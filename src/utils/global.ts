@@ -6,8 +6,8 @@ declare global {
 
     interface CreepMemory {
         role: string;
-        // room: string;
-        // working: boolean;
+        room: string;
+        working: boolean;
     }
 
     // namespace NodeJS {

@@ -7,29 +7,32 @@ export class RoomManager implements Manager {
 
     constructor() { }
 
+    // spawn according to json
+
     public spawn(): void {
         var harvesters = _.filter(Game.creeps, (creep) => creep.memory.role == 'harvester');
         console.log('Harvesters: ' + harvesters.length);
 
+        const spawn = Game.spawns['Spawn1'];
+
         if (harvesters.length < 2) {
             var newName = 'Harvester' + Game.time;
             console.log('Spawning new harvester: ' + newName);
-            Game.spawns['Spawn1'].spawnCreep([WORK, CARRY, MOVE], newName,
-                { memory: { role: 'harvester' } });
+            spawn.spawnCreep([WORK, CARRY, MOVE], newName,
+                { memory: { role: 'harvester', working: false, room: spawn.room.name } });
         }
 
-        if (Game.spawns['Spawn1'].spawning) {
-            var spawningCreep = Game.creeps[Game.spawns['Spawn1'].spawning.name];
-            Game.spawns['Spawn1'].room.visual.text(
+        if (spawn.spawning) {
+            var spawningCreep = Game.creeps[spawn.spawning.name];
+            spawn.room.visual.text(
                 '🛠️' + spawningCreep.memory.role,
-                Game.spawns['Spawn1'].pos.x + 1,
-                Game.spawns['Spawn1'].pos.y,
+                spawn.pos.x + 1,
+                spawn.pos.y,
                 { align: 'left', opacity: 0.8 });
         }
     }
 
     public run(): void {
-        console.log(`Current game tick is ${Game.time}`);
         this.spawn();
     }
 
