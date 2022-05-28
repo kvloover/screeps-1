@@ -4,7 +4,7 @@ import { Manager, Managers } from "manager";
 import { Logger } from "logger";
 
 @injectable()
-export class GameManager implements Manager {
+export class GameWorld {
 
     constructor(
         private log: Logger,

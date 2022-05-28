@@ -1,6 +1,6 @@
 import { registry } from "tsyringe";
 
-import { GameManager } from "game-manager";
+import { GameWorld } from "game-world";
 import { RoomManager } from "room";
 import { CreepsManager } from "creeps";
 import { TowerManager } from "structures";
