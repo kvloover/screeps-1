@@ -43,6 +43,10 @@ export class RoomManager implements Manager {
         }
     }
 
+    public state(): void {
+
+    }
+
     public run(): void {
         this.spawn();
     }
