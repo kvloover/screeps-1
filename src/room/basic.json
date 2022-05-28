@@ -3,17 +3,17 @@
         {
             "role": "upgrader",
             "priority": 3,
-            "count": 1
+            "count": 3
         },
         {
             "role": "harvester",
             "priority": 1,
-            "count": 1
+            "count": 2
         },
         {
             "role": "builder",
             "priority": 2,
-            "count": 1
+            "count": 2
         }
     ]
 }

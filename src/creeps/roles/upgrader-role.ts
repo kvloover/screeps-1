@@ -35,7 +35,10 @@ export class UpgraderRole implements Role {
                 }
             }
             if (!harvesting) {
-                this.pathing.moveToClosest(creep, sources);
+                const loc = this.pathing.findClosest(creep, FIND_SOURCES);
+                if (loc != undefined) {
+                    this.pathing.moveTo(creep, loc.pos);
+                }
             }
         }
     }

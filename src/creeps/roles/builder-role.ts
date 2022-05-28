@@ -1,6 +1,7 @@
 import { injectable } from "tsyringe";
 import { Pathing } from "creeps/pathing";
 import { Role } from "../role";
+import { CreepUtils } from "creeps/creep-utils";
 
 @injectable()
 export class BuilderRole implements Role {
@@ -21,31 +22,20 @@ export class BuilderRole implements Role {
         }
 
         if (creep.memory.working) {
-            var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
-            let building = false;
-            for (let loc of targets) {
-                if (creep.build(loc) != ERR_NOT_IN_RANGE) {
-                    building = true;
-                    break;
+            if (!CreepUtils.tryForFind(creep, FIND_CONSTRUCTION_SITES, loc => creep.build(loc))) {
+                const loc = this.pathing.findClosest(creep, FIND_CONSTRUCTION_SITES);
+                if (loc != undefined) {
+                    this.pathing.moveTo(creep, loc.pos);
                 }
-            }
-            if (!building) {
-                this.pathing.moveToClosest(creep, targets);
             }
         }
         else {
-            const sources = creep.room.find(FIND_SOURCES);
-            let harvesting = false;
-            for (let src of sources) {
-                if (creep.harvest(src) != ERR_NOT_IN_RANGE) {
-                    harvesting = true;
-                    break;
+            if (!CreepUtils.tryForFind(creep, FIND_SOURCES, loc => creep.harvest(loc))) {
+                const loc = this.pathing.findClosest(creep, FIND_SOURCES);
+                if (loc != undefined) {
+                    this.pathing.moveTo(creep, loc.pos);
                 }
-            }
-            if (!harvesting) {
-                this.pathing.moveToClosest(creep, sources);
             }
         }
     }
-
 }

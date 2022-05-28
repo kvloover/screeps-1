@@ -1,3 +1,4 @@
+import { CreepUtils } from "creeps/creep-utils";
 import { Pathing } from "creeps/pathing";
 import { injectable } from "tsyringe";
 import { Role } from "../role";
@@ -12,32 +13,29 @@ export class HarvesterRole implements Role {
 
     public run(creep: Creep): void {
         if (creep.store.getFreeCapacity() > 0) {
-            const sources = creep.room.find(FIND_SOURCES);
-            let harvesting = false;
-            for (let src of sources) {
-                if (creep.harvest(src) != ERR_NOT_IN_RANGE) {
-                    harvesting = true;
-                    break;
+            if (!CreepUtils.tryForFind(creep, FIND_SOURCES, loc => creep.harvest(loc))) {
+                const loc = this.pathing.findClosest(creep, FIND_SOURCES);
+                if (loc != undefined) {
+                    this.pathing.moveTo(creep, loc.pos);
                 }
-            }
-            if (!harvesting) {
-                this.pathing.moveToClosest(creep, sources);
             }
         }
         else {
-            var targets = creep.room.find(FIND_STRUCTURES, {
-                filter: (structure) => {
-                    return (structure.structureType == STRUCTURE_EXTENSION
+            const filt: FilterOptions<FIND_STRUCTURES> = {
+                filter: (structure) =>
+                    (structure.structureType == STRUCTURE_EXTENSION
                         || structure.structureType == STRUCTURE_SPAWN) &&
-                        structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
-                }
-            });
-            if (targets.length > 0) {
-                if (creep.transfer(targets[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(targets[0], { visualizePathStyle: { stroke: '#ffffff' } });
+                    structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0
+            };
+            if (!CreepUtils.tryForFind(
+                creep, FIND_STRUCTURES,
+                loc => creep.transfer(loc, RESOURCE_ENERGY), filt
+                )) {
+                const loc = this.pathing.findClosest(creep, FIND_STRUCTURES, filt);
+                if (loc != undefined) {
+                    this.pathing.moveTo(creep, loc.pos);
                 }
             }
         }
     }
-
 }
