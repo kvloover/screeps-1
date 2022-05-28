@@ -4,6 +4,12 @@ declare global {
     //     log: any;
     // }
 
+    interface FlagMemory {
+        objectId: Id<_HasId>; // For Game.GetObject
+        maxRequests: number;
+        requests: number;
+    }
+
     interface CreepMemory {
         role: string;
         room: string;

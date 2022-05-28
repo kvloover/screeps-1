@@ -1,5 +1,5 @@
-import { Pathing } from "creeps/pathing";
 import { injectable } from "tsyringe";
+import { Pathing } from "creeps/pathing";
 import { Role } from "../role";
 
 @injectable()

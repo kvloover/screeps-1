@@ -1,13 +1,13 @@
-import { injectable } from "tsyringe";
+import { injectable, inject } from "tsyringe";
 
 import { Manager } from "manager";
 import basic from './basic.json';
-import { object } from "lodash";
+import { SourceController } from "./source-controller";
 
-injectable()
+@injectable()
 export class RoomManager implements Manager {
 
-    constructor() { }
+    constructor(private sources: SourceController) { }
 
     // spawn according to json
 
@@ -49,6 +49,9 @@ export class RoomManager implements Manager {
 
     public run(): void {
         this.spawn();
+
+        // TODO rework room manager for a single room
+        _.forEach(Game.rooms, room => this.sources.run(room));
     }
 
 }

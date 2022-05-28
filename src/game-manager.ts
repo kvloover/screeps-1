@@ -1,11 +1,15 @@
-import { injectable } from "tsyringe";
+import { injectable, injectAll } from "tsyringe";
 
-import { Manager } from "manager";
+import { Manager, Managers } from "manager";
+import { Logger } from "logger";
 
-injectable()
+@injectable()
 export class GameManager implements Manager {
 
-    constructor() { }
+    constructor(
+        private log: Logger,
+        @injectAll(Managers.token) private managers: Manager[]
+        ) { }
 
     public cleanMemory(): void {
         for (const name in Memory.creeps) {
@@ -16,8 +20,12 @@ export class GameManager implements Manager {
     }
 
     public run(): void {
-        console.log(`Current game tick is ${Game.time}`);
+        this.log.Important(`Current game tick is ${Game.time}`);
         this.cleanMemory();
+
+        this.managers.forEach(manager => {
+          manager.run();
+        });
     }
 
 }

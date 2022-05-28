@@ -1,12 +1,12 @@
 import { injectable } from "tsyringe";
 
 import { Manager } from "manager";
-import { TickLogger } from "logger";
+import { Logger } from "logger";
 
-injectable()
+@injectable()
 export class TowerManager implements Manager {
 
-    constructor() { }
+    constructor(private log: Logger) { }
 
     private defend(tower: StructureTower) {
 
@@ -30,7 +30,7 @@ export class TowerManager implements Manager {
             .forEach(key => {
                 const towers = Game.rooms[key].find<StructureTower>(FIND_MY_STRUCTURES,
                     { filter: (struct) => struct.structureType == STRUCTURE_TOWER });
-                // this.log.Information(`${towers.length} towers found in room ${Game.rooms[key].name}`);
+                this.log.Information(`${towers.length} towers found in room ${Game.rooms[key].name}`);
                 if (towers.length > 0) {
                     towers.forEach(t => this.defend(t));
                 }
