@@ -12,6 +12,12 @@ export class Pathing {
         return closest as S;
     }
 
+    public findClosestOf<K extends FindConstant, S extends FindTypes[K]>(creep: Creep, locations: S[]): S | null {
+        const options: PathFinderOpts = this.opt.optimal();
+        const closest = creep.pos.findClosestByPath(locations, options);
+        return closest as S;
+    }
+
     public moveTo(creep: Creep, pos: RoomPosition) {
 
         const options: PathFinderOpts = this.opt.optimal();

@@ -22,10 +22,43 @@ export class BuilderRole implements Role {
         }
 
         if (creep.memory.working) {
-            if (!CreepUtils.tryForFind(creep, FIND_CONSTRUCTION_SITES, loc => creep.build(loc))) {
-                const loc = this.pathing.findClosest(creep, FIND_CONSTRUCTION_SITES);
-                if (loc != undefined) {
-                    this.pathing.moveTo(creep, loc.pos);
+
+            // priority repairs > construction > repairs
+            const emergency = creep.room.find(FIND_STRUCTURES, {
+                filter: (struct) => // TODO owner for tower
+                    (struct.structureType === STRUCTURE_TOWER && struct.hits <= 0.50 * struct.hitsMax)      // 1.5k HP
+                    || (struct.structureType == STRUCTURE_WALL && struct.hits <= 0.000005 * struct.hitsMax) // 1.5k HP
+            })
+            if (emergency.length > 0) {
+                // emergency repairs
+                if (!CreepUtils.tryFor(emergency, loc => creep.repair(loc))) {
+                    const loc = this.pathing.findClosestOf(creep, emergency);
+                    if (loc != undefined) {
+                        this.pathing.moveTo(creep, loc.pos);
+                    }
+                }
+            } else {
+                const constructions = creep.room.find(FIND_STRUCTURES);
+                if (constructions.length > 0) {
+                    // construct
+                    if (!CreepUtils.tryForFind(creep, FIND_CONSTRUCTION_SITES, loc => creep.build(loc))) {
+                        const loc = this.pathing.findClosest(creep, FIND_CONSTRUCTION_SITES);
+                        if (loc != undefined) {
+                            this.pathing.moveTo(creep, loc.pos);
+                        }
+                    }
+                } else {
+                    // repair
+                    if (!CreepUtils.tryForFind(creep, FIND_STRUCTURES, loc => creep.repair(loc), {
+                        filter: (struct) =>
+                            (struct.structureType === STRUCTURE_TOWER)                                              // 3k HP
+                            || (struct.structureType == STRUCTURE_WALL && struct.hits <= 0.00005 * struct.hitsMax) // 15k HP
+                    })) {
+                        const loc = this.pathing.findClosest(creep, FIND_STRUCTURES);
+                        if (loc != undefined) {
+                            this.pathing.moveTo(creep, loc.pos);
+                        }
+                    }
                 }
             }
         }
