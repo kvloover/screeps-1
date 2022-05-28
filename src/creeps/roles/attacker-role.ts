@@ -22,6 +22,13 @@ export class AttackerRole implements Role {
                     this.pathing.moveTo(creep, loc.pos);
                 }
             }
+        } else {
+            const flag = this.pathing.findClosest(creep, FIND_FLAGS,  { filter: (fl) => fl.name.startsWith('Guardian') });
+            if (flag != undefined) {
+                this.pathing.moveTo(creep, flag.pos);
+            }
         }
+
+
     }
 }
