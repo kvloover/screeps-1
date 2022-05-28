@@ -24,7 +24,9 @@ export class HarvesterRole implements Role {
             const filt: FilterOptions<FIND_STRUCTURES> = {
                 filter: (structure) =>
                     (structure.structureType == STRUCTURE_EXTENSION
-                        || structure.structureType == STRUCTURE_SPAWN) &&
+                        || structure.structureType == STRUCTURE_SPAWN
+                        || structure.structureType == STRUCTURE_TOWER
+                        || structure.structureType == STRUCTURE_CONTAINER) &&
                     structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0
             };
             if (!CreepUtils.tryForFind(
