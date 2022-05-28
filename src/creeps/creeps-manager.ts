@@ -9,16 +9,17 @@ export class CreepsManager implements Manager {
 
     constructor(@injectAll(Roles.token) private roles: Role[]) { }
 
-    public performRole(): void {
+    public performRole(room: Room): void {
         this.roles.forEach(role => {
-            Object.values(Game.creeps)
-                .filter(crp => crp.memory.role == role.name)
+            _.filter(Game.creeps, crp =>
+                crp.room.name === room.name
+                && crp.memory.role == role.name)
                 .forEach(crp => role.run(crp));
         })
     }
 
-    public run(): void {
-        this.performRole();
+    public run(room: Room): void {
+        this.performRole(room);
     }
 
     // have idle creeps switch task/roles

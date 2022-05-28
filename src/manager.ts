@@ -6,7 +6,7 @@ import { CreepsManager } from "creeps";
 import { TowerManager } from "structures";
 
 export interface Manager {
-    run(): void;
+    run(room: Room): void;
 }
 
 @registry([

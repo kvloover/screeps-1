@@ -1,0 +1,24 @@
+{
+    "template": [
+        "work",
+        "carry",
+        "move"
+    ],
+    "roles": [
+        {
+            "role": "harvester",
+            "priority": 1,
+            "count": 2
+        },
+        {
+            "role": "upgrader",
+            "priority": 2,
+            "count": 2
+        },
+        {
+            "role": "builder",
+            "priority": 3,
+            "count": 2
+        }
+    ]
+}
