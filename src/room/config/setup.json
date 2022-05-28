@@ -42,18 +42,31 @@
         ],
         "roles": [
             {
-                "role": "harvester",
+                "role": "attacker",
                 "priority": 1,
-                "count": 2
+                "count": 1,
+                "template": [
+                    "attack",
+                    "attack",
+                    "ranged_attack",
+                    "tough",
+                    "move",
+                    "move"
+                ]
             },
             {
-                "role": "upgrader",
+                "role": "harvester",
                 "priority": 2,
                 "count": 2
             },
             {
-                "role": "builder",
+                "role": "upgrader",
                 "priority": 3,
+                "count": 2
+            },
+            {
+                "role": "builder",
+                "priority": 4,
                 "count": 2
             }
         ]

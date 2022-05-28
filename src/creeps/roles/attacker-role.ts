@@ -12,26 +12,12 @@ export class AttackerRole implements Role {
     }
 
     public run(creep: Creep): void {
-        if (creep.memory.working && creep.store[RESOURCE_ENERGY] == 0) {
-            creep.memory.working = false;
-            creep.say('🔄 harvest');
-        }
-        if (!creep.memory.working && creep.store.getFreeCapacity() == 0) {
-            creep.memory.working = true;
-            creep.say('🚧 build');
-        }
 
-        if (creep.memory.working) {
-            if (!CreepUtils.tryForFind(creep, FIND_CONSTRUCTION_SITES, loc => creep.build(loc))) {
-                const loc = this.pathing.findClosest(creep, FIND_CONSTRUCTION_SITES);
-                if (loc != undefined) {
-                    this.pathing.moveTo(creep, loc.pos);
-                }
-            }
-        }
-        else {
-            if (!CreepUtils.tryForFind(creep, FIND_SOURCES, loc => creep.harvest(loc))) {
-                const loc = this.pathing.findClosest(creep, FIND_SOURCES);
+        const hostiles = creep.room.find(FIND_HOSTILE_CREEPS);
+        if (hostiles.length > 0) {
+            if (Game.time % 10 == 0) { creep.say('⚔️ hostiles found'); }
+            if (!CreepUtils.tryFor(hostiles, (hostile) => creep.attack(hostile))) {
+                const loc = this.pathing.findClosestOf(creep, hostiles);
                 if (loc != undefined) {
                     this.pathing.moveTo(creep, loc.pos);
                 }
