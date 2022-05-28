@@ -28,6 +28,7 @@ export class BuilderRole implements Role {
                 filter: (struct) => // TODO owner for tower
                     (struct.structureType === STRUCTURE_TOWER && struct.hits <= 0.50 * struct.hitsMax)      // 1.5k HP
                     || (struct.structureType == STRUCTURE_WALL && struct.hits <= 0.000005 * struct.hitsMax) // 1.5k HP
+                    || (struct.structureType == STRUCTURE_RAMPART && struct.hits <= 0.005 * struct.hitsMax) // 1.5k HP
             })
             if (emergency.length > 0) {
                 // emergency repairs
@@ -53,6 +54,7 @@ export class BuilderRole implements Role {
                         filter: (struct) =>
                             (struct.structureType === STRUCTURE_TOWER)                                              // 3k HP
                             || (struct.structureType == STRUCTURE_WALL && struct.hits <= 0.00005 * struct.hitsMax) // 15k HP
+                            || (struct.structureType == STRUCTURE_RAMPART && struct.hits <= 0.05 * struct.hitsMax) // 15k HP
                     })) {
                         const loc = this.pathing.findClosest(creep, FIND_STRUCTURES);
                         if (loc != undefined) {
