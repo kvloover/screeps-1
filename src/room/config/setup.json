@@ -1,0 +1,61 @@
+{
+    "initial": {
+        "order": 1,
+        "energy": 0,
+        "controller": 0,
+        "creeps": 0,
+        "template": [
+            "work",
+            "carry",
+            "move"
+        ],
+        "roles": [
+            {
+                "role": "harvester",
+                "priority": 1,
+                "count": 2
+            },
+            {
+                "role": "upgrader",
+                "priority": 2,
+                "count": 2
+            },
+            {
+                "role": "builder",
+                "priority": 3,
+                "count": 2
+            }
+        ]
+    },
+    "stage-2": {
+        "order": 2,
+        "energy": 400,
+        "controller": 2,
+        "creeps": 1,
+        "template": [
+            "work",
+            "work",
+            "carry",
+            "carry",
+            "move",
+            "move"
+        ],
+        "roles": [
+            {
+                "role": "harvester",
+                "priority": 1,
+                "count": 2
+            },
+            {
+                "role": "upgrader",
+                "priority": 2,
+                "count": 2
+            },
+            {
+                "role": "builder",
+                "priority": 3,
+                "count": 2
+            }
+        ]
+    }
+}
