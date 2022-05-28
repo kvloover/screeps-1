@@ -1,10 +1,11 @@
 import { registry } from "tsyringe";
 
 import {
-    AttackerRole,
+    MeleeAttackerRole,
     BuilderRole,
     HarvesterRole,
-    UpgraderRole
+    UpgraderRole,
+    RangedAttackerRole
 } from "./roles";
 
 export interface Role {
@@ -16,7 +17,8 @@ export interface Role {
     { token: Roles.token, useToken: BuilderRole },
     { token: Roles.token, useToken: HarvesterRole },
     { token: Roles.token, useToken: UpgraderRole },
-    { token: Roles.token, useToken: AttackerRole },
+    { token: Roles.token, useToken: MeleeAttackerRole },
+    { token: Roles.token, useToken: RangedAttackerRole }
 ])
 export abstract class Roles {
     static readonly token = Symbol('Role');

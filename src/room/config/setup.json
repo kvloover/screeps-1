@@ -82,9 +82,9 @@
         ],
         "roles": [
             {
-                "role": "attacker",
+                "role": "melee",
                 "priority": 1,
-                "count": 1,
+                "count": 2,
                 "template": [
                     "attack",
                     "attack",
@@ -108,7 +108,7 @@
             {
                 "role": "upgrader",
                 "priority": 3,
-                "count": 4
+                "count": 5
             },
             {
                 "role": "builder",
