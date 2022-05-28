@@ -3,17 +3,24 @@ import { injectable } from "tsyringe";
 @injectable()
 export class SourceController {
 
-    private monitor(room: Room): void {
-        room.memory.sources.forEach(tag => {
-            if (Game.flags.hasOwnProperty(tag)) {
-                const flag = Game.flags[tag];
-                if (flag) {
-                    if (flag.memory.maxRequests > flag.memory.requests) {
-                        // REQUEST
-                    }
-                }
-            }
-        });
+    public monitor(room: Room): void {
+
+        if (!room.memory.sources) {
+            this.initializeRoom(room);
+        }
+
+        // if (room.memory.sources) {
+        //     room.memory.sources.forEach(tag => {
+        //         if (Game.flags.hasOwnProperty(tag)) {
+        //             const flag = Game.flags[tag];
+        //             if (flag) {
+        //                 if (flag.memory.maxRequests > flag.memory.requests) {
+        //                     // REQUEST
+        //                 }
+        //             }
+        //         }
+        //     });
+        // }
     }
 
     // Set flags on sources and store names in room memory
@@ -40,13 +47,6 @@ export class SourceController {
         flag.memory.maxRequests = 2; // default TODO
         flag.memory.requests = 0;
     }
-
-    public run(room: Room): void {
-        if (!room.memory.sources) {
-            this.initializeRoom(room);
-        }
-    }
-
 }
 
 declare global {

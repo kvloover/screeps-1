@@ -1,16 +1,19 @@
 import { injectable } from "tsyringe";
 
 import { Manager } from "manager";
-import { SourceController } from "./source-controller";
+import { SourceController } from "./controllers/source-controller";
 
 import setup from './config/setup.json';
 import { config, stageConfig } from "./config/config";
 import { Logger } from "logger";
+import { EmergencyController } from "./controllers/emergency-controller";
 
 @injectable()
 export class RoomManager implements Manager {
 
-    constructor(private log: Logger, private sources: SourceController) { }
+    constructor(private log: Logger,
+        private sources: SourceController,
+        private emergency: EmergencyController) { }
 
     private isBodyTemplate(str: string): str is BodyPartConstant {
         return (str as BodyPartConstant) != null;
@@ -87,7 +90,8 @@ export class RoomManager implements Manager {
 
     public run(room: Room): void {
         this.manageSpawns(room);
-        this.sources.run(room);
+        this.sources.monitor(room);
+        this.emergency.monitor(room);
     }
 
 }
