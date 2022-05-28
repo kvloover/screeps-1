@@ -7,6 +7,7 @@ import { CreepUtils } from "creeps/creep-utils";
 export class BuilderRole implements Role {
 
     name: string = 'builder'
+    maxHits: number = 15000;
 
     constructor(private pathing: Pathing) {
     }
@@ -52,9 +53,7 @@ export class BuilderRole implements Role {
                     // repair
                     if (!CreepUtils.tryForFind(creep, FIND_STRUCTURES, loc => creep.repair(loc), {
                         filter: (struct) =>
-                            (struct.structureType === STRUCTURE_TOWER)                                              // 3k HP
-                            || (struct.structureType == STRUCTURE_WALL && struct.hits <= 0.00005 * struct.hitsMax) // 15k HP
-                            || (struct.structureType == STRUCTURE_RAMPART && struct.hits <= 0.05 * struct.hitsMax) // 15k HP
+                            struct.hits < this.maxHits && struct.hits < struct.hitsMax
                     })) {
                         const loc = this.pathing.findClosest(creep, FIND_STRUCTURES);
                         if (loc != undefined) {
