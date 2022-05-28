@@ -1,5 +1,4 @@
 import { Pathing } from "creeps/pathing";
-import { forEach } from "lodash";
 import { injectable } from "tsyringe";
 import { Role } from "../role";
 
