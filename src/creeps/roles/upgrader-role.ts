@@ -1,3 +1,4 @@
+import { CreepUtils } from "creeps/creep-utils";
 import { Pathing } from "creeps/pathing";
 import { injectable } from "tsyringe";
 import { Role } from "../role";
@@ -22,19 +23,11 @@ export class UpgraderRole implements Role {
 
         if (creep.memory.working) {
             if (creep.room.controller && creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(creep.room.controller, { visualizePathStyle: { stroke: '#ffffff' } });
+                this.pathing.moveTo(creep, creep.room.controller.pos);
             }
         }
         else {
-            const sources = creep.room.find(FIND_SOURCES);
-            let harvesting = false;
-            for (let src of sources) {
-                if (creep.harvest(src) != ERR_NOT_IN_RANGE) {
-                    harvesting = true;
-                    break;
-                }
-            }
-            if (!harvesting) {
+            if (!CreepUtils.tryForFind(creep, FIND_SOURCES, loc => creep.harvest(loc))) {
                 const loc = this.pathing.findClosest(creep, FIND_SOURCES);
                 if (loc != undefined) {
                     this.pathing.moveTo(creep, loc.pos);
