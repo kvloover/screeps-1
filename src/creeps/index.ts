@@ -1,2 +1,2 @@
 export * from './creeps-manager';
-export * from './roles';
+export * from './roles/index';

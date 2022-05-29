@@ -110,7 +110,7 @@
             {
                 "role": "upgrader",
                 "priority": 3,
-                "count": 5
+                "count": 4
             },
             {
                 "role": "builder",

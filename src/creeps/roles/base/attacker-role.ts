@@ -1,6 +1,4 @@
-import { injectable } from "tsyringe";
 import { Pathing } from "creeps/pathing";
-import { Role } from "../role";
 import { CreepUtils } from "creeps/creep-utils";
 
 export abstract class AttackerRole {
@@ -29,27 +27,4 @@ export abstract class AttackerRole {
     }
 }
 
-@injectable()
-export class MeleeAttackerRole extends AttackerRole implements Role {
-
-    name: string = 'melee'
-
-    constructor(pathing: Pathing) { super(pathing); }
-
-    protected override attack(creep: Creep, hostile: Creep): CreepActionReturnCode {
-        return creep.attack(hostile);
-    }
-}
-
-@injectable()
-export class RangedAttackerRole extends AttackerRole implements Role {
-
-    name: string = 'ranger'
-
-    constructor(pathing: Pathing) { super(pathing); }
-
-    protected override attack(creep: Creep, hostile: Creep): CreepActionReturnCode {
-        return creep.rangedAttack(hostile);
-    }
-}
 

@@ -4,9 +4,9 @@ import { injectable } from "tsyringe";
 import { Role } from "../role";
 
 @injectable()
-export class HarvesterRole implements Role {
+export class RemoteHarvesterRole implements Role {
 
-    name: string = 'harvester'
+    name: string = 'remote-harvester'
 
     constructor(private pathing: Pathing) {
     }

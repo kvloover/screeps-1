@@ -1,9 +1,8 @@
 import { registry } from "tsyringe";
 
-import { GameWorld } from "game-world";
 import { RoomManager } from "room";
 import { CreepsManager } from "creeps";
-import { TowerManager } from "structures";
+import { TowerManager, SpawnManager } from "structures";
 
 export interface Manager {
     run(room: Room): void;
@@ -12,6 +11,7 @@ export interface Manager {
 @registry([
     { token: Managers.token, useToken: RoomManager },
     { token: Managers.token, useToken: CreepsManager },
+    { token: Managers.token, useToken: SpawnManager },
     { token: Managers.token, useToken: TowerManager },
 ])
 export abstract class Managers {
