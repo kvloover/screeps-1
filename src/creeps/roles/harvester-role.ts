@@ -20,7 +20,7 @@ export class HarvesterRole implements Role {
         }
 
         if (creep.memory.working) {
-            this.fill(creep);
+            this.deposit(creep);
         }
         else {
             this.harvest(creep);
@@ -36,8 +36,8 @@ export class HarvesterRole implements Role {
         }
     }
 
-    private fill(creep: Creep) {
-        const priofill: FilterOptions<FIND_STRUCTURES> = {
+    private deposit(creep: Creep) {
+        const opt: FilterOptions<FIND_STRUCTURES> = {
             filter: (structure) =>
                 (structure.structureType == STRUCTURE_EXTENSION
                     || structure.structureType == STRUCTURE_SPAWN
@@ -47,28 +47,28 @@ export class HarvesterRole implements Role {
 
         if (!CreepUtils.tryForFind(
             creep, FIND_STRUCTURES,
-            loc => creep.transfer(loc, RESOURCE_ENERGY), priofill
+            loc => creep.transfer(loc, RESOURCE_ENERGY), opt
         )) {
-            const loc = this.pathing.findClosest(creep, FIND_STRUCTURES, priofill);
+            const loc = this.pathing.findClosest(creep, FIND_STRUCTURES, opt);
             if (loc != undefined) {
                 this.pathing.moveTo(creep, loc.pos);
             } else {
-                this.fillNonPrio(creep);
+                this.depositNonPrio(creep);
             }
         }
     }
 
-    private fillNonPrio(creep: Creep) {
-        const fill: FilterOptions<FIND_STRUCTURES> = {
+    private depositNonPrio(creep: Creep) {
+        const opt: FilterOptions<FIND_STRUCTURES> = {
             filter: (structure) =>
                 (structure.structureType == STRUCTURE_CONTAINER) &&
                 structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0
         };
         if (!CreepUtils.tryForFind(
             creep, FIND_STRUCTURES,
-            loc => creep.transfer(loc, RESOURCE_ENERGY), fill
+            loc => creep.transfer(loc, RESOURCE_ENERGY), opt
         )) {
-            const loc = this.pathing.findClosest(creep, FIND_STRUCTURES, fill);
+            const loc = this.pathing.findClosest(creep, FIND_STRUCTURES, opt);
             if (loc != undefined) {
                 this.pathing.moveTo(creep, loc.pos);
             }
