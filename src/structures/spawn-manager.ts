@@ -65,10 +65,13 @@ export class SpawnManager implements Manager {
                 var bodyTemplate = template.map(i => this.isBodyTemplate(i) ? i : TOUGH);
 
                 var newName = this.generateName(room, prio.role);
-                if (spawn.spawnCreep(bodyTemplate, newName,
-                    { memory: { role: prio.role, working: false, room: spawn.room.name } }
-                ) === OK) {
+                const ret = spawn.spawnCreep(bodyTemplate, newName,
+                    { memory: { role: prio.role, working: false, room: spawn.room.name } });
+                if (ret === OK) {
                     this.log.Critical(`Spawning new ${prio.role}: ${newName}`);
+                    this.nameInUse(room, prio.role, newName);
+                } else if (ret === ERR_NAME_EXISTS) {
+                    this.nameInUse(room, prio.role, newName);
                 }
             }
         }
@@ -76,11 +79,15 @@ export class SpawnManager implements Manager {
 
     private generateName(room: Room, role: string) {
         // initialize spawn sequence (reset ever 3k ticks - creeps live 1.5k)
-        if (!Memory.spawnSequence || Game.time % 3000)
-        Memory.spawnSequence = 0;
+        if (!Memory.spawnSequence || Game.time % 3000 === 0)
+            Memory.spawnSequence = 0;
 
+        return `${role.slice(0, 4)}_${Memory.spawnSequence.toString()}`
+    }
+
+    private nameInUse(room: Room, role: string, name: string) {
+        this.log.Critical(`name in use: ${name}`);
         Memory.spawnSequence++;
-        return `${role.slice(0,4)}_${Memory.spawnSequence.toString()}`
     }
 
     private reportSpawning(room: Room, spawn: StructureSpawn) {
