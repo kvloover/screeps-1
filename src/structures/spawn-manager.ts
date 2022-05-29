@@ -64,7 +64,7 @@ export class SpawnManager implements Manager {
                 var template = prio.template ?? stage.template ?? [WORK, CARRY, MOVE];
                 var bodyTemplate = template.map(i => this.isBodyTemplate(i) ? i : TOUGH);
 
-                var newName = `${prio.role}_${room.name}_${Game.time}`;
+                var newName = this.generateName(room, prio.role);
                 if (spawn.spawnCreep(bodyTemplate, newName,
                     { memory: { role: prio.role, working: false, room: spawn.room.name } }
                 ) === OK) {
@@ -72,6 +72,15 @@ export class SpawnManager implements Manager {
                 }
             }
         }
+    }
+
+    private generateName(room: Room, role: string) {
+        // initialize spawn sequence (reset ever 3k ticks - creeps live 1.5k)
+        if (!Memory.spawnSequence || Game.time % 3000)
+        Memory.spawnSequence = 0;
+
+        Memory.spawnSequence++;
+        return `${role.slice(0,4)}_${Memory.spawnSequence.toString()}`
     }
 
     private reportSpawning(room: Room, spawn: StructureSpawn) {
@@ -88,4 +97,10 @@ export class SpawnManager implements Manager {
         this.manageSpawns(room);
     }
 
+}
+
+declare global {
+    interface Memory {
+        spawnSequence: number;
+    }
 }
