@@ -12,11 +12,18 @@ export class HarvesterRole implements Role {
     }
 
     public run(creep: Creep): void {
-        if (creep.store.getUsedCapacity() === 0) {
-            this.harvest(creep);
+        if (creep.memory.working && creep.store.getUsedCapacity() == 0) {
+            creep.memory.working = false;
+        }
+        if (!creep.memory.working && creep.store.getFreeCapacity() == 0) {
+            creep.memory.working = true;
+        }
+
+        if (creep.memory.working) {
+            this.fill(creep);
         }
         else {
-            this.fill(creep);
+            this.harvest(creep);
         }
     }
 
