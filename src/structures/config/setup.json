@@ -105,16 +105,31 @@
             {
                 "role": "harvester",
                 "priority": 2,
-                "count": 2
+                "count": 1
             },
             {
                 "role": "upgrader",
                 "priority": 3,
-                "count": 4
+                "count": 1
+            },
+            {
+                "role": "harvester",
+                "priority": 4,
+                "count": 2
             },
             {
                 "role": "builder",
-                "priority": 4,
+                "priority": 5,
+                "count": 1
+            },
+            {
+                "role": "upgrader",
+                "priority": 6,
+                "count": 3
+            },
+            {
+                "role": "builder",
+                "priority": 7,
                 "count": 2
             }
         ]
@@ -123,7 +138,7 @@
         "order": 4,
         "energy": 800,
         "controller": 3,
-        "creeps": 2,
+        "creeps": 4,
         "template": [
             "work",
             "work",
@@ -162,16 +177,31 @@
             {
                 "role": "harvester",
                 "priority": 2,
-                "count": 2
+                "count": 1
             },
             {
                 "role": "upgrader",
                 "priority": 3,
-                "count": 5
+                "count": 1
+            },
+            {
+                "role": "harvester",
+                "priority": 4,
+                "count": 2
             },
             {
                 "role": "builder",
-                "priority": 4,
+                "priority": 5,
+                "count": 1
+            },
+            {
+                "role": "upgrader",
+                "priority": 6,
+                "count": 3
+            },
+            {
+                "role": "builder",
+                "priority": 7,
                 "count": 2
             }
         ]

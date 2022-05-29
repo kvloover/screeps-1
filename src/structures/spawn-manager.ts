@@ -25,7 +25,10 @@ export class SpawnManager implements Manager {
     private isPrio(room: Room, roomCreeps: Creep[], cfg: roleConfig): boolean {
         return (cfg.count > 0)
             && (!cfg.emergency || (room.memory.emergency?.active))
-            && (roomCreeps?.filter(c => c.memory.role === cfg.role)?.length < cfg.count);
+            && (roomCreeps?.filter(c => c.memory.role === cfg.role
+                && (!c.ticksToLive // spawning
+                    || c.ticksToLive > 100
+                ))?.length < cfg.count);
     }
 
     private manageSpawns(room: Room): void {
