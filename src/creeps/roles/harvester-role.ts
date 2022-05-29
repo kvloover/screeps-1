@@ -12,7 +12,7 @@ export class HarvesterRole implements Role {
     }
 
     public run(creep: Creep): void {
-        if (creep.store.getFreeCapacity() > 0) {
+        if (creep.store.getUsedCapacity() === 0) {
             this.harvest(creep);
         }
         else {
