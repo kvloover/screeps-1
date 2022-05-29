@@ -14,6 +14,7 @@ export class stageConfig {
 export class roleConfig {
     public priority: number = 9;
     public role: string = '';
+    public emergency: boolean = false;
     public count: number = 0;
     public template: string[] | undefined;
 }

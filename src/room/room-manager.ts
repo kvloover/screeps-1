@@ -4,7 +4,7 @@ import { Manager } from "manager";
 import { SourceController } from "./controllers/source-controller";
 
 import setup from './config/setup.json';
-import { config, stageConfig } from "./config/config";
+import { config, roleConfig, stageConfig } from "./config/config";
 import { Logger } from "logger";
 import { EmergencyController } from "./controllers/emergency-controller";
 
@@ -26,6 +26,12 @@ export class RoomManager implements Manager {
             && (cfg.creeps <= 0 || roomCreeps.length >= cfg.creeps)
     }
 
+    private isPrio(room: Room, roomCreeps: Creep[], cfg: roleConfig): boolean {
+        return (cfg.count > 0)
+            && (!cfg.emergency || (room.memory.emergency?.active))
+            && (roomCreeps?.filter(c => c.memory.role === cfg.role)?.length < cfg.count);
+    }
+
     private manageSpawns(room: Room): void {
 
         const spawns = room.find(FIND_MY_SPAWNS)
@@ -40,7 +46,6 @@ export class RoomManager implements Manager {
     }
 
     private trySpawn(room: Room, spawn: StructureSpawn): void {
-        const state: { [key: string]: number } = {};
         const roomCreeps = room.find(FIND_MY_CREEPS);
 
         const cfg = Object.assign(new config(), setup);
@@ -52,15 +57,10 @@ export class RoomManager implements Manager {
 
         if (stage != undefined) {
             this.log.Information(`current stage: ${stage.order}`);
-            // fill state for easy compare
-            stage.roles
-                .filter(rc => rc.role.length > 0)
-                .forEach(rc => state[rc.role] =
-                    _.filter(roomCreeps, (creep) => creep.memory.role == rc.role).length);
 
             const prio = stage.roles
                 .sort((a, b) => a.priority - b.priority)
-                .filter(cfg => _.filter(Game.creeps, (creep) => creep.memory.role == cfg.role)?.length < cfg.count)
+                .filter(cfg => this.isPrio(room, roomCreeps, cfg))
                 .find(x => x !== undefined);
 
             if (prio) {

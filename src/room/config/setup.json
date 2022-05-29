@@ -31,7 +31,7 @@
         "order": 2,
         "energy": 240,
         "controller": 2,
-        "creeps": 2,
+        "creeps": 1,
         "template": [
             "work",
             "carry",
@@ -41,7 +41,8 @@
             {
                 "role": "attacker",
                 "priority": 1,
-                "count": 1,
+                "emergency": true,
+                "count": 5,
                 "template": [
                     "attack",
                     "tough",
@@ -84,7 +85,8 @@
             {
                 "role": "melee",
                 "priority": 1,
-                "count": 2,
+                "emergency": true,
+                "count": 5,
                 "template": [
                     "attack",
                     "attack",
@@ -113,7 +115,64 @@
             {
                 "role": "builder",
                 "priority": 4,
-                "count": 1
+                "count": 2
+            }
+        ]
+    },
+    "stage-4": {
+        "order": 4,
+        "energy": 800,
+        "controller": 3,
+        "creeps": 2,
+        "template": [
+            "work",
+            "work",
+            "work",
+            "work",
+            "carry",
+            "carry",
+            "carry",
+            "carry",
+            "carry",
+            "move",
+            "move",
+            "move"
+        ],
+        "roles": [
+            {
+                "role": "melee",
+                "priority": 1,
+                "emergency": true,
+                "count": 5,
+                "template": [
+                    "attack",
+                    "attack",
+                    "tough",
+                    "tough",
+                    "tough",
+                    "tough",
+                    "tough",
+                    "tough",
+                    "move",
+                    "move",
+                    "move",
+                    "move"
+                ]
+            },
+            {
+                "role": "harvester",
+                "priority": 2,
+                "count": 2
+            },
+            {
+                "role": "upgrader",
+                "priority": 3,
+                "count": 5
+            },
+            {
+                "role": "builder",
+                "priority": 4,
+                "count": 2
             }
         ]
     }
