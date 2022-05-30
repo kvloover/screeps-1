@@ -13,6 +13,7 @@ export class Pathing {
     }
 
     public findClosestOf<K extends FindConstant, S extends FindTypes[K]>(creep: Creep, locations: S[]): S | null {
+        if (locations.length == 0) return null;
         const options: PathFinderOpts = this.opt.optimalFinder();
         const closest = creep.pos.findClosestByPath(locations, options);
         return closest as S;
