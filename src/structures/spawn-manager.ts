@@ -46,7 +46,7 @@ export class SpawnManager implements Manager {
     }
 
     private trySpawn(room: Room, spawn: StructureSpawn): void {
-        const roomCreeps = room.find(FIND_MY_CREEPS);
+        const roomCreeps = this.getRoomCreeps(room);
 
         const cfg = Object.assign(new config(), setup);
 
@@ -81,36 +81,56 @@ export class SpawnManager implements Manager {
         }
     }
 
+    private getRoomCreeps(room: Room): Creep[] {
+        const creeps =
+            _.filter(
+                _.mapValues(Memory.creeps, (v, k) => { return { ...v, name: k } }), //, (v, k) => { return { ...v, i: k }; })
+                c => c.room === room.name
+            ).map(i => i.name !== undefined
+                && Game.creeps.hasOwnProperty(i.name)
+                ? Game.creeps[i.name] : undefined)
+                .filter((i): i is Creep => !!i);
+        //console.log(`creeps: ${creeps}`);
+        return creeps;
+        //return room.find(FIND_MY_CREEPS);
+    }
+
     private initialMemory(spawn: StructureSpawn, cfg: roleConfig): CreepMemory {
-        return { role: cfg.role, state: CreepState.idle, room: spawn.room.name, target: undefined };
+        return {
+            role: cfg.role,
+            state: CreepState.idle,
+            room: spawn.room.name,
+            targetRoom: undefined,
+            targetId: undefined
+        };
     }
 
     private generateName(room: Room, role: string) {
-    // initialize spawn sequence (reset ever 3k ticks - creeps live 1.5k)
-    if (!Memory.spawnSequence || Game.time % 3000 === 0)
-        Memory.spawnSequence = 0;
+        // initialize spawn sequence (reset ever 3k ticks - creeps live 1.5k)
+        if (!Memory.spawnSequence || Game.time % 3000 === 0)
+            Memory.spawnSequence = 0;
 
-    return `${role.slice(0, 4)}_${Memory.spawnSequence.toString()}`
-}
+        return `${role.slice(0, 4)}_${Memory.spawnSequence.toString()}`
+    }
 
     private nameInUse(room: Room, role: string, name: string) {
-    this.log.Critical(`name in use: ${name}`);
-    Memory.spawnSequence++;
-}
+        this.log.Critical(`name in use: ${name}`);
+        Memory.spawnSequence++;
+    }
 
     private reportSpawning(room: Room, spawn: StructureSpawn) {
-    if (!spawn.spawning) return;
-    var spawningCreep = Game.creeps[spawn.spawning.name];
-    spawn.room.visual.text(
-        '🛠️' + spawningCreep.memory.role,
-        spawn.pos.x + 1,
-        spawn.pos.y,
-        { align: 'left', opacity: 0.8 });
-}
+        if (!spawn.spawning) return;
+        var spawningCreep = Game.creeps[spawn.spawning.name];
+        spawn.room.visual.text(
+            '🛠️' + spawningCreep.memory.role,
+            spawn.pos.x + 1,
+            spawn.pos.y,
+            { align: 'left', opacity: 0.8 });
+    }
 
     public run(room: Room): void {
-    this.manageSpawns(room);
-}
+        this.manageSpawns(room);
+    }
 
 }
 
