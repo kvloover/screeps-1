@@ -38,16 +38,21 @@ export abstract class SupplierRole<T extends FIND_STRUCTURES | FIND_MY_STRUCTURE
 
     protected deposit(creep: Creep) {
         const opt = this.filter();
+        const supplyRoom = this.supplyRoom(creep);
 
-        if (!CreepUtils.tryForFind(
-            creep, this.findConstant(),
-            loc => creep.transfer(loc, RESOURCE_ENERGY), opt
-        )) {
-            const loc = this.pathing.findClosest(creep, this.findConstant(), opt);
-            if (loc != undefined) {
-                this.pathing.moveTo(creep, loc.pos);
-            } else {
-                this.noDepositFound(creep);
+        if (supplyRoom.name !== creep.room.name) {
+            this.pathing.moveTo(creep, new RoomPosition(25, 25, supplyRoom.name))
+        } else {
+            if (!CreepUtils.tryForFind(
+                creep, this.findConstant(),
+                loc => creep.transfer(loc, RESOURCE_ENERGY), opt
+            )) {
+                const loc = this.pathing.findClosest(creep, this.findConstant(), opt);
+                if (loc != undefined) {
+                    this.pathing.moveTo(creep, loc.pos);
+                } else {
+                    this.noDepositFound(creep);
+                }
             }
         }
     }
