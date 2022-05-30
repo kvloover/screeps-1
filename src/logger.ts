@@ -16,4 +16,12 @@ export class Logger {
     public Critical(msg: string): void {
         console.log(msg);
     }
+
+    public Error(e: unknown) : void {
+        if (typeof e === "string") {
+            console.log(e);
+        } else if (e instanceof Error) {
+            console.log(e);
+        }
+    }
 }

@@ -197,12 +197,12 @@
             {
                 "role": "upgrader",
                 "priority": 6,
-                "count": 3
+                "count": 4
             },
             {
                 "role": "builder",
                 "priority": 7,
-                "count": 2
+                "count": 3
             }
         ]
     }

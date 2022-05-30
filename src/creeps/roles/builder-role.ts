@@ -15,10 +15,10 @@ export class BuilderRole extends ConsumerRole implements Role {
     protected work(creep: Creep): void {
         // priority repairs > construction > repairs
         const emergency = creep.room.find(FIND_STRUCTURES, {
-            filter: (struct) => // TODO owner for tower
-                (struct.structureType === STRUCTURE_TOWER && struct.hits <= 0.50 * struct.hitsMax)      // 1.5k HP
-                || (struct.structureType == STRUCTURE_WALL && struct.hits <= 0.000005 * struct.hitsMax) // 1.5k HP
-                || (struct.structureType == STRUCTURE_RAMPART && struct.hits <= 0.005 * struct.hitsMax) // 1.5k HP
+            filter: (struct) => struct.hits < 1500 && struct.hits < struct.hitsMax
+                // (struct.structureType === STRUCTURE_TOWER && struct.hits <= 0.50 * struct.hitsMax)      // 1.5k HP
+                // || (struct.structureType == STRUCTURE_WALL && struct.hits <= 0.000005 * struct.hitsMax) // 1.5k HP
+                // || (struct.structureType == STRUCTURE_RAMPART && struct.hits <= 0.005 * struct.hitsMax) // 1.5k HP
         })
         if (emergency.length > 0) {
             // emergency repairs
@@ -42,7 +42,7 @@ export class BuilderRole extends ConsumerRole implements Role {
                 // repair
                 if (!CreepUtils.tryForFind(creep, FIND_STRUCTURES, loc => creep.repair(loc), {
                     filter: (struct) =>
-                        struct.hits < this.maxHits && struct.hits < struct.hitsMax
+                        struct.hits < struct.hitsMax
                 })) {
                     const loc = this.pathing.findClosest(creep, FIND_STRUCTURES);
                     if (loc != undefined) {
