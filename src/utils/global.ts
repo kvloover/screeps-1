@@ -1,3 +1,7 @@
+import { CreepState } from "./creep-state";
+
+export { };
+
 declare global {
     // interface Memory {
     //     uuid: number;
@@ -13,7 +17,7 @@ declare global {
     interface CreepMemory {
         role: string;
         room: string;
-        working: boolean;
+        state: CreepState;
     }
 
     // namespace NodeJS {
@@ -23,4 +27,3 @@ declare global {
     // }
 }
 
-export { };

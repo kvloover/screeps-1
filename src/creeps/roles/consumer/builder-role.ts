@@ -1,8 +1,11 @@
 import { injectable } from "tsyringe";
-import { Pathing } from "creeps/pathing";
-import { Role } from "../role";
+
 import { CreepUtils } from "creeps/creep-utils";
-import { ConsumerRole } from "./base/consumer-role";
+import { Pathing } from "creeps/pathing";
+import { CreepState } from "utils/creep-state";
+
+import { Role } from "../../role";
+import { ConsumerRole } from "./consumer-role";
 
 @injectable()
 export class BuilderRole extends ConsumerRole implements Role {
@@ -12,13 +15,17 @@ export class BuilderRole extends ConsumerRole implements Role {
 
     constructor(pathing: Pathing) { super(pathing); }
 
+    protected workState(creep: Creep): CreepState {
+        return CreepState.build;
+    }
+
     protected work(creep: Creep): void {
         // priority repairs > construction > repairs
         const emergency = creep.room.find(FIND_STRUCTURES, {
             filter: (struct) => struct.hits < 1500 && struct.hits < struct.hitsMax
-                // (struct.structureType === STRUCTURE_TOWER && struct.hits <= 0.50 * struct.hitsMax)      // 1.5k HP
-                // || (struct.structureType == STRUCTURE_WALL && struct.hits <= 0.000005 * struct.hitsMax) // 1.5k HP
-                // || (struct.structureType == STRUCTURE_RAMPART && struct.hits <= 0.005 * struct.hitsMax) // 1.5k HP
+            // (struct.structureType === STRUCTURE_TOWER && struct.hits <= 0.50 * struct.hitsMax)      // 1.5k HP
+            // || (struct.structureType == STRUCTURE_WALL && struct.hits <= 0.000005 * struct.hitsMax) // 1.5k HP
+            // || (struct.structureType == STRUCTURE_RAMPART && struct.hits <= 0.005 * struct.hitsMax) // 1.5k HP
         })
         if (emergency.length > 0) {
             // emergency repairs

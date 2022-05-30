@@ -2,6 +2,7 @@ import { injectable } from "tsyringe";
 
 import { Manager } from "manager";
 import { Logger } from "logger";
+import { CreepState } from "utils/creep-state";
 
 import setup from "./config/setup.json";
 import { config, roleConfig, stageConfig } from "./config/config";
@@ -69,7 +70,7 @@ export class SpawnManager implements Manager {
 
                 var newName = this.generateName(room, prio.role);
                 const ret = spawn.spawnCreep(bodyTemplate, newName,
-                    { memory: { role: prio.role, working: false, room: spawn.room.name } });
+                    { memory: { role: prio.role, state: CreepState.idle, room: spawn.room.name } });
                 if (ret === OK) {
                     this.log.Critical(`Spawning new ${prio.role}: ${newName}`);
                     this.nameInUse(room, prio.role, newName);

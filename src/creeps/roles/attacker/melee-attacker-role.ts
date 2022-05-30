@@ -1,8 +1,11 @@
 import { injectable } from "tsyringe";
-import { Pathing } from "creeps/pathing";
-import { Role } from "../role";
-import { AttackerRole } from "./base/attacker-role";
 
+import { CreepUtils } from "creeps/creep-utils";
+import { Pathing } from "creeps/pathing";
+import { CreepState } from "utils/creep-state";
+
+import { Role } from "../../role";
+import { AttackerRole } from "./attacker-role";
 
 @injectable()
 export class MeleeAttackerRole extends AttackerRole implements Role {

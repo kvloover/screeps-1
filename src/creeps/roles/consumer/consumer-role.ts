@@ -1,25 +1,34 @@
 import { Pathing } from "creeps/pathing";
 import { CreepUtils } from "creeps/creep-utils";
+import { CreepState } from 'utils/creep-state';
 
 export abstract class ConsumerRole {
 
     constructor(protected pathing: Pathing) { }
 
     protected abstract work(creep: Creep): void;
+    protected abstract workState(creep: Creep): CreepState;
 
     public run(creep: Creep): void {
-        if (creep.memory.working && creep.store.getUsedCapacity() == 0) {
-            creep.memory.working = false;
-        }
-        if (!creep.memory.working && creep.store.getFreeCapacity() == 0) {
-            creep.memory.working = true;
-        }
+        this.setState(creep);
+        this.switchState(creep);
+    }
 
-        if (creep.memory.working) {
-            this.work(creep);
+    protected setState(creep: Creep): void {
+        if (!creep.store[RESOURCE_ENERGY] || creep.memory.state == CreepState.idle)
+            creep.memory.state = CreepState.consume;
+
+        if (creep.memory.state == CreepState.consume
+            && creep.store.getFreeCapacity() == 0) {
+            creep.memory.state = this.workState(creep);
         }
-        else {
+    }
+
+    protected switchState(creep: Creep): void {
+        if (creep.memory.state == CreepState.consume) {
             this.getEnergy(creep);
+        } else if (creep.memory.state != CreepState.idle) {
+            this.work(creep);
         }
     }
 
@@ -27,7 +36,7 @@ export abstract class ConsumerRole {
         const prio: FilterOptions<FIND_STRUCTURES> = {
             filter: (structure) =>
                 structure.structureType == STRUCTURE_CONTAINER &&
-                structure.store.getUsedCapacity(RESOURCE_ENERGY) > 0
+                structure.store[RESOURCE_ENERGY]
         };
 
         if (!CreepUtils.tryForFind(

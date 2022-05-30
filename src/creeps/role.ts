@@ -8,6 +8,7 @@ import {
     UpgraderRole,
     RangedAttackerRole
 } from "./roles";
+import { HaulerRole } from "./roles/supplier/hauler-role";
 
 export interface Role {
     name: string;
@@ -15,8 +16,9 @@ export interface Role {
 }
 
 @registry([
-    { token: Roles.token, useToken: BuilderRole },
     { token: Roles.token, useToken: HarvesterRole },
+    { token: Roles.token, useToken: HaulerRole },
+    { token: Roles.token, useToken: BuilderRole },
     { token: Roles.token, useToken: RemoteHarvesterRole },
     { token: Roles.token, useToken: UpgraderRole },
     { token: Roles.token, useToken: MeleeAttackerRole },

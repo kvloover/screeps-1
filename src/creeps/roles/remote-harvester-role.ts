@@ -1,6 +1,9 @@
+import { injectable } from "tsyringe";
+
 import { CreepUtils } from "creeps/creep-utils";
 import { Pathing } from "creeps/pathing";
-import { injectable } from "tsyringe";
+import { CreepState } from "utils/creep-state";
+
 import { Role } from "../role";
 
 @injectable()

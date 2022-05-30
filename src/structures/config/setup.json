@@ -202,7 +202,30 @@
             {
                 "role": "builder",
                 "priority": 7,
-                "count": 3
+                "count": 2
+            },
+            {
+                "role": "hauler",
+                "priority": 7,
+                "count": 2,
+                "template": [
+                    "move",
+                    "carry",
+                    "move",
+                    "carry",
+                    "move",
+                    "carry",
+                    "move",
+                    "carry",
+                    "move",
+                    "carry",
+                    "move",
+                    "carry",
+                    "move",
+                    "carry",
+                    "move",
+                    "carry"
+                ]
             }
         ]
     }
