@@ -11,6 +11,8 @@ export abstract class SupplierRole<T extends FIND_STRUCTURES | FIND_MY_STRUCTURE
     protected abstract findConstant(): T;
     protected abstract filter(): FilterOptions<T>;
 
+    protected supplyRoom(creep: Creep): Room { return creep.room };
+
     public run(creep: Creep): void {
         this.setState(creep);
         this.switchState(creep);

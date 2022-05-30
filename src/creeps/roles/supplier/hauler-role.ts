@@ -42,8 +42,8 @@ export class HaulerRole extends SupplierRole<FIND_MY_STRUCTURES> implements Role
                 && structure.store[RESOURCE_ENERGY] > 0
         };
 
-        if (!CreepUtils.tryForFind(
-            creep, FIND_STRUCTURES,
+        if (!CreepUtils.tryForFindInRoom(
+            creep, this.supplyRoom(creep), FIND_STRUCTURES,
             loc => creep.withdraw(loc, RESOURCE_ENERGY), prio
         )) {
             const loc = this.pathing.findClosest(creep, FIND_STRUCTURES, prio);

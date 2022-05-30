@@ -47,11 +47,9 @@ export class BuilderRole extends ConsumerRole implements Role {
                 }
             } else {
                 // repair
-                if (!CreepUtils.tryForFind(creep, FIND_STRUCTURES, loc => creep.repair(loc), {
-                    filter: (struct) =>
-                        struct.hits < struct.hitsMax
-                })) {
-                    const loc = this.pathing.findClosest(creep, FIND_STRUCTURES);
+                const opts: FilterOptions<FIND_STRUCTURES> = { filter: (struct) => struct.hits < struct.hitsMax };
+                if (!CreepUtils.tryForFind(creep, FIND_STRUCTURES, loc => creep.repair(loc), opts)) {
+                    const loc = this.pathing.findClosest(creep, FIND_STRUCTURES, opts);
                     if (loc != undefined) {
                         this.pathing.moveTo(creep, loc.pos);
                     }

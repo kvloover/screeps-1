@@ -70,7 +70,7 @@ export class SpawnManager implements Manager {
 
                 var newName = this.generateName(room, prio.role);
                 const ret = spawn.spawnCreep(bodyTemplate, newName,
-                    { memory: { role: prio.role, state: CreepState.idle, room: spawn.room.name } });
+                    { memory: this.initialMemory(spawn, prio) });
                 if (ret === OK) {
                     this.log.Critical(`Spawning new ${prio.role}: ${newName}`);
                     this.nameInUse(room, prio.role, newName);
@@ -81,32 +81,36 @@ export class SpawnManager implements Manager {
         }
     }
 
-    private generateName(room: Room, role: string) {
-        // initialize spawn sequence (reset ever 3k ticks - creeps live 1.5k)
-        if (!Memory.spawnSequence || Game.time % 3000 === 0)
-            Memory.spawnSequence = 0;
-
-        return `${role.slice(0, 4)}_${Memory.spawnSequence.toString()}`
+    private initialMemory(spawn: StructureSpawn, cfg: roleConfig): CreepMemory {
+        return { role: cfg.role, state: CreepState.idle, room: spawn.room.name, target: undefined };
     }
+
+    private generateName(room: Room, role: string) {
+    // initialize spawn sequence (reset ever 3k ticks - creeps live 1.5k)
+    if (!Memory.spawnSequence || Game.time % 3000 === 0)
+        Memory.spawnSequence = 0;
+
+    return `${role.slice(0, 4)}_${Memory.spawnSequence.toString()}`
+}
 
     private nameInUse(room: Room, role: string, name: string) {
-        this.log.Critical(`name in use: ${name}`);
-        Memory.spawnSequence++;
-    }
+    this.log.Critical(`name in use: ${name}`);
+    Memory.spawnSequence++;
+}
 
     private reportSpawning(room: Room, spawn: StructureSpawn) {
-        if (!spawn.spawning) return;
-        var spawningCreep = Game.creeps[spawn.spawning.name];
-        spawn.room.visual.text(
-            '🛠️' + spawningCreep.memory.role,
-            spawn.pos.x + 1,
-            spawn.pos.y,
-            { align: 'left', opacity: 0.8 });
-    }
+    if (!spawn.spawning) return;
+    var spawningCreep = Game.creeps[spawn.spawning.name];
+    spawn.room.visual.text(
+        '🛠️' + spawningCreep.memory.role,
+        spawn.pos.x + 1,
+        spawn.pos.y,
+        { align: 'left', opacity: 0.8 });
+}
 
     public run(room: Room): void {
-        this.manageSpawns(room);
-    }
+    this.manageSpawns(room);
+}
 
 }
 

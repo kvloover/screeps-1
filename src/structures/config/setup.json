@@ -226,6 +226,27 @@
                     "move",
                     "carry"
                 ]
+            },
+            {
+                "role": "remote-harvester",
+                "priority": 8,
+                "count": 1,
+                "template": [
+                    "move",
+                    "carry",
+                    "move",
+                    "carry",
+                    "move",
+                    "carry",
+                    "move",
+                    "carry",
+                    "move",
+                    "carry",
+                    "move",
+                    "carry",
+                    "work",
+                    "work"
+                ]
             }
         ]
     }

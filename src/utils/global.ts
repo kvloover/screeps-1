@@ -18,6 +18,8 @@ declare global {
         role: string;
         room: string;
         state: CreepState;
+        targetRoom: undefined | string;
+        targetId: undefined | Id<_HasId>;
     }
 
     // namespace NodeJS {
