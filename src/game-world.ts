@@ -1,7 +1,8 @@
-import { container, injectable, injectAll } from "tsyringe";
+import { container, injectable } from "tsyringe";
 
-import { Manager, Managers } from "manager";
 import { Logger } from "logger";
+import { Manager, Managers } from "manager";
+import { Persistency, Persistent } from "tasks/Persistent";
 
 @injectable()
 export class GameWorld {
@@ -19,11 +20,18 @@ export class GameWorld {
     public run(): void {
         this.log.Important(`Current game tick is ${Game.time}`);
         this.cleanMemory();
+        Persistency.Initialize();
+
+        const persistency = container.resolveAll<Persistent>(Persistency.token);
+        persistency.forEach(persistent => persistent.restore());
 
         _.forEach(Game.rooms, room => {
             const managers = container.resolveAll<Manager>(Managers.token);
             managers.forEach(m => m.run(room));
         });
+
+        // TODO time constraint ? > limit manager executions to make sure persistency is stored ?
+        persistency.forEach(persistent => persistent.save());
     }
 
 }

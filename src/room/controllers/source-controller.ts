@@ -1,13 +1,20 @@
+import { HarvestTaskRepo } from "tasks/harvest-task-repo";
+import { HarvestTask } from "tasks/task";
 import { injectable } from "tsyringe";
 
 @injectable()
 export class SourceController {
+
+    constructor(private harvestRepo: HarvestTaskRepo) {
+    }
 
     public monitor(room: Room): void {
 
         if (!room.memory.sources) {
             this.initializeRoom(room);
         }
+
+        this.harvestRepo.list();
 
         // if (room.memory.sources) {
         //     room.memory.sources.forEach(tag => {
@@ -27,6 +34,10 @@ export class SourceController {
     private initializeRoom(room: Room): void {
         const srces = room.find(FIND_SOURCES)
             .map((src, ind) => { return { item: src, name: `${room.name}_source${ind}` } });
+
+        srces.forEach(kv => {
+            this.harvestRepo.add(Object.assign(new HarvestTask(), { amount: 50, pos: kv.item.pos, dummy: 10 }));
+        })
 
         room.memory.sources = [];
         srces.forEach(src => {
