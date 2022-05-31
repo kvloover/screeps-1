@@ -32,11 +32,13 @@ export class SourceController {
 
     // Set flags on sources and store names in room memory
     private initializeRoom(room: Room): void {
-        const srces = room.find(FIND_SOURCES)
-            .map((src, ind) => { return { item: src, name: `${room.name}_source${ind}` } });
+        const srces =
+            room.find(FIND_SOURCES)
+                .map((src, ind) => { return { item: src, name: `${room.name}_source${ind}` } });
 
+        // Add task for each source to be mined | TODO configurable ammount of harvesters
         srces.forEach(kv => {
-            this.harvestRepo.add(Object.assign(new HarvestTask(), { amount: 50, pos: kv.item.pos, dummy: 10 }));
+            this.harvestRepo.add(new HarvestTask(1, undefined, kv.item.id, kv.item)); // all use same prio for now
         })
 
         room.memory.sources = [];
