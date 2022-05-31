@@ -13,6 +13,15 @@ export class TowerManager implements Manager {
         if (closestHostile) {
             tower.attack(closestHostile);
         }
+
+        const closestContainer = tower.pos.findClosestByRange(FIND_STRUCTURES, {
+            filter: (c) =>
+                c.structureType === STRUCTURE_CONTAINER
+                && c.hits < c.hitsMax
+        });
+        if (closestContainer) {
+            tower.repair(closestContainer);
+        }
     }
 
     public run(room: Room): void {
