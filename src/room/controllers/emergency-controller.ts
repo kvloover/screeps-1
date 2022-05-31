@@ -20,7 +20,7 @@ export class EmergencyController {
         const towers = room.find(FIND_MY_STRUCTURES, { filter: (struct) => struct.structureType === STRUCTURE_TOWER })
             .length;
 
-        const friendly = defenders + 2 * towers;
+        const friendly = defenders + 10 * towers;
 
         if (!room.memory.emergency) {
             room.memory.emergency = {
