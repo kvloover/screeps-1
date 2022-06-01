@@ -360,7 +360,7 @@
             {
                 "role": "remote-attacker",
                 "priority": 1,
-                "count": 0,
+                "count": 2,
                 "template": [
                     "ranged_attack",
                     "move",
