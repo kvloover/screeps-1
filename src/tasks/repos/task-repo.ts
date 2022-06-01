@@ -21,9 +21,10 @@ export abstract class TaskRepo<T extends Task> {
         this.tasks.push(task);
     }
     public removeById(id: string): void {
-        this.tasks = _.remove(this.tasks, i => i.id === id);
+        _.remove(this.tasks, i => i.id === id);
     }
     public remove(task: T): void {
+        console.log(`removing task ${task.id}`);
         this.removeById(task.id);
     }
 
