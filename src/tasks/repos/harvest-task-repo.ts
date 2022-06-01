@@ -1,6 +1,6 @@
 import { Lifecycle, scoped } from "tsyringe";
-import { Persistent } from "./Persistent";
-import { HarvestTask, Task } from "./task";
+import { Persistent } from "../Persistent";
+import { HarvestTask } from "../task";
 import { TaskRepo } from "./task-repo";
 
 @scoped(Lifecycle.ContainerScoped)
@@ -13,7 +13,7 @@ export class HarvestTaskRepo extends TaskRepo<HarvestTask> implements Persistent
 
     // Persistency
     restore(): void {
-        if (Memory.persistency?.hasOwnProperty('harvest'))
+        if (Memory.persistency?.hasOwnProperty(this.key))
             this.tasks = Memory.persistency.harvest;
     }
 
@@ -26,7 +26,6 @@ export class HarvestTaskRepo extends TaskRepo<HarvestTask> implements Persistent
 declare global {
     interface Persistency {
         harvest: HarvestTask[];
-        dummy: Task[];
     }
 }
 

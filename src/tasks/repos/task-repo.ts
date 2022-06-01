@@ -1,4 +1,4 @@
-import { Task } from "./task";
+import { Task } from "../task";
 
 export abstract class TaskRepo<T extends Task> {
     // getById(id: string): T | undefined;
@@ -7,7 +7,7 @@ export abstract class TaskRepo<T extends Task> {
     // removeById(id: string): void;
     // remove(task: T): void;
 
-    constructor(private key: string) { }
+    constructor(protected key: string) { }
 
     protected tasks: T[] = [];
 

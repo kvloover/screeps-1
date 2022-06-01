@@ -1,5 +1,5 @@
 import { registry } from "tsyringe";
-import { HarvestTaskRepo } from "./harvest-task-repo";
+import { HarvestTaskRepo } from "./repos/harvest-task-repo";
 import { Task } from "./task";
 
 export interface Persistent {

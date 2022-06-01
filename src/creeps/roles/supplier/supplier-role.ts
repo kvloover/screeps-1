@@ -19,20 +19,23 @@ export abstract class SupplierRole<T extends FIND_STRUCTURES | FIND_MY_STRUCTURE
     }
 
     protected setState(creep: Creep): void {
-        if (creep.store.getFreeCapacity() == 0 || creep.memory.state == CreepState.idle)
+        if (creep.store.getFreeCapacity() == 0
+            || creep.memory.state == CreepState.idle)
             creep.memory.state = CreepState.supply;
 
         if (creep.memory.state == CreepState.supply
-            && creep.store.getUsedCapacity() == 0) {
+            && creep.store[RESOURCE_ENERGY] == 0) {
             creep.memory.state = this.workState(creep);
         }
     }
 
     protected switchState(creep: Creep): void {
+        if (creep.memory.state != CreepState.idle
+            && creep.memory.state != CreepState.supply) {
+            this.work(creep);
+        }
         if (creep.memory.state == CreepState.supply) {
             this.deposit(creep);
-        } else if (creep.memory.state != CreepState.idle) {
-            this.work(creep);
         }
     }
 
