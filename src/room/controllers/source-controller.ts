@@ -1,9 +1,11 @@
-import { HarvestTaskRepo } from "tasks/harvest-task-repo";
-import { HarvestTask } from "tasks/task";
 import { injectable } from "tsyringe";
 
+import { HarvestTaskRepo } from "tasks/repos/harvest-task-repo";
+import { HarvestTask } from "tasks/task";
+import { Controller } from "./controller";
+
 @injectable()
-export class SourceController {
+export class SourceController implements Controller{
 
     constructor(private harvestRepo: HarvestTaskRepo) {
     }
@@ -38,7 +40,7 @@ export class SourceController {
 
         // Add task for each source to be mined | TODO configurable ammount of harvesters
         srces.forEach(kv => {
-            this.harvestRepo.add(new HarvestTask(1, undefined, kv.item.id, kv.item)); // all use same prio for now
+             this.harvestRepo.add(new HarvestTask(1, undefined, kv.item.id, undefined, kv.item)); // all use same prio for now
         })
 
         room.memory.sources = [];

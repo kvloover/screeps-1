@@ -1,8 +1,10 @@
-import { Logger } from "logger";
 import { injectable } from "tsyringe";
 
+import { Logger } from "logger";
+import { Controller } from "./controller";
+
 @injectable()
-export class EmergencyController {
+export class EmergencyController implements Controller {
 
     leeway: number = 0.3; // x % leeway before stating emergency
 
