@@ -1,21 +1,19 @@
-import { injectable } from "tsyringe";
+import { injectable, injectAll } from "tsyringe";
 
 import { Manager } from "manager";
-import { SourceController } from "./controllers/source-controller";
-
-import { EmergencyController } from "./controllers/emergency-controller";
+import { Controller, Controllers } from "./controllers/controller";
 
 @injectable()
 export class RoomManager implements Manager {
 
     constructor(
-        // private log: Logger,
-        private sources: SourceController,
-        private emergency: EmergencyController) { }
+        // private log: Logger
+         @injectAll(Controllers.token) private controllers: Controller[]) { }
 
     public run(room: Room): void {
-        this.sources.monitor(room);
-        this.emergency.monitor(room);
+        this.controllers.forEach(c => {
+            c.monitor(room);
+        })
     }
 
 }

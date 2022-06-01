@@ -64,6 +64,7 @@ export class HarvesterRole implements Role {
             if (task) {
                 creep.memory.targetId = task.requester;
                 task.executer = creep.id;
+                creep.memory.tasks['harvest'] = task;
             }
         }
 
@@ -93,40 +94,48 @@ export class HarvesterRole implements Role {
 
     private supplyToRepo(creep: Creep, repo: TaskRepo<Task>) {
         if (!creep.memory.tasks['supply']) {
-            const task = _(repo.list()).filter(e => !e.executer).first();
+            const tasks = repo.list();
+            console.log(`tasks found : ${tasks.length}`);
+            const task = _(tasks).filter(e => !e.executer).first();
             if (task) {
                 task.executer = creep.id;
+                creep.memory.tasks['supply'] = task;
             }
+            // Split task if not enough energy being carried
         }
 
         const memoryTask = creep.memory.tasks['supply'];
         if (memoryTask) {
-            const task = this.containers.getById(memoryTask.id);
+            const task = repo.getById(memoryTask.id);
             if (task) {
+                console.log(`task found: ${task.id}`);
                 // will be undefined for other repo | rework to avoid unnecessary getById
-                if (!this.trySupplyForTask(creep, task)) {
+                const [succes, transferred] = this.trySupplyForTask(creep, task);
+                if (!succes) {
                     // Clear supply task for new one
                     task.executer = undefined;
                     creep.memory.tasks['supply'] = undefined;
-                } else {
+                    console.log(`could not supply for task: ${task.id}`);
+                } else if (transferred) {
                     repo.remove(task);
                 }
             }
         }
     }
 
-    private trySupplyForTask(creep: Creep, task: Task): boolean {
+    private trySupplyForTask(creep: Creep, task: Task): [succes: boolean, transferred: boolean] {
         const dest = Game.getObjectById(task.requester as Id<AnyStoreStructure>);
 
-        if (dest && dest.store && (dest.store.getFreeCapacity() ?? 0 > 0)) {
+        if (dest && (dest.store.getFreeCapacity(RESOURCE_ENERGY) ?? 0) > 0) {
             if (creep.transfer(dest, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
                 this.pathing.moveTo(creep, dest.pos);
+                return [true, false]
             }
-            return true;
+            return [true, true];
         }
 
         // invalid location or no free capacity
-        return false;
+        return [false, false];
     }
 
 }

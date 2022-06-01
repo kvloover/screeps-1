@@ -73,6 +73,7 @@ export class SpawnManager implements Manager {
                     { memory: this.initialMemory(spawn, prio) });
                 if (ret === OK) {
                     this.log.Critical(`Spawning new ${prio.role}: ${newName}`);
+                    Memory.creeps[newName].id = Game.creeps[newName].id;
                     this.nameInUse(room, prio.role, newName);
                 } else if (ret === ERR_NAME_EXISTS) {
                     this.nameInUse(room, prio.role, newName);
@@ -97,6 +98,7 @@ export class SpawnManager implements Manager {
 
     private initialMemory(spawn: StructureSpawn, cfg: roleConfig): CreepMemory {
         return {
+            id: undefined,
             role: cfg.role,
             state: CreepState.idle,
             room: spawn.room.name,

@@ -4,8 +4,8 @@ export { };
 
 declare global {
     // interface Memory {
-    //     uuid: number;
-    //     log: any;
+    //     // uuid: number;
+    //     // log: any;
     // }
 
     interface FlagMemory {
@@ -15,6 +15,7 @@ declare global {
     }
 
     interface CreepMemory {
+        id: undefined | Id<_HasId>;
         role: string;
         room: string;
         state: CreepState;
