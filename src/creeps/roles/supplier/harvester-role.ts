@@ -10,7 +10,7 @@ import { SupplierRole } from "./supplier-role";
 import { HarvestTaskRepo } from "tasks/repos/harvest-task-repo";
 import { ContainerTransferTaskRepo } from "tasks/repos/container-transfer-task-repo";
 import { TransferTaskRepo } from "tasks/repos/transfer-task-repo";
-import { Task } from "tasks/task";
+import { Task, TransferTask } from "tasks/task";
 import { TaskRepo } from "tasks/repos/task-repo";
 
 @injectable()
@@ -99,8 +99,16 @@ export class HarvesterRole implements Role {
             if (task) {
                 task.executer = creep.id;
                 creep.memory.tasks['supply'] = task;
+                if (task.amount && task.amount > creep.store.getUsedCapacity(RESOURCE_ENERGY)) {
+                    // Split task if not enough energy being carried : leave open for other to supply
+                    this.demands.add(
+                        new TransferTask(task.prio,
+                            task.amount - creep.store.getUsedCapacity(RESOURCE_ENERGY),
+                            task.requester,
+                            undefined,
+                            task.pos));
+                }
             }
-            // Split task if not enough energy being carried
         }
 
         const memoryTask = creep.memory.tasks['supply'];
@@ -116,6 +124,7 @@ export class HarvesterRole implements Role {
                     console.log(`could not supply for task: ${task.id}`);
                 } else if (transferred) {
                     repo.remove(task);
+                    creep.memory.tasks['supply'] = undefined;
                 }
             }
         }
