@@ -95,7 +95,6 @@ export class HarvesterRole implements Role {
     private supplyToRepo(creep: Creep, repo: TaskRepo<Task>) {
         if (!creep.memory.tasks['supply']) {
             const tasks = repo.list();
-            console.log(`tasks found : ${tasks.length}`);
             const task = _(tasks).filter(e => !e.executer).first();
             if (task) {
                 task.executer = creep.id;
@@ -108,7 +107,6 @@ export class HarvesterRole implements Role {
         if (memoryTask) {
             const task = repo.getById(memoryTask.id);
             if (task) {
-                console.log(`task found: ${task.id}`);
                 // will be undefined for other repo | rework to avoid unnecessary getById
                 const [succes, transferred] = this.trySupplyForTask(creep, task);
                 if (!succes) {
