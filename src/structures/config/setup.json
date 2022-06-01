@@ -206,33 +206,56 @@
                 "count": 1
             },
             {
-                "role": "upgrader",
+                "role": "hauler",
                 "priority": 3,
+                "count": 1,
+                "template": [
+                    "move",
+                    "carry",
+                    "move",
+                    "carry",
+                    "move",
+                    "carry",
+                    "move",
+                    "carry",
+                    "move",
+                    "carry",
+                    "move",
+                    "carry",
+                    "move",
+                    "carry",
+                    "move",
+                    "carry"
+                ]
+            },
+            {
+                "role": "upgrader",
+                "priority": 4,
                 "count": 1
             },
             {
                 "role": "harvester",
-                "priority": 4,
+                "priority": 5,
                 "count": 2
             },
             {
                 "role": "builder",
-                "priority": 5,
+                "priority": 6,
                 "count": 1
             },
             {
                 "role": "upgrader",
-                "priority": 6,
+                "priority": 7,
                 "count": 4
             },
             {
                 "role": "builder",
-                "priority": 7,
+                "priority": 8,
                 "count": 2
             },
             {
                 "role": "hauler",
-                "priority": 7,
+                "priority": 9,
                 "count": 2,
                 "template": [
                     "move",
@@ -255,7 +278,7 @@
             },
             {
                 "role": "remote-harvester",
-                "priority": 8,
+                "priority": 10,
                 "count": 4,
                 "template": [
                     "move",
@@ -276,7 +299,7 @@
             },
             {
                 "role": "upgrader",
-                "priority": 9,
+                "priority": 11,
                 "count": 6
             }
         ]

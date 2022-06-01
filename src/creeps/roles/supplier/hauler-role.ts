@@ -36,20 +36,46 @@ export class HaulerRole extends SupplierRole<FIND_MY_STRUCTURES> implements Role
 
     protected work(creep: Creep): void {
 
-        const prio: FilterOptions<FIND_STRUCTURES> = {
-            filter: (structure) =>
-                structure.structureType == STRUCTURE_CONTAINER
-                && structure.store[RESOURCE_ENERGY] > 0
-        };
-
         if (!CreepUtils.tryForFindInRoom(
-            creep, this.supplyRoom(creep), FIND_STRUCTURES,
-            loc => creep.withdraw(loc, RESOURCE_ENERGY), prio
-        )) {
-            const loc = this.pathing.findClosest(creep, FIND_STRUCTURES, prio);
+            creep, this.supplyRoom(creep), FIND_TOMBSTONES,
+            loc => creep.withdraw(loc, RESOURCE_ENERGY), { filter: (loc) => loc.store[RESOURCE_ENERGY] > 0 })
+        ) {
+            const loc = this.pathing.findClosest(creep, FIND_TOMBSTONES, { filter: (loc) => loc.store[RESOURCE_ENERGY] > 0 });
             if (loc != undefined) {
                 this.pathing.moveTo(creep, loc.pos);
+
+            } else {
+                if (!CreepUtils.tryForFindInRoom(
+                    creep, this.supplyRoom(creep), FIND_DROPPED_RESOURCES,
+                    loc => creep.pickup(loc))
+                ) {
+                    const loc = this.pathing.findClosest(creep, FIND_DROPPED_RESOURCES);
+                    if (loc != undefined) {
+                        this.pathing.moveTo(creep, loc.pos);
+                    } else {
+
+                        const prio: FilterOptions<FIND_STRUCTURES> = {
+                            filter: (structure) =>
+                                structure.structureType == STRUCTURE_CONTAINER
+                                && structure.store[RESOURCE_ENERGY] > 0
+                        };
+
+                        if (!CreepUtils.tryForFindInRoom(
+                            creep, this.supplyRoom(creep), FIND_STRUCTURES,
+                            loc => creep.withdraw(loc, RESOURCE_ENERGY), prio
+                        )) {
+                            const loc = this.pathing.findClosest(creep, FIND_STRUCTURES, prio);
+                            if (loc != undefined) {
+                                this.pathing.moveTo(creep, loc.pos);
+                            } else {
+                                creep.memory.state = CreepState.idle;
+                            }
+                        }
+                    }
+                }
             }
         }
     }
+
 }
+
