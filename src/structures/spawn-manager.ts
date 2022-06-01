@@ -73,7 +73,6 @@ export class SpawnManager implements Manager {
                     { memory: this.initialMemory(spawn, prio) });
                 if (ret === OK) {
                     this.log.Critical(`Spawning new ${prio.role}: ${newName}`);
-                    Memory.creeps[newName].id = Game.creeps[newName].id;
                     this.nameInUse(room, prio.role, newName);
                 } else if (ret === ERR_NAME_EXISTS) {
                     this.nameInUse(room, prio.role, newName);
