@@ -9,7 +9,7 @@ export class GameWorld {
 
     constructor(private log: Logger) { }
 
-    public cleanMemory(persistent: Persistent[]): void {
+    private cleanMemory(persistent: Persistent[]): void {
         for (const name in Memory.creeps) {
             if (!(name in Game.creeps)) {
                 const id = Memory.creeps[name].id;
@@ -17,6 +17,13 @@ export class GameWorld {
                 delete Memory.creeps[name];
             }
         }
+    }
+
+    private setIds(): void {
+        _.forIn(
+            _.filter(Memory.creeps, val => !val.id),
+            (val, key) => { if (key) { val.id = Game.creeps[key]?.id } else { console.log('key not found')} }
+        );
     }
 
     public run(): void {
@@ -32,6 +39,8 @@ export class GameWorld {
             const managers = container.resolveAll<Manager>(Managers.token);
             managers.forEach(m => m.run(room));
         });
+
+        this.setIds();
 
         // TODO time constraint ? > limit manager executions to make sure persistency is stored ?
         persistency.forEach(persistent => persistent.save());
