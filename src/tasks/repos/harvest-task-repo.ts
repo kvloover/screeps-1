@@ -31,9 +31,28 @@ export class HarvestTaskRepo extends TaskRepo<HarvestTask> implements Persistent
         }
 
         // remove other references
+        const requesters: Id<_HasId>[] = []
         this.tasks.forEach(t => {
-            if (t.executer === id) { t.executer = undefined; }
+            if (t.executer === id) {
+                t.executer = undefined;
+                if (t.requester) { requesters.push(t.requester); }
+            }
         });
+
+        // merge empty task on requester
+        requesters.forEach(req => {
+            const all = _(this.tasks).filter(r => r.requester === req);
+            if (all.size() > 1) {
+                const toKeep = all.slice(0).first();
+                const toRemove = all.slice(1)
+                if (toKeep.amount) {
+                    const total = _(toRemove.map(i => i.amount)).sum()
+                    toKeep.amount += total;
+                }
+                _(this.tasks).remove(toRemove);
+            }
+        })
+
     }
 
 }

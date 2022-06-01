@@ -40,7 +40,8 @@ export class SourceController implements Controller{
 
         // Add task for each source to be mined | TODO configurable ammount of harvesters
         srces.forEach(kv => {
-             this.harvestRepo.add(new HarvestTask(1, undefined, kv.item.id, undefined, kv.item)); // all use same prio for now
+            // 3000 energy per tick, reset every 300 ticks
+             this.harvestRepo.add(new HarvestTask(1, 10, kv.item.id, undefined, kv.item)); // all use same prio for now
         })
 
         room.memory.sources = [];

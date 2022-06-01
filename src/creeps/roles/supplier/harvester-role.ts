@@ -10,7 +10,7 @@ import { SupplierRole } from "./supplier-role";
 import { HarvestTaskRepo } from "tasks/repos/harvest-task-repo";
 import { ContainerTransferTaskRepo } from "tasks/repos/container-transfer-task-repo";
 import { TransferTaskRepo } from "tasks/repos/transfer-task-repo";
-import { Task, TransferTask } from "tasks/task";
+import { HarvestTask, Task, TransferTask } from "tasks/task";
 import { TaskRepo } from "tasks/repos/task-repo";
 
 @injectable()
@@ -65,6 +65,21 @@ export class HarvesterRole implements Role {
                 creep.memory.targetId = task.requester;
                 task.executer = creep.id;
                 creep.memory.tasks['harvest'] = task;
+                if (task.amount) {
+                    // Mine 2 per tick per worker part
+                    const workerAmount = 2 * creep.getActiveBodyparts(WORK);
+                    if (task.amount > workerAmount) {
+                        // Split task if not enough energy being mined
+                        this.harvests.add(
+                            new HarvestTask(task.prio,
+                                task.amount - workerAmount,
+                                task.requester,
+                                undefined,
+                                task.pos));
+                        task.amount = workerAmount;
+                    }
+
+                }
             }
         }
 
