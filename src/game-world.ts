@@ -20,10 +20,12 @@ export class GameWorld {
     }
 
     private setIds(): void {
-        _.forIn(
-            _.filter(Memory.creeps, val => !val.id),
-            (val, key) => { if (key) { val.id = Game.creeps[key]?.id } else { console.log('key not found')} }
-        );
+        Object.entries(Memory.creeps)
+            .forEach(([key, val]) => {
+                if (Game.creeps[key]) {
+                    val.id = Game.creeps[key].id
+                }
+            });
     }
 
     public run(): void {
