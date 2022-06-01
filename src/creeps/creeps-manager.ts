@@ -12,7 +12,7 @@ export class CreepsManager implements Manager {
         @injectAll(Roles.token) private roles: Role[]
     ) { }
 
-    public performRole(room: Room): void {
+    private performRole(room: Room): void {
         this.roles.forEach(role => {
             _.filter(Game.creeps, crp =>
                 crp.room.name === room.name
