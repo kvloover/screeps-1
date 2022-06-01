@@ -33,8 +33,9 @@ export class HarvesterRole extends SupplierRole<FIND_STRUCTURES> implements Role
     }
 
     protected work(creep: Creep): void {
-        if (!CreepUtils.tryForFind(creep, FIND_SOURCES, loc => creep.harvest(loc), { filter: (struct) => struct.energy > 0 })) {
-            const loc = this.pathing.findClosest(creep, FIND_SOURCES);
+        const opt: FilterOptions<FIND_SOURCES> = { filter: (struct) => struct.energy > 0 };
+        if (!CreepUtils.tryForFind(creep, FIND_SOURCES, loc => creep.harvest(loc), opt)) {
+            const loc = this.pathing.findClosest(creep, FIND_SOURCES, opt);
             if (loc != undefined) {
                 this.pathing.moveTo(creep, loc.pos);
             } else {

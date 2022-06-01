@@ -229,33 +229,13 @@
                 ]
             },
             {
-                "role": "upgrader",
-                "priority": 4,
-                "count": 1
-            },
-            {
                 "role": "harvester",
-                "priority": 5,
-                "count": 2
-            },
-            {
-                "role": "builder",
-                "priority": 6,
-                "count": 1
-            },
-            {
-                "role": "upgrader",
-                "priority": 7,
-                "count": 4
-            },
-            {
-                "role": "builder",
-                "priority": 8,
+                "priority": 4,
                 "count": 2
             },
             {
                 "role": "hauler",
-                "priority": 9,
+                "priority": 5,
                 "count": 2,
                 "template": [
                     "move",
@@ -275,6 +255,26 @@
                     "move",
                     "carry"
                 ]
+            },
+            {
+                "role": "upgrader",
+                "priority": 6,
+                "count": 1
+            },
+            {
+                "role": "builder",
+                "priority": 7,
+                "count": 1
+            },
+            {
+                "role": "upgrader",
+                "priority": 8,
+                "count": 4
+            },
+            {
+                "role": "builder",
+                "priority": 9,
+                "count": 2
             },
             {
                 "role": "remote-harvester",
@@ -394,32 +394,8 @@
                 ]
             },
             {
-                "role": "upgrader",
-                "priority": 3,
-                "count": 1
-            },
-            {
-                "role": "harvester",
-                "priority": 4,
-                "count": 1,
-                "template": [
-                    "work",
-                    "work",
-                    "work",
-                    "work",
-                    "work",
-                    "work",
-                    "work",
-                    "work",
-                    "carry",
-                    "move",
-                    "carry",
-                    "move"
-                ]
-            },
-            {
                 "role": "hauler",
-                "priority": 5,
+                "priority": 3,
                 "count": 1,
                 "template": [
                     "move",
@@ -442,8 +418,8 @@
             },
             {
                 "role": "harvester",
-                "priority": 6,
-                "count": 1,
+                "priority": 4,
+                "count": 2,
                 "template": [
                     "work",
                     "work",
@@ -460,23 +436,8 @@
                 ]
             },
             {
-                "role": "builder",
-                "priority": 7,
-                "count": 1
-            },
-            {
-                "role": "upgrader",
-                "priority": 8,
-                "count": 2
-            },
-            {
-                "role": "builder",
-                "priority": 9,
-                "count": 2
-            },
-            {
                 "role": "hauler",
-                "priority": 10,
+                "priority": 5,
                 "count": 2,
                 "template": [
                     "move",
@@ -498,8 +459,28 @@
                 ]
             },
             {
+                "role": "upgrader",
+                "priority": 6,
+                "count": 1
+            },
+            {
+                "role": "builder",
+                "priority": 7,
+                "count": 1
+            },
+            {
+                "role": "upgrader",
+                "priority": 8,
+                "count": 2
+            },
+            {
+                "role": "builder",
+                "priority": 9,
+                "count": 2
+            },
+            {
                 "role": "remote-harvester",
-                "priority": 11,
+                "priority": 10,
                 "count": 4,
                 "template": [
                     "move",
@@ -524,7 +505,7 @@
             {
                 "role": "upgrader",
                 "priority": 12,
-                "count": 3
+                "count": 4
             }
         ]
     }
