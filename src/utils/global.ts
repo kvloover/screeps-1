@@ -14,6 +14,10 @@ declare global {
         requests: number;
     }
 
+    interface RoomMemory {
+        debug: boolean;
+    }
+
     interface CreepMemory {
         id: undefined | Id<_HasId>;
         role: string;

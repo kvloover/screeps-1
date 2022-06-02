@@ -56,7 +56,7 @@ export class SpawnManager implements Manager {
         )
 
         if (stage != undefined) {
-            this.log.Information(`current stage: ${stage.order}`);
+            this.log.info(`current stage: ${stage.order}`);
 
             const prio = stage.roles
                 .sort((a, b) => a.priority - b.priority)
@@ -64,7 +64,7 @@ export class SpawnManager implements Manager {
                 .find(x => x !== undefined);
 
             if (prio) {
-                this.log.Information(`Requesting new spawn for ${prio.role}`)
+                this.log.info(`Requesting new spawn for ${prio.role}`)
                 var template = prio.template ?? stage.template ?? [WORK, CARRY, MOVE];
                 var bodyTemplate = template.map(i => this.isBodyTemplate(i) ? i : TOUGH);
 
@@ -72,7 +72,7 @@ export class SpawnManager implements Manager {
                 const ret = spawn.spawnCreep(bodyTemplate, newName,
                     { memory: this.initialMemory(spawn, prio) });
                 if (ret === OK) {
-                    this.log.Critical(`Spawning new ${prio.role}: ${newName}`);
+                    this.log.critical(`Spawning new ${prio.role}: ${newName}`);
                     this.nameInUse(room, prio.role, newName);
                 } else if (ret === ERR_NAME_EXISTS) {
                     this.nameInUse(room, prio.role, newName);
@@ -116,7 +116,7 @@ export class SpawnManager implements Manager {
     }
 
     private nameInUse(room: Room, role: string, name: string) {
-        this.log.Critical(`name in use: ${name}`);
+        this.log.critical(`name in use: ${name}`);
         Memory.spawnSequence++;
     }
 

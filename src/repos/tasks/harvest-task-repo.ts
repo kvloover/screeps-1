@@ -1,8 +1,8 @@
 import { Logger } from "logger";
 import { Lifecycle, scoped } from "tsyringe";
-import { Persistent } from "../Persistent";
-import { HarvestTask } from "../task";
-import { TaskRepo } from "./task-repo";
+import { Persistent } from "../persistent";
+import { HarvestTask } from "../../tasks/task";
+import { TaskRepo } from "./base/task-repo";
 
 @scoped(Lifecycle.ContainerScoped)
 export class HarvestTaskRepo extends TaskRepo<HarvestTask> implements Persistent {

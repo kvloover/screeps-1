@@ -1,6 +1,6 @@
 import { injectable } from "tsyringe";
 
-import { TransferTaskRepo } from "tasks/repos/transfer-task-repo";
+import { TransferTaskRepo } from "repos/tasks/transfer-task-repo";
 import { Controller } from "./controller";
 import { TransferTask } from "tasks/task";
 

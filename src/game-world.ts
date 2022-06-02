@@ -2,7 +2,7 @@ import { container, injectable } from "tsyringe";
 
 import { Logger } from "logger";
 import { Manager, Managers } from "manager";
-import { Persistency, Persistent } from "tasks/Persistent";
+import { Persistency, Persistent } from "repos/persistent";
 
 @injectable()
 export class GameWorld {

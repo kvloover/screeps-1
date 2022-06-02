@@ -1,8 +1,8 @@
 import { registry } from "tsyringe";
 
-import { ContainerTransferTaskRepo } from "./repos/container-transfer-task-repo";
-import { HarvestTaskRepo } from "./repos/harvest-task-repo";
-import { TransferTaskRepo } from "./repos/transfer-task-repo";
+import { ContainerTransferTaskRepo } from "./tasks/container-transfer-task-repo";
+import { HarvestTaskRepo } from "./tasks/harvest-task-repo";
+import { TransferTaskRepo } from "./tasks/transfer-task-repo";
 
 export interface Persistent {
     restore(): void;

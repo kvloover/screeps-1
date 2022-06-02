@@ -1,5 +1,5 @@
 import { Logger } from "logger";
-import { Task } from "../task";
+import { Task } from "../../../tasks/task";
 
 export abstract class TaskRepo<T extends Task> {
     // getById(id: string): T | undefined;

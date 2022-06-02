@@ -8,12 +8,17 @@ export class RoomManager implements Manager {
 
     constructor(
         // private log: Logger
-         @injectAll(Controllers.token) private controllers: Controller[]) { }
+        @injectAll(Controllers.token) private controllers: Controller[]) { }
 
     public run(room: Room): void {
+        this.initMemory(room);
         this.controllers.forEach(c => {
             c.monitor(room);
         })
+    }
+
+    private initMemory(room: Room) {
+        if (!room.memory.debug) { room.memory.debug = false; }
     }
 
 }

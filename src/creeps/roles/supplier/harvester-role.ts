@@ -7,11 +7,11 @@ import { CreepState } from "utils/creep-state";
 import { Role } from "../../role";
 import { SupplierRole } from "./supplier-role";
 
-import { HarvestTaskRepo } from "tasks/repos/harvest-task-repo";
-import { ContainerTransferTaskRepo } from "tasks/repos/container-transfer-task-repo";
-import { TransferTaskRepo } from "tasks/repos/transfer-task-repo";
+import { HarvestTaskRepo } from "repos/tasks/harvest-task-repo";
+import { ContainerTransferTaskRepo } from "repos/tasks/container-transfer-task-repo";
+import { TransferTaskRepo } from "repos/tasks/transfer-task-repo";
 import { HarvestTask, Task, TransferTask } from "tasks/task";
-import { TaskRepo } from "tasks/repos/task-repo";
+import { TaskRepo } from "repos/tasks/base/task-repo";
 
 @injectable()
 /**

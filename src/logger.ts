@@ -5,19 +5,25 @@ export class Logger {
 
     constructor() { }
 
-    public Information(msg: string): void {
+    public info(msg: string): void {
         if (Game.time % 10 == 0) { console.log(msg); }
     }
 
-    public Important(msg: string): void {
+    public important(msg: string): void {
         if (Game.time % 5 == 0) { console.log(msg); }
     }
 
-    public Critical(msg: string): void {
+    public critical(msg: string): void {
         console.log(msg);
     }
 
-    public Error(e: unknown) : void {
+    public debug(room: Room, msg: string): void {
+        if (room.memory.debug) {
+            console.log(msg);
+        }
+    }
+
+    public error(e: unknown): void {
         if (typeof e === "string") {
             console.log(e);
         } else if (e instanceof Error) {

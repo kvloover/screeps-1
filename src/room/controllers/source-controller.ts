@@ -1,13 +1,14 @@
 import { injectable } from "tsyringe";
 
-import { HarvestTaskRepo } from "tasks/repos/harvest-task-repo";
+import { HarvestTaskRepo } from "repos/tasks/harvest-task-repo";
 import { HarvestTask } from "tasks/task";
 import { Controller } from "./controller";
+import { Logger } from "logger";
 
 @injectable()
 export class SourceController implements Controller{
 
-    constructor(private harvestRepo: HarvestTaskRepo) {
+    constructor(private log: Logger, private harvestRepo: HarvestTaskRepo) {
     }
 
     public monitor(room: Room): void {
