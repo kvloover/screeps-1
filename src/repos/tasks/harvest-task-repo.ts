@@ -43,7 +43,7 @@ export class HarvestTaskRepo extends TaskRepo<HarvestTask> implements Persistent
 
         // merge empty task on requester
         requesters.forEach(req => {
-            const requests = this.tasks.filter(r => r.requester?.toString() === req.toString() && !r.executer);
+            const requests = this.tasks.filter(r => r.requester === req && !r.executer);
             if (requests.length > 1) {
                 this.tasks= _.difference(this.tasks, requests);
                 const record = requests.reduce((prev: HarvestTask, curr: HarvestTask) => {
