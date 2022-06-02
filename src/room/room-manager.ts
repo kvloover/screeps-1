@@ -16,7 +16,7 @@ export class RoomManager implements Manager {
     public run(room: Room): void {
 
         if (!room.memory.remote) { room.memory.remote = 'E6S48'; }
-        if (!room.memory.attack) { room.memory.remote = 'E6S47'; }
+        if (!room.memory.attack) { room.memory.attack = 'E6S47'; }
 
         this.sources.monitor(room);
         this.emergency.monitor(room);
