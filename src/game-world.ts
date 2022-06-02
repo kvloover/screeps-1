@@ -34,8 +34,8 @@ export class GameWorld {
 
         // ? use resolveScope and resolve seperate for rooms ?
         const persistency = container.resolveAll<Persistent>(Persistency.token);
-        this.cleanMemory(persistency);
         persistency.forEach(persistent => persistent.restore());
+        this.cleanMemory(persistency);
 
         _.forEach(Game.rooms, room => {
             const managers = container.resolveAll<Manager>(Managers.token);
