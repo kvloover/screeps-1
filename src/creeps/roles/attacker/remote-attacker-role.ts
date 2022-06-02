@@ -17,12 +17,11 @@ export class RemoteAttackerRole extends RangedAttackerRole implements Role {
      public override run(creep: Creep): void {
         // First entry to work: find target room
         if (!creep.memory.targetRoom) {
-            // find room to check
-            // const exits = Game.map.describeExits(creep.memory.room);
-            // _.filter(exits, e => Game.map.getRoomStatus(e).status === "normal")
-            const targetRoom = 'E6S47'; // todo
-
-            creep.memory.targetRoom = targetRoom
+            // get setting on room:
+            if (Memory.rooms[creep.memory.room]) {
+                const target = Memory.rooms[creep.memory.room].attack;
+                creep.memory.targetRoom = target;
+            }
         }
 
         if (creep.memory.targetRoom && creep.room.name !== creep.memory.targetRoom) {
@@ -35,7 +34,11 @@ export class RemoteAttackerRole extends RangedAttackerRole implements Role {
     }
 
     protected override attack(creep: Creep, hostile: Creep | AnyOwnedStructure): CreepActionReturnCode {
-        return creep.rangedAttack(hostile);
+        const ranged = creep.rangedAttack(hostile);
+        if (creep.getActiveBodyparts(ATTACK) > 0)
+            return creep.attack(hostile);
+        else
+            return ranged;
     }
 
 }

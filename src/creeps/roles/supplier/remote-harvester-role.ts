@@ -33,12 +33,11 @@ export class RemoteHarvesterRole extends SupplierRole<FIND_STRUCTURES> implement
     protected work(creep: Creep): void {
         // First entry to work: find target room
         if (!creep.memory.targetRoom) {
-            // find room to check
-            // const exits = Game.map.describeExits(creep.memory.room);
-            // _.filter(exits, e => Game.map.getRoomStatus(e).status === "normal")
-            const targetRoom = 'E6S47'; // todo
-
-            creep.memory.targetRoom = targetRoom
+            // get setting on room:
+            if (Memory.rooms[creep.memory.room]) {
+                const target = Memory.rooms[creep.memory.room].remote;
+                creep.memory.targetRoom = target;
+            }
         }
 
         if (creep.memory.targetRoom && creep.room.name !== creep.memory.targetRoom) {

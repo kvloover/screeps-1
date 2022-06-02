@@ -362,15 +362,17 @@
                 "priority": 1,
                 "count": 2,
                 "template": [
-                    "ranged_attack",
+                    "attack",
+                    "attack",
+                    "attack",
+                    "attack",
+                    "attack",
+                    "attack",
+                    "attack",
+                    "attack",
                     "move",
-                    "ranged_attack",
                     "move",
-                    "ranged_attack",
                     "move",
-                    "ranged_attack",
-                    "move",
-                    "ranged_attack",
                     "move"
                 ]
             },
