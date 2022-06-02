@@ -5,13 +5,13 @@ import { Pathing } from "creeps/pathing";
 import { CreepState } from "utils/creep-state";
 
 import { Role } from "../../role";
-import { SupplierRole } from "./supplier-role";
 
 import { HarvestTaskRepo } from "repos/tasks/harvest-task-repo";
 import { ContainerTransferTaskRepo } from "repos/tasks/container-transfer-task-repo";
 import { TransferTaskRepo } from "repos/tasks/transfer-task-repo";
 import { HarvestTask, Task, TransferTask } from "tasks/task";
 import { TaskRepo } from "repos/tasks/base/task-repo";
+import { Logger } from "logger";
 
 @injectable()
 /**
@@ -22,7 +22,8 @@ export class HarvesterRole implements Role {
 
     name: string = 'harvester'
 
-    constructor(private pathing: Pathing,
+    constructor(private log: Logger,
+        private pathing: Pathing,
         private harvests: HarvestTaskRepo,
         private containers: ContainerTransferTaskRepo,
         private demands: TransferTaskRepo,
@@ -76,6 +77,7 @@ export class HarvesterRole implements Role {
                                 task.requester,
                                 undefined,
                                 task.pos));
+                        this.log.debug(creep.room, `${creep.name}: task added to harvests for remaining work`);
                         task.amount = workerAmount;
                     }
 
@@ -122,6 +124,7 @@ export class HarvesterRole implements Role {
                             task.requester,
                             undefined,
                             task.pos));
+                    this.log.debug(creep.room, `${creep.name}: task added to demands for remaining demand`);
                 }
             }
         }
@@ -136,9 +139,10 @@ export class HarvesterRole implements Role {
                     // Clear supply task for new one
                     task.executer = undefined;
                     creep.memory.tasks['supply'] = undefined;
-                    console.log(`could not supply for task: ${task.id}`);
+                    console.log(`${creep.name}: could not supply for task: ${task.id}`);
                 } else if (transferred) {
                     repo.remove(task);
+                    this.log.debug(creep.room, `${creep.name}: supply task removed for ${task.id}`);
                     creep.memory.tasks['supply'] = undefined;
                 }
             }
@@ -148,15 +152,16 @@ export class HarvesterRole implements Role {
     private trySupplyForTask(creep: Creep, task: Task): [succes: boolean, transferred: boolean] {
         const dest = Game.getObjectById(task.requester as Id<AnyStoreStructure>);
 
-        if (dest && (dest.store.getFreeCapacity(RESOURCE_ENERGY) ?? 0) > 0) {
-            if (creep.transfer(dest, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
+        if (dest != null) {
+            if ((dest.store.getFreeCapacity(RESOURCE_ENERGY) ?? 0) > 0 && creep.transfer(dest, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
                 this.pathing.moveTo(creep, dest.pos);
                 return [true, false]
             }
+            // transferred or already full:
             return [true, true];
         }
 
-        // invalid location or no free capacity
+        // invalid location
         return [false, false];
     }
 
