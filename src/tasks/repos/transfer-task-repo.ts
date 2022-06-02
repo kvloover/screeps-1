@@ -1,3 +1,4 @@
+import { Logger } from "logger";
 import { Lifecycle, scoped } from "tsyringe";
 import { Persistent } from "../Persistent";
 import { TransferTask } from "../task";
@@ -6,7 +7,7 @@ import { TaskRepo } from "./task-repo";
 @scoped(Lifecycle.ContainerScoped)
 export class TransferTaskRepo extends TaskRepo<TransferTask> implements Persistent {
 
-    constructor() { super('transfer'); }
+    constructor(log: Logger) { super('transfer', log); }
 
     // Repository
     // Cf. base class TaskRepo

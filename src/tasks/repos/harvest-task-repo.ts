@@ -1,3 +1,4 @@
+import { Logger } from "logger";
 import { Lifecycle, scoped } from "tsyringe";
 import { Persistent } from "../Persistent";
 import { HarvestTask } from "../task";
@@ -6,7 +7,7 @@ import { TaskRepo } from "./task-repo";
 @scoped(Lifecycle.ContainerScoped)
 export class HarvestTaskRepo extends TaskRepo<HarvestTask> implements Persistent {
 
-    constructor() { super('harvest'); }
+    constructor(log: Logger) { super('harvest', log); }
 
     // Repository
     // Cf. base class TaskRepo
@@ -41,15 +42,12 @@ export class HarvestTaskRepo extends TaskRepo<HarvestTask> implements Persistent
 
         // merge empty task on requester
         requesters.forEach(req => {
-            const all = _(this.tasks).filter(r => r.requester === req);
-            if (all.size() > 1) {
-                const toKeep = all.slice(0).first();
-                const toRemove = all.slice(1)
-                if (toKeep.amount) {
-                    const total = _(toRemove.map(i => i.amount)).sum()
-                    toKeep.amount += total;
-                }
-                _(this.tasks).remove(toRemove);
+            const requests = _(this.tasks).filter(r => r.requester === req);
+            if (requests.size() > 1) {
+                const removed = _(this.tasks).remove(requests);
+                const record = removed.reduce((prev, curr, index) => {
+
+                })
             }
         })
 
