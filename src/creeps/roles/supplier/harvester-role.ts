@@ -58,11 +58,14 @@ export class HarvesterRole implements Role {
     protected work(creep: Creep): void {
 
         // target lock on task if task not set
+        // targetId stays on source being farmed for creep
+
         if (!creep.memory.tasks) { creep.memory.tasks = {}; }
         if (!creep.memory.tasks.hasOwnProperty('harvest') || !creep.memory.tasks['harvest']) {
             const task = this.harvests.closestTask(creep.pos);
             if (task) {
                 this.registerTask(creep, task, 'harvest');
+                creep.memory.targetId = task.requester;
                 // Mine 2 per tick per worker part
                 if (this.harvests.trySplitTask(task, 2 * creep.getActiveBodyparts(WORK)))
                     this.log.debug(creep.room, `${creep.name}: task split to harvests for remaining work`);
@@ -95,7 +98,6 @@ export class HarvesterRole implements Role {
 
     private registerTask(creep: Creep, task: Task, key: string) {
         task.executer = creep.id;
-        creep.memory.targetId = task.requester;
         creep.memory.tasks[key] = task.id;
     }
 
