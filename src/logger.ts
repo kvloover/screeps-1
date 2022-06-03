@@ -23,10 +23,11 @@ export class Logger {
         }
     }
 
-    public error(e: unknown): void {
+    public error(e: unknown, msg?: string): void {
         if (typeof e === "string") {
-            console.log(e);
+            console.log(msg ? `${msg}: ${e}` : e);
         } else if (e instanceof Error) {
+            if (msg) console.log(`${msg}:`);
             console.log(e);
         }
     }

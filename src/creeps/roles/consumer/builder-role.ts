@@ -41,7 +41,9 @@ export class BuilderRole extends ConsumerRole implements Role {
             let constructions = creep.room.find(FIND_CONSTRUCTION_SITES);
             if (constructions.length == 0 && creep.room.memory.remote) {
                 // check remote
-                constructions = Game.rooms[creep.room.memory.remote].find(FIND_CONSTRUCTION_SITES);
+                const room = Game.rooms[creep.room.memory.remote];
+                if (room)
+                    constructions = room.find(FIND_CONSTRUCTION_SITES);
             }
             if (constructions.length > 0) {
                 // construct

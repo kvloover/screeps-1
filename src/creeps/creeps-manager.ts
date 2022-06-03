@@ -21,7 +21,7 @@ export class CreepsManager implements Manager {
                     try {
                         role.run(crp)
                     } catch (error) {
-                        this.log.error(error)
+                        this.log.error(error, `error for creep ${crp.name}`);
                     }
                 });
         })
