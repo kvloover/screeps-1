@@ -30,10 +30,8 @@ export abstract class TaskRepo<T extends Task> {
     }
 
     public closestTask(pos: RoomPosition): Task {
-        console.log(`pos: ${pos}`);
-
-        return _(this.list()).filter(e => !e.executer)
         // i.pos = serialized = functions stripped, use values directly
+        return _(this.list()).filter(e => !e.executer)
             .sortByAll(i => i.prio, i => { if (i.pos) { return pos.getRangeTo(i.pos.x, i.pos.y); } return undefined; })
             .first();
     }
