@@ -9,8 +9,8 @@ import { Role } from "../../role";
 import { HarvestTaskRepo } from "repos/tasks/harvest-task-repo";
 import { ContainerTransferTaskRepo } from "repos/tasks/container-transfer-task-repo";
 import { TransferTaskRepo } from "repos/tasks/transfer-task-repo";
-import { HarvestTask, Task, TransferTask } from "tasks/task";
 import { TaskRepo } from "repos/tasks/base/task-repo";
+import { Task } from "tasks/task";
 import { Logger } from "logger";
 
 @injectable()
