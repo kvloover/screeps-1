@@ -60,31 +60,12 @@ export class HarvesterRole implements Role {
         // target lock on task if task not set
         if (!creep.memory.tasks) { creep.memory.tasks = {}; }
         if (!creep.memory.tasks.hasOwnProperty('harvest') || !creep.memory.tasks['harvest']) {
-            // TODO closest first
-            const task = _(this.harvests.list())
-                .filter(e => !e.executer)
-                .sortByAll(i => i.prio, i => { if (i.pos) { creep.pos.getRangeTo(i.pos); } })
-                .first();
+            const task = this.closestTask(creep, this.harvests.list());
             if (task) {
-                task.executer = creep.id;
-                creep.memory.targetId = task.requester;
-                creep.memory.tasks['harvest'] = task.id;
-                if (task.amount) {
-                    // Mine 2 per tick per worker part
-                    const workerAmount = 2 * creep.getActiveBodyparts(WORK);
-                    if (task.amount > workerAmount) {
-                        // Split task if not enough energy being mined
-                        this.harvests.add(
-                            new HarvestTask(task.prio,
-                                task.amount - workerAmount,
-                                task.requester,
-                                undefined,
-                                task.pos));
-                        this.log.debug(creep.room, `${creep.name}: task added to harvests for remaining work`);
-                        task.amount = workerAmount;
-                    }
-
-                }
+                this.registerTask(creep, task, 'harvest');
+                // Mine 2 per tick per worker part
+                if (this.trySplitTask(task, 2 * creep.getActiveBodyparts(WORK), this.harvests))
+                    this.log.debug(creep.room, `${creep.name}: task split to harvests for remaining work`);
             }
         }
 
@@ -112,23 +93,40 @@ export class HarvesterRole implements Role {
 
     }
 
+    private registerTask(creep: Creep, task: Task, key: string) {
+        task.executer = creep.id;
+        creep.memory.targetId = task.requester;
+        creep.memory.tasks[key] = task.id;
+    }
+
+    private finishTask(creep: Creep, task: Task, repo: TaskRepo<Task>, key: string){
+        creep.memory.tasks[key] = undefined;
+        repo.remove(task);
+    }
+
+    private closestTask(creep: Creep, list: Task[]): Task {
+        return _(list).filter(e => !e.executer)
+            .sortByAll(i => i.prio, i => { if (i.pos) { creep.pos.getRangeTo(i.pos); } })
+            .first();
+    }
+
+    private trySplitTask<T extends Task>(task: Task, amount: number, repo: TaskRepo<Task>, opt?: (task: Task) => T): boolean {
+        if (task.amount && task.amount > amount) {
+            const newTask = new Task(task.prio, task.amount - amount, task.requester, undefined, task.pos);
+            repo.add(opt ? opt(newTask) : newTask as T);
+            task.amount = amount;
+            return true;
+        }
+        return false;
+    }
+
     private supplyToRepo(creep: Creep, repo: TaskRepo<Task>) {
         if (!creep.memory.tasks['supply']) {
-            const tasks = repo.list();
-            const task = _(tasks).filter(e => !e.executer).first();
+            const task = _(repo.list()).filter(e => !e.executer).first();
             if (task) {
-                task.executer = creep.id;
-                creep.memory.tasks['supply'] = task.id;
-                if (task.amount && task.amount > creep.store.getUsedCapacity(RESOURCE_ENERGY)) {
-                    // Split task if not enough energy being carried : leave open for other to supply
-                    this.demands.add(
-                        new TransferTask(task.prio,
-                            task.amount - creep.store.getUsedCapacity(RESOURCE_ENERGY),
-                            task.requester,
-                            undefined,
-                            task.pos));
+                this.registerTask(creep, task, 'supply');
+                if (this.trySplitTask(task, creep.store.getUsedCapacity(RESOURCE_ENERGY), this.demands))
                     this.log.debug(creep.room, `${creep.name}: task added to demands for remaining demand`);
-                }
             }
         }
 
@@ -136,17 +134,14 @@ export class HarvesterRole implements Role {
         if (memoryTaskId) {
             const task = repo.getById(memoryTaskId);
             if (task) {
-                // will be undefined for other repo | rework to avoid unnecessary getById
+                // will be undefined for other repo
                 const [succes, transferred] = this.trySupplyForTask(creep, task);
                 if (!succes) {
-                    // Clear supply task for new one
-                    task.executer = undefined;
-                    creep.memory.tasks['supply'] = undefined;
+                    this.finishTask(creep, task, repo, 'supply');
                     console.log(`${creep.name}: could not supply for task: ${task.id}`);
                 } else if (transferred) {
-                    repo.remove(task);
+                    this.finishTask(creep, task, repo, 'supply');
                     this.log.debug(creep.room, `${creep.name}: supply task removed for ${task.id}`);
-                    creep.memory.tasks['supply'] = undefined;
                 }
             }
         }
