@@ -60,11 +60,11 @@ export class HarvesterRole implements Role {
         // target lock on task if task not set
         if (!creep.memory.tasks) { creep.memory.tasks = {}; }
         if (!creep.memory.tasks.hasOwnProperty('harvest') || !creep.memory.tasks['harvest']) {
-            const task = this.closestTask(creep, this.harvests.list());
+            const task = this.harvests.closestTask(creep.pos);
             if (task) {
                 this.registerTask(creep, task, 'harvest');
                 // Mine 2 per tick per worker part
-                if (this.trySplitTask(task, 2 * creep.getActiveBodyparts(WORK), this.harvests))
+                if (this.harvests.trySplitTask(task, 2 * creep.getActiveBodyparts(WORK)))
                     this.log.debug(creep.room, `${creep.name}: task split to harvests for remaining work`);
             }
         }
@@ -99,33 +99,17 @@ export class HarvesterRole implements Role {
         creep.memory.tasks[key] = task.id;
     }
 
-    private finishTask(creep: Creep, task: Task, repo: TaskRepo<Task>, key: string){
+    private finishTask(creep: Creep, task: Task, repo: TaskRepo<Task>, key: string) {
         creep.memory.tasks[key] = undefined;
         repo.remove(task);
     }
 
-    private closestTask(creep: Creep, list: Task[]): Task {
-        return _(list).filter(e => !e.executer)
-            .sortByAll(i => i.prio, i => { if (i.pos) { creep.pos.getRangeTo(i.pos); } })
-            .first();
-    }
-
-    private trySplitTask<T extends Task>(task: Task, amount: number, repo: TaskRepo<Task>, opt?: (task: Task) => T): boolean {
-        if (task.amount && task.amount > amount) {
-            const newTask = new Task(task.prio, task.amount - amount, task.requester, undefined, task.pos);
-            repo.add(opt ? opt(newTask) : newTask as T);
-            task.amount = amount;
-            return true;
-        }
-        return false;
-    }
-
     private supplyToRepo(creep: Creep, repo: TaskRepo<Task>) {
         if (!creep.memory.tasks['supply']) {
-            const task = _(repo.list()).filter(e => !e.executer).first();
+            const task = repo.closestTask(creep.pos);
             if (task) {
                 this.registerTask(creep, task, 'supply');
-                if (this.trySplitTask(task, creep.store.getUsedCapacity(RESOURCE_ENERGY), this.demands))
+                if (repo.trySplitTask(task, creep.store.getUsedCapacity(RESOURCE_ENERGY)))
                     this.log.debug(creep.room, `${creep.name}: task added to demands for remaining demand`);
             }
         }

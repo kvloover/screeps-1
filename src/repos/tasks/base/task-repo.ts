@@ -29,6 +29,22 @@ export abstract class TaskRepo<T extends Task> {
         this.removeById(task.id);
     }
 
+    public closestTask(pos: RoomPosition): Task {
+        return _(this.list()).filter(e => !e.executer)
+            .sortByAll(i => i.prio, i => { if (i.pos) { pos.getRangeTo(i.pos); } })
+            .first();
+    }
+
+    public trySplitTask(task: Task, amount: number, opt?: (task: Task) => T): boolean {
+        if (task.amount && task.amount > amount) {
+            const newTask = new Task(task.prio, task.amount - amount, task.requester, undefined, task.pos);
+            this.add(opt ? opt(newTask) : newTask as T);
+            task.amount = amount;
+            return true;
+        }
+        return false;
+    }
+
 }
 
 
