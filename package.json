@@ -35,7 +35,7 @@
   "devDependencies": {
     "@rollup/plugin-commonjs": "^20.0.0",
     "@rollup/plugin-json": "^4.1.0",
-    "@rollup/plugin-node-resolve": "^13.0.4",
+    "@rollup/plugin-node-resolve": "^13.3.0",
     "@types/chai": "^4.1.6",
     "@types/lodash": "3.10.2",
     "@types/mocha": "^5.2.5",
@@ -71,6 +71,6 @@
     "reflect-metadata": "^0.1.13",
     "source-map": "~0.6.1",
     "tsyringe": "^4.6.0",
-    "uuid": "^8.3.2"
+    "v4-uuid": "^1.1.0"
   }
 }
