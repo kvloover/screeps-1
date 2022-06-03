@@ -1,0 +1,514 @@
+{
+    "initial": {
+        "order": 1,
+        "energy": 0,
+        "controller": 0,
+        "creeps": 0,
+        "template": [
+            "work",
+            "carry",
+            "move"
+        ],
+        "roles": [
+            {
+                "role": "harvester",
+                "priority": 1,
+                "count": 2
+            },
+            {
+                "role": "upgrader",
+                "priority": 2,
+                "count": 2
+            },
+            {
+                "role": "builder",
+                "priority": 3,
+                "count": 2
+            }
+        ]
+    },
+    "stage-2": {
+        "order": 2,
+        "energy": 240,
+        "controller": 2,
+        "creeps": 1,
+        "template": [
+            "work",
+            "carry",
+            "move"
+        ],
+        "roles": [
+            {
+                "role": "attacker",
+                "priority": 1,
+                "emergency": true,
+                "count": 5,
+                "template": [
+                    "attack",
+                    "tough",
+                    "move"
+                ]
+            },
+            {
+                "role": "harvester",
+                "priority": 2,
+                "count": 1
+            },
+            {
+                "role": "hauler",
+                "priority": 3,
+                "count": 1
+            },
+            {
+                "role": "harvester",
+                "priority": 4,
+                "count": 2
+            },
+            {
+                "role": "upgrader",
+                "priority": 5,
+                "count": 3
+            },
+            {
+                "role": "builder",
+                "priority": 6,
+                "count": 1
+            }
+        ]
+    },
+    "stage-3": {
+        "order": 3,
+        "energy": 550,
+        "controller": 2,
+        "creeps": 3,
+        "template": [
+            "work",
+            "work",
+            "work",
+            "carry",
+            "carry",
+            "carry",
+            "move",
+            "move"
+        ],
+        "roles": [
+            {
+                "role": "melee",
+                "priority": 1,
+                "emergency": true,
+                "count": 5,
+                "template": [
+                    "attack",
+                    "attack",
+                    "tough",
+                    "tough",
+                    "tough",
+                    "tough",
+                    "tough",
+                    "tough",
+                    "move",
+                    "move",
+                    "move",
+                    "move"
+                ]
+            },
+            {
+                "role": "harvester",
+                "priority": 2,
+                "count": 1
+            },
+            {
+                "role": "upgrader",
+                "priority": 3,
+                "count": 1
+            },
+            {
+                "role": "harvester",
+                "priority": 4,
+                "count": 2
+            },
+            {
+                "role": "builder",
+                "priority": 5,
+                "count": 1
+            },
+            {
+                "role": "upgrader",
+                "priority": 6,
+                "count": 3
+            },
+            {
+                "role": "builder",
+                "priority": 7,
+                "count": 2
+            }
+        ]
+    },
+    "stage-4": {
+        "order": 4,
+        "energy": 800,
+        "controller": 3,
+        "creeps": 4,
+        "template": [
+            "work",
+            "work",
+            "work",
+            "work",
+            "carry",
+            "carry",
+            "carry",
+            "carry",
+            "carry",
+            "move",
+            "move",
+            "move"
+        ],
+        "roles": [
+            {
+                "role": "melee",
+                "priority": 1,
+                "emergency": true,
+                "count": 3,
+                "template": [
+                    "attack",
+                    "attack",
+                    "tough",
+                    "tough",
+                    "tough",
+                    "tough",
+                    "tough",
+                    "tough",
+                    "move",
+                    "move",
+                    "move",
+                    "move"
+                ]
+            },
+            {
+                "role": "ranged",
+                "priority": 1,
+                "count": 2,
+                "emergency": true,
+                "template": [
+                    "ranged_attack",
+                    "move",
+                    "ranged_attack",
+                    "move",
+                    "ranged_attack",
+                    "move",
+                    "ranged_attack",
+                    "move"
+                ]
+            },
+            {
+                "role": "harvester",
+                "priority": 2,
+                "count": 1
+            },
+            {
+                "role": "hauler",
+                "priority": 3,
+                "count": 1,
+                "template": [
+                    "move",
+                    "carry",
+                    "move",
+                    "carry",
+                    "move",
+                    "carry",
+                    "move",
+                    "carry",
+                    "move",
+                    "carry",
+                    "move",
+                    "carry",
+                    "move",
+                    "carry",
+                    "move",
+                    "carry"
+                ]
+            },
+            {
+                "role": "harvester",
+                "priority": 4,
+                "count": 2
+            },
+            {
+                "role": "hauler",
+                "priority": 5,
+                "count": 2,
+                "template": [
+                    "move",
+                    "carry",
+                    "move",
+                    "carry",
+                    "move",
+                    "carry",
+                    "move",
+                    "carry",
+                    "move",
+                    "carry",
+                    "move",
+                    "carry",
+                    "move",
+                    "carry",
+                    "move",
+                    "carry"
+                ]
+            },
+            {
+                "role": "upgrader",
+                "priority": 6,
+                "count": 1
+            },
+            {
+                "role": "builder",
+                "priority": 7,
+                "count": 1
+            },
+            {
+                "role": "upgrader",
+                "priority": 8,
+                "count": 4
+            },
+            {
+                "role": "builder",
+                "priority": 9,
+                "count": 2
+            },
+            {
+                "role": "remote-harvester",
+                "priority": 10,
+                "count": 4,
+                "template": [
+                    "move",
+                    "carry",
+                    "move",
+                    "carry",
+                    "move",
+                    "carry",
+                    "move",
+                    "carry",
+                    "move",
+                    "carry",
+                    "move",
+                    "carry",
+                    "work",
+                    "work"
+                ]
+            },
+            {
+                "role": "upgrader",
+                "priority": 11,
+                "count": 6
+            }
+        ]
+    },
+    "stage-5": {
+        "order": 5,
+        "energy": 1200,
+        "controller": 4,
+        "creeps": 8,
+        "template": [
+            "work",
+            "carry",
+            "move",
+            "work",
+            "carry",
+            "move",
+            "work",
+            "carry",
+            "move",
+            "work",
+            "carry",
+            "move",
+            "work",
+            "carry",
+            "move",
+            "work",
+            "carry",
+            "move"
+        ],
+        "roles": [
+            {
+                "role": "melee",
+                "priority": 1,
+                "emergency": true,
+                "count": 3,
+                "template": [
+                    "attack",
+                    "attack",
+                    "attack",
+                    "attack",
+                    "attack",
+                    "attack",
+                    "attack",
+                    "attack",
+                    "attack",
+                    "attack",
+                    "move",
+                    "move",
+                    "move",
+                    "move",
+                    "move",
+                    "move",
+                    "move",
+                    "move",
+                    "move"
+                ]
+            },
+            {
+                "role": "remote-attacker",
+                "priority": 1,
+                "count": 2,
+                "template": [
+                    "attack",
+                    "attack",
+                    "attack",
+                    "attack",
+                    "attack",
+                    "attack",
+                    "attack",
+                    "attack",
+                    "move",
+                    "move",
+                    "move",
+                    "move"
+                ]
+            },
+            {
+                "role": "harvester",
+                "priority": 2,
+                "count": 1,
+                "template": [
+                    "work",
+                    "work",
+                    "work",
+                    "work",
+                    "work",
+                    "work",
+                    "work",
+                    "work",
+                    "carry",
+                    "move",
+                    "carry",
+                    "move"
+                ]
+            },
+            {
+                "role": "hauler",
+                "priority": 3,
+                "count": 1,
+                "template": [
+                    "move",
+                    "carry",
+                    "move",
+                    "carry",
+                    "move",
+                    "carry",
+                    "move",
+                    "carry",
+                    "move",
+                    "carry",
+                    "move",
+                    "carry",
+                    "move",
+                    "carry",
+                    "move",
+                    "carry"
+                ]
+            },
+            {
+                "role": "harvester",
+                "priority": 4,
+                "count": 2,
+                "template": [
+                    "work",
+                    "work",
+                    "work",
+                    "work",
+                    "work",
+                    "work",
+                    "work",
+                    "work",
+                    "carry",
+                    "move",
+                    "carry",
+                    "move"
+                ]
+            },
+            {
+                "role": "hauler",
+                "priority": 5,
+                "count": 2,
+                "template": [
+                    "move",
+                    "carry",
+                    "move",
+                    "carry",
+                    "move",
+                    "carry",
+                    "move",
+                    "carry",
+                    "move",
+                    "carry",
+                    "move",
+                    "carry",
+                    "move",
+                    "carry",
+                    "move",
+                    "carry"
+                ]
+            },
+            {
+                "role": "upgrader",
+                "priority": 6,
+                "count": 1
+            },
+            {
+                "role": "builder",
+                "priority": 7,
+                "count": 1
+            },
+            {
+                "role": "upgrader",
+                "priority": 8,
+                "count": 2
+            },
+            {
+                "role": "builder",
+                "priority": 9,
+                "count": 2
+            },
+            {
+                "role": "remote-harvester",
+                "priority": 10,
+                "count": 4,
+                "template": [
+                    "move",
+                    "carry",
+                    "move",
+                    "carry",
+                    "move",
+                    "carry",
+                    "move",
+                    "carry",
+                    "move",
+                    "carry",
+                    "move",
+                    "carry",
+                    "move",
+                    "carry",
+                    "work",
+                    "work",
+                    "work"
+                ]
+            },
+            {
+                "role": "upgrader",
+                "priority": 12,
+                "count": 4
+            }
+        ]
+    }
+}

@@ -1,13 +1,25 @@
+import { CreepState } from "./creep-state";
+
+export { };
+
 declare global {
     // interface Memory {
     //     uuid: number;
     //     log: any;
     // }
 
+    interface FlagMemory {
+        objectId: Id<_HasId>; // For Game.GetObject
+        maxRequests: number;
+        requests: number;
+    }
+
     interface CreepMemory {
         role: string;
-        // room: string;
-        // working: boolean;
+        room: string;
+        state: CreepState;
+        targetRoom: undefined | string;
+        targetId: undefined | Id<_HasId>;
     }
 
     // namespace NodeJS {
@@ -17,4 +29,3 @@ declare global {
     // }
 }
 
-export { };

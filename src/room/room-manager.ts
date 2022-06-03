@@ -1,23 +1,32 @@
 import { injectable } from "tsyringe";
 
 import { Manager } from "manager";
+import { SourceController } from "./controllers/source-controller";
 
-injectable()
+import { EmergencyController } from "./controllers/emergency-controller";
+
+@injectable()
 export class RoomManager implements Manager {
 
-    constructor() { }
+    constructor(
+        // private log: Logger,
+        private sources: SourceController,
+        private emergency: EmergencyController) { }
 
-    public cleanMemory(): void {
-        for (const name in Memory.creeps) {
-            if (!(name in Game.creeps)) {
-                delete Memory.creeps[name];
-            }
-        }
+    public run(room: Room): void {
+
+        if (!room.memory.remote) { room.memory.remote = 'E6S48'; }
+        if (!room.memory.attack) { room.memory.attack = 'E6S47'; }
+
+        this.sources.monitor(room);
+        this.emergency.monitor(room);
     }
 
-    public run(): void {
-        console.log(`Current game tick is ${Game.time}`);
-        this.cleanMemory();
-    }
+}
 
+declare global {
+    interface RoomMemory {
+        remote: string | undefined
+        attack: string | undefined
+    }
 }
