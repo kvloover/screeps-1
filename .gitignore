@@ -93,3 +93,4 @@ $RECYCLE.BIN/
 
 #screens config
 screeps.json
+.devcontainer/*
