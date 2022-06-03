@@ -29,7 +29,7 @@ export class Pathing {
         // creep.moveTo(pos, { costCallback })
         if (pathing && pathing?.path?.length > 0) {
             const pos = pathing.path[0];
-            this.log.Information(`next step for ${creep.name}: ${JSON.stringify(pos)}`)
+            this.log.debug(creep.room, `next step for ${creep.name}: ${JSON.stringify(pos)}`)
             creep.move(creep.pos.getDirectionTo(pos));
         }
     }
