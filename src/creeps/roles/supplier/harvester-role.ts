@@ -64,7 +64,7 @@ export class HarvesterRole implements Role {
 
         if (!creep.memory.tasks) { creep.memory.tasks = {}; }
         if (!creep.memory.tasks.hasOwnProperty('harvest') || !creep.memory.tasks['harvest']) {
-            const task = this.harvests.closestTask(creep.pos);
+            const task = this.harvests.closestTask(creep.pos, creep.room.name);
             if (task) {
                 this.registerTask(creep, task, 'harvest');
                 creep.memory.targetId = task.requester;
@@ -110,7 +110,7 @@ export class HarvesterRole implements Role {
 
     private supplyToRepo(creep: Creep, repo: TaskRepo<Task>) {
         if (!creep.memory.tasks['supply']) {
-            const task = repo.closestTask(creep.pos);
+            const task = repo.closestTask(creep.pos, creep.room.name);
             if (task) {
                 this.registerTask(creep, task, 'supply');
                 if (repo.trySplitTask(task, creep.store.getUsedCapacity(RESOURCE_ENERGY)))

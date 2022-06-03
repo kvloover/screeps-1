@@ -3,6 +3,7 @@ import uuid from 'v4-uuid';
 export class Task {
     id: string = uuid();
     constructor(
+        public room: string,
         public prio: number,
         public amount?: number,
         public requester?: Id<_HasId>,
