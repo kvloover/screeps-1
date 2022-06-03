@@ -16,7 +16,7 @@ import { Logger } from "logger";
 @injectable()
 /**
  * Get Energy from Sources and store in containers
- * TODO FALLBACK to base harvesting and supplying (or dropping for simple hauler)
+ * FALLBACK to base harvesting and supplying (or dropping for simple hauler)
  */
 export class HarvesterRole implements Role {
 
@@ -61,11 +61,14 @@ export class HarvesterRole implements Role {
         if (!creep.memory.tasks) { creep.memory.tasks = {}; }
         if (!creep.memory.tasks.hasOwnProperty('harvest') || !creep.memory.tasks['harvest']) {
             // TODO closest first
-            const task = _(this.harvests.list()).filter(e => !e.executer).first();
+            const task = _(this.harvests.list())
+                .filter(e => !e.executer)
+                .sortByAll(i => i.prio, i => { if (i.pos) { creep.pos.getRangeTo(i.pos); } })
+                .first();
             if (task) {
-                creep.memory.targetId = task.requester;
                 task.executer = creep.id;
-                creep.memory.tasks['harvest'] = task;
+                creep.memory.targetId = task.requester;
+                creep.memory.tasks['harvest'] = task.id;
                 if (task.amount) {
                     // Mine 2 per tick per worker part
                     const workerAmount = 2 * creep.getActiveBodyparts(WORK);
@@ -115,7 +118,7 @@ export class HarvesterRole implements Role {
             const task = _(tasks).filter(e => !e.executer).first();
             if (task) {
                 task.executer = creep.id;
-                creep.memory.tasks['supply'] = task;
+                creep.memory.tasks['supply'] = task.id;
                 if (task.amount && task.amount > creep.store.getUsedCapacity(RESOURCE_ENERGY)) {
                     // Split task if not enough energy being carried : leave open for other to supply
                     this.demands.add(
@@ -129,9 +132,9 @@ export class HarvesterRole implements Role {
             }
         }
 
-        const memoryTask = creep.memory.tasks['supply'];
-        if (memoryTask) {
-            const task = repo.getById(memoryTask.id);
+        const memoryTaskId = creep.memory.tasks['supply'];
+        if (memoryTaskId) {
+            const task = repo.getById(memoryTaskId);
             if (task) {
                 // will be undefined for other repo | rework to avoid unnecessary getById
                 const [succes, transferred] = this.trySupplyForTask(creep, task);
@@ -170,6 +173,6 @@ export class HarvesterRole implements Role {
 // Only hold taskId ?
 declare global {
     interface CreepMemory {
-        tasks: { [key: string]: Task | undefined }
+        tasks: { [key: string]: string | undefined }
     }
 }
