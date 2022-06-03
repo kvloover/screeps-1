@@ -32,7 +32,6 @@ export abstract class TaskRepo<T extends Task> {
     }
 
     public remove(task: T): void {
-        console.log(`removing task ${task.id}`);
         this.removeById(task.id);
     }
 

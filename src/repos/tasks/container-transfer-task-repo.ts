@@ -7,7 +7,7 @@ import { TaskRepo } from "./base/task-repo";
 @scoped(Lifecycle.ContainerScoped)
 export class ContainerTransferTaskRepo extends TaskRepo<ContainerTransferTask> implements Persistent {
 
-    constructor(log: Logger) { super('container-transfer', log); }
+    constructor(log: Logger) { super('container_transfer', log); }
 
     // Repository
     // Cf. base class TaskRepo

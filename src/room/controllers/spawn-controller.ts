@@ -28,7 +28,6 @@ export class SpawnController implements Controller {
             if (struct) {
                 const task = demands.find(d => d.requester === s.id);
                 if (!task) {
-                    console.log(`demand for ${struct.pos}`)
                     this.demands.add(new TransferTask(struct.room.name, 1, struct.store.getFreeCapacity(RESOURCE_ENERGY), struct.id, undefined, struct.pos ));
                     this.log.debug(struct.room, `${struct.pos}: added supply task`);
                 }
