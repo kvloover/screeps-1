@@ -7,7 +7,7 @@ export class Task {
         public amount?: number,
         public requester?: Id<_HasId>,
         public executer?: Id<_HasId>,
-        public pos?: _HasRoomPosition,
+        public pos?: RoomPosition,
     ) { }
 }
 

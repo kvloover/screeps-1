@@ -46,6 +46,8 @@ export class HarvesterRole implements Role {
     }
 
     protected switchState(creep: Creep): void {
+        if (creep.spawning) return;
+
         if (creep.memory.state != CreepState.idle
             && creep.memory.state != CreepState.supply) {
             this.work(creep);

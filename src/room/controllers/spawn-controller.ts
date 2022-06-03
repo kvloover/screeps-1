@@ -29,7 +29,7 @@ export class SpawnController implements Controller {
                 const task = demands.find(d => d.requester === s.id);
                 if (!task) {
                     console.log(`demand for ${struct.pos}`)
-                    this.demands.add(new TransferTask(1, struct.store.getFreeCapacity(RESOURCE_ENERGY), struct.id, undefined, struct ));
+                    this.demands.add(new TransferTask(1, struct.store.getFreeCapacity(RESOURCE_ENERGY), struct.id, undefined, struct.pos ));
                     this.log.debug(struct.room, `${struct.pos}: added supply task`);
                 }
             }
