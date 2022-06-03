@@ -33,8 +33,10 @@ export class ClaimerRole implements Role {
 
     protected findClaim(creep: Creep) {
         if (creep.room.controller && !creep.room.controller.my) {
-            if (!CreepUtils.tryFor([creep.room.controller], (controller) => creep.reserveController(controller))) { // fix to claim
-                this.pathing.moveTo(creep, creep.room.controller.pos);
+            if (!CreepUtils.tryFor([creep.room.controller], (controller) => creep.claimController(controller))) { // fix to claim
+                if (!CreepUtils.tryFor([creep.room.controller], (controller) => creep.reserveController(controller))) { // fix to claim
+                    this.pathing.moveTo(creep, creep.room.controller.pos);
+                }
             }
         }
     }

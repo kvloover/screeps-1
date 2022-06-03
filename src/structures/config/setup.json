@@ -508,6 +508,7 @@
                 "role": "remote-harvester",
                 "priority": 10,
                 "count": 4,
+                "condition": "remote-mining",
                 "template": [
                     "move",
                     "carry",

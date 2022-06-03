@@ -54,11 +54,11 @@ export class BuilderRole extends ConsumerRole implements Role {
                         this.pathing.moveTo(creep, target.pos);
                 } else {
                     creep.memory.targetId = undefined;
-                    if (!CreepUtils.tryForFind(creep, FIND_CONSTRUCTION_SITES, loc => {
+                    if (!CreepUtils.tryFor(constructions, loc => {
                         if (loc) creep.memory.targetId = loc.id;
                         return creep.build(loc);
                     })) {
-                        const loc = this.pathing.findClosest(creep, FIND_CONSTRUCTION_SITES);
+                        const loc = this.pathing.findClosestOf(creep, constructions);
                         if (loc != undefined) {
                             this.pathing.moveTo(creep, loc.pos);
                         }
