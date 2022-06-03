@@ -42,7 +42,10 @@ export class PathingOptions {
         const room = Game.rooms[roomName];
         if (!room) return costs;
 
-        room.find(FIND_STRUCTURES).forEach(function (struct) {
+        const structures = room.find(FIND_STRUCTURES);
+        const constructions = room.find(FIND_CONSTRUCTION_SITES);
+
+        const filter = function (struct : ConstructionSite | AnyStructure) {
             if (struct.structureType === STRUCTURE_ROAD) {
                 // Favor roads over plain tiles
                 costs.set(struct.pos.x, struct.pos.y, 1);
@@ -52,7 +55,9 @@ export class PathingOptions {
                 // Can't walk through non-walkable buildings
                 costs.set(struct.pos.x, struct.pos.y, 0xff);
             }
-        });
+        }
+        structures.forEach(st => filter(st));
+        constructions.forEach(st => filter(st));
 
         // Avoid creeps in the room
         room.find(FIND_CREEPS).forEach(function (creep) {

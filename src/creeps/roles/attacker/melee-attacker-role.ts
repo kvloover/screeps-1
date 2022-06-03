@@ -14,7 +14,7 @@ export class MeleeAttackerRole extends AttackerRole implements Role {
 
     constructor(pathing: Pathing) { super(pathing); }
 
-    protected override attack(creep: Creep, hostile: Creep): CreepActionReturnCode {
+    protected override attack(creep: Creep, hostile: Creep | AnyOwnedStructure): CreepActionReturnCode {
         return creep.attack(hostile);
     }
 }

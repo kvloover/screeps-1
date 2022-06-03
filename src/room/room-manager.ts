@@ -19,6 +19,16 @@ export class RoomManager implements Manager {
 
     private initMemory(room: Room) {
         if (!room.memory.debug) { room.memory.debug = false; }
+        if (!room.memory.remote) { room.memory.remote = 'E6S48'; }
+        if (!room.memory.attack) { room.memory.attack = 'E6S47'; }
     }
 
+}
+
+declare global {
+    interface RoomMemory {
+        debug: boolean
+        remote: string | undefined
+        attack: string | undefined
+    }
 }
