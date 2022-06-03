@@ -203,7 +203,20 @@
             {
                 "role": "harvester",
                 "priority": 2,
-                "count": 1
+                "count": 1,
+                "template": [
+                    "work",
+                    "work",
+                    "work",
+                    "work",
+                    "work",
+                    "carry",
+                    "move",
+                    "carry",
+                    "move",
+                    "move",
+                    "move"
+                ]
             },
             {
                 "role": "hauler",
@@ -331,6 +344,16 @@
         ],
         "roles": [
             {
+                "role": "claimer",
+                "priority": 1,
+                "condition": "claim",
+                "count": 1,
+                "template": [
+                    "claim",
+                    "move"
+                ]
+            },
+            {
                 "role": "melee",
                 "priority": 1,
                 "emergency": true,
@@ -361,6 +384,7 @@
                 "role": "remote-attacker",
                 "priority": 1,
                 "count": 2,
+                "condition": "defend-remote",
                 "template": [
                     "attack",
                     "attack",
@@ -386,12 +410,12 @@
                     "work",
                     "work",
                     "work",
-                    "work",
-                    "work",
-                    "work",
                     "carry",
                     "move",
                     "carry",
+                    "move",
+                    "carry",
+                    "move",
                     "move"
                 ]
             },

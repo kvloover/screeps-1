@@ -26,6 +26,7 @@ export class SpawnManager implements Manager {
     private isPrio(room: Room, roomCreeps: Creep[], cfg: roleConfig): boolean {
         return (cfg.count > 0)
             && (!cfg.emergency || (room.memory.emergency?.active))
+            && (!cfg.condition || (room.memory.hasOwnProperty(cfg.condition) && (room.memory as any)[cfg.condition] == true))
             && (roomCreeps?.filter(c => c.memory.role === cfg.role
                 && (!c.ticksToLive // spawning
                     || c.ticksToLive > 100
@@ -73,6 +74,9 @@ export class SpawnManager implements Manager {
                     { memory: this.initialMemory(spawn, prio) });
                 if (ret === OK) {
                     this.log.Critical(`Spawning new ${prio.role}: ${newName}`);
+                    if (prio.condition && room.memory.hasOwnProperty(prio.condition)) {
+                        (room.memory as any)[prio.condition] = false;
+                    }
                     this.nameInUse(room, prio.role, newName);
                 } else if (ret === ERR_NAME_EXISTS) {
                     this.nameInUse(room, prio.role, newName);
