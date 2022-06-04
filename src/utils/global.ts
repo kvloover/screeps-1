@@ -16,6 +16,7 @@ declare global {
 
     interface RoomMemory {
         debug: boolean;
+        stage: number;
     }
 
     interface CreepMemory {

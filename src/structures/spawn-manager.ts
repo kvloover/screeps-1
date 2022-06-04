@@ -57,7 +57,8 @@ export class SpawnManager implements Manager {
         )
 
         if (stage != undefined) {
-            this.log.info(`current stage: ${stage.order}`);
+            // this.log.info(`current stage: ${stage.order}`);
+            room.memory.stage = stage.order;
 
             const prio = stage.roles
                 .sort((a, b) => a.priority - b.priority)

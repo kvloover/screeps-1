@@ -94,7 +94,8 @@ export class HarvesterRole implements Role {
         if (!creep.memory.tasks.hasOwnProperty('supply')) { creep.memory.tasks['supply'] = undefined }
 
         this.supplyToRepo(creep, this.containers);
-        this.supplyToRepo(creep, this.demands);
+        if (!creep.room.memory.stage || creep.room.memory.stage <= 2)
+            this.supplyToRepo(creep, this.demands);
 
     }
 
