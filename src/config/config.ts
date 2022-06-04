@@ -7,7 +7,7 @@ export class stageConfig {
     public energy: number = 0;
     public controller: number = 0;
     public creeps: number = 0;
-    public template: string[] = ["work", "carry", "move"];
+    public template: { [key: string]: number } | undefined;
     public roles: roleConfig[] = [];
 }
 
@@ -17,5 +17,6 @@ export class roleConfig {
     public condition: string | undefined;
     public emergency: boolean = false;
     public count: number = 0;
-    public template: string[] | undefined;
+    // public template: string[] | undefined;
+    public template: { [key: string]: number } | undefined;
 }

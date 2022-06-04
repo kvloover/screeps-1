@@ -4,8 +4,8 @@ import { Manager } from "manager";
 import { Logger } from "logger";
 import { CreepState } from "utils/creep-state";
 
-import setup from "./config/setup.json";
-import { config, roleConfig, stageConfig } from "./config/config";
+import setup from "../config/setup.json";
+import { config, roleConfig, stageConfig } from "../config/config";
 
 @injectable()
 export class SpawnManager implements Manager {
@@ -66,8 +66,10 @@ export class SpawnManager implements Manager {
 
             if (prio) {
                 this.log.info(`Requesting new spawn for ${prio.role}`)
-                var template = prio.template ?? stage.template ?? [WORK, CARRY, MOVE];
-                var bodyTemplate = template.map(i => this.isBodyTemplate(i) ? i : TOUGH);
+                var template = prio.template ?? stage.template ?? { 'work': 1, 'move': 1, 'carry': 1 };
+                var bodyTemplate = _.flatten(Object.entries(template)
+                    .map(([key, value]) => this.isBodyTemplate(key) ? _.times(value, _ => key) : []));
+                // template.map(i => this.isBodyTemplate(i) ? i : TOUGH);
 
                 var newName = this.generateName(room, prio.role);
                 const ret = spawn.spawnCreep(bodyTemplate, newName,
