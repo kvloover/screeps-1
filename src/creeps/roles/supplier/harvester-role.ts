@@ -12,6 +12,7 @@ import { TransferTaskRepo } from "repos/tasks/transfer-task-repo";
 import { TaskRepo } from "repos/tasks/base/task-repo";
 import { Task } from "tasks/task";
 import { Logger } from "logger";
+import { isDefined } from "utils/utils";
 
 @injectable()
 /**
@@ -47,6 +48,7 @@ export class HarvesterRole implements Role {
 
     protected switchState(creep: Creep): void {
         if (creep.spawning) return;
+        if (!creep.memory.tasks) { creep.memory.tasks = {}; }
 
         if (creep.memory.state != CreepState.idle
             && creep.memory.state != CreepState.supply) {
@@ -58,19 +60,33 @@ export class HarvesterRole implements Role {
     }
 
     protected work(creep: Creep): void {
-
         // target lock on task if task not set
-        // targetId stays on source being farmed for creep
+        // targetId stays on source being harvested for creep
 
-        if (!creep.memory.tasks) { creep.memory.tasks = {}; }
-        if (!creep.memory.tasks.hasOwnProperty('harvest') || !creep.memory.tasks['harvest']) {
+        const key = 'harvest';
+        if (!creep.memory.tasks.hasOwnProperty(key)) { this.unlinkTask(creep, key); }
+
+        if (!creep.memory.tasks.hasOwnProperty(key) || !creep.memory.tasks[key]) {
             const task = this.harvests.closestTask(creep.pos, creep.room.name);
             if (task) {
-                this.registerTask(creep, task, 'harvest');
+                this.registerTask(creep, task, key);
                 creep.memory.targetId = task.requester;
                 // Mine 2 per tick per worker part
                 if (this.harvests.trySplitTask(task, 2 * creep.getActiveBodyparts(WORK)))
                     this.log.debug(creep.room, `${creep.name}: task split to harvests for remaining work`);
+            }
+        }
+
+        if (!creep.memory.targetId
+            && creep.memory.tasks.hasOwnProperty(key)) {
+            const taskId = creep.memory.tasks[key];
+            if (isDefined(taskId)) {
+                const task = this.harvests.getById(taskId);
+                if (task) {
+                    creep.memory.targetId = task.requester;
+                } else {
+                    this.unlinkTask(creep, key);
+                }
             }
         }
 
@@ -90,12 +106,12 @@ export class HarvesterRole implements Role {
 
     protected deposit(creep: Creep) {
 
-        if (!creep.memory.tasks) { creep.memory.tasks = {}; }
-        if (!creep.memory.tasks.hasOwnProperty('supply')) { creep.memory.tasks['supply'] = undefined }
+        const key = 'supply';
+        if (!creep.memory.tasks.hasOwnProperty(key)) { this.unlinkTask(creep, key); }
 
-        this.supplyToRepo(creep, this.containers);
+        this.supplyToRepo(creep, this.containers, key);
         if (!creep.room.memory.stage || creep.room.memory.stage <= 2)
-            this.supplyToRepo(creep, this.demands);
+            this.supplyToRepo(creep, this.demands, key);
 
     }
 
@@ -105,33 +121,39 @@ export class HarvesterRole implements Role {
     }
 
     private finishTask(creep: Creep, task: Task, repo: TaskRepo<Task>, key: string) {
-        creep.memory.tasks[key] = undefined;
+        this.unlinkTask(creep, key);
         repo.remove(task);
     }
 
-    private supplyToRepo(creep: Creep, repo: TaskRepo<Task>) {
-        if (!creep.memory.tasks['supply']) {
+    private unlinkTask(creep: Creep, key: string) {
+        creep.memory.tasks[key] = undefined;
+    }
+
+    private supplyToRepo(creep: Creep, repo: TaskRepo<Task>, key: string) {
+        if (!creep.memory.tasks[key]) {
             const task = repo.closestTask(creep.pos, creep.room.name);
             if (task) {
-                this.registerTask(creep, task, 'supply');
+                this.registerTask(creep, task, key);
                 if (repo.trySplitTask(task, creep.store.getUsedCapacity(RESOURCE_ENERGY)))
                     this.log.debug(creep.room, `${creep.name}: task added to demands for remaining demand`);
             }
         }
 
-        const memoryTaskId = creep.memory.tasks['supply'];
+        const memoryTaskId = creep.memory.tasks[key];
         if (memoryTaskId) {
             const task = repo.getById(memoryTaskId);
             if (task) {
                 // will be undefined for other repo
                 const [succes, transferred] = this.trySupplyForTask(creep, task);
                 if (!succes) {
-                    this.finishTask(creep, task, repo, 'supply');
+                    this.finishTask(creep, task, repo, key);
                     console.log(`${creep.name}: could not supply for task: ${task.id}`);
                 } else if (transferred) {
-                    this.finishTask(creep, task, repo, 'supply');
+                    this.finishTask(creep, task, repo, key);
                     this.log.debug(creep.room, `${creep.name}: supply task removed for ${task.id}`);
                 }
+            } else {
+                this.unlinkTask(creep, key);
             }
         }
     }
