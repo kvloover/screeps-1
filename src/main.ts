@@ -2,12 +2,19 @@ import "reflect-metadata";
 import { container } from "tsyringe";
 
 import { ErrorMapper } from "utils/ErrorMapper";
+import { wrapWithMemoryHack } from "utils/memory-hack";
+import { ExConsole } from "utils/console";
 
 import { GameWorld } from "game-world";
 
-// When compiling TS to JS and bundling with rollup, the line numbers and file names in error messages change
-// This utility uses source maps to get the line numbers and file names of the original, TS source code
-export const loop = ErrorMapper.wrapLoop(() => {
-  container.resolve(GameWorld)
-    .run();
-});
+export const loop = ErrorMapper.wrapLoop(
+  //wrapWithMemoryHack( // Disabled for now to allow console memory editing
+    () => {
+
+      ExConsole.init();
+
+      container.resolve(GameWorld)
+        .run();
+    }
+  //)
+);

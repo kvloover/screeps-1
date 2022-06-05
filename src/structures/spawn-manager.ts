@@ -6,6 +6,7 @@ import { CreepState } from "utils/creep-state";
 
 import setup from "../config/setup.json";
 import { config, roleConfig, stageConfig } from "../config/config";
+import { isDefined } from "utils/utils";
 
 @injectable()
 export class SpawnManager implements Manager {
@@ -89,17 +90,16 @@ export class SpawnManager implements Manager {
     }
 
     private getRoomCreeps(room: Room): Creep[] {
+        //return room.find(FIND_MY_CREEPS);
         const creeps =
             _.filter(
-                _.mapValues(Memory.creeps, (v, k) => { return { ...v, name: k } }), //, (v, k) => { return { ...v, i: k }; })
+                _.mapValues(Memory.creeps, (v, k) => { return { ...v, name: k } }),
                 c => c.room === room.name
             ).map(i => i.name !== undefined
                 && Game.creeps.hasOwnProperty(i.name)
                 ? Game.creeps[i.name] : undefined)
-                .filter((i): i is Creep => !!i);
-        //console.log(`creeps: ${creeps}`);
+                .filter(isDefined);
         return creeps;
-        //return room.find(FIND_MY_CREEPS);
     }
 
     private initialMemory(spawn: StructureSpawn, cfg: roleConfig): CreepMemory {
