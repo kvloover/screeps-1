@@ -184,7 +184,12 @@
             {
                 "role": "harvester",
                 "priority": 4,
-                "count": 2
+                "count": 2,
+                "template": {
+                    "work": 5,
+                    "move": 3,
+                    "carry": 2
+                }
             },
             {
                 "role": "hauler",
@@ -211,13 +216,8 @@
                 "count": 4
             },
             {
-                "role": "builder",
-                "priority": 9,
-                "count": 2
-            },
-            {
                 "role": "remote-harvester",
-                "priority": 10,
+                "priority": 9,
                 "count": 4,
                 "condition": "remote-mining",
                 "template": {
@@ -225,11 +225,6 @@
                     "carry": 6,
                     "work": 2
                 }
-            },
-            {
-                "role": "upgrader",
-                "priority": 11,
-                "count": 6
             }
         ]
     },
@@ -328,13 +323,8 @@
                 "count": 2
             },
             {
-                "role": "builder",
-                "priority": 9,
-                "count": 2
-            },
-            {
                 "role": "remote-harvester",
-                "priority": 10,
+                "priority": 9,
                 "count": 4,
                 "condition": "remote-mining",
                 "template": {
@@ -342,11 +332,6 @@
                     "carry": 7,
                     "move": 7
                 }
-            },
-            {
-                "role": "upgrader",
-                "priority": 12,
-                "count": 4
             }
         ]
     }
