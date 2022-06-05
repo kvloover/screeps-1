@@ -19,7 +19,7 @@ export class Logger {
 
     public debug(room: Room, msg: string): void {
         if (room.memory.debug) {
-            console.log(msg);
+            console.log(`[${room.name}] ${msg}`);
         }
     }
 
