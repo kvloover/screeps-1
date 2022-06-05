@@ -37,6 +37,16 @@ export class ContainerTransferTaskRepo extends TaskRepo<ContainerTransferTask> i
         });
     }
 
+    clearRoomRef(roomName: string): void {
+        // remove if room
+        const requests = _(this.tasks)
+            .filter(r => r.room === roomName)
+            .map(r => r.id);
+        for (let i in requests) {
+            this.removeById(i);
+        }
+    }
+
 }
 
 declare global {

@@ -16,10 +16,13 @@ export class TransferTaskRepo extends TaskRepo<TransferTask> implements Persiste
     restore(): void {
         if (Memory.persistency?.hasOwnProperty(this.key))
             this.tasks = Memory.persistency.transfer;
+        //console.log(`on restore ${this.key}: ${this.tasks.length}`)
     }
 
     save(): void {
+        //console.log(`on saving ${this.key}: ${this.tasks.length}`)
         Memory.persistency = Object.assign(Memory.persistency, { transfer: this.tasks ?? [] });
+        //console.log(`in persistency ${this.key}: ${Memory.persistency.transfer.length}`)
     }
 
     clearReference(id: Id<_HasId>): void {
@@ -35,6 +38,17 @@ export class TransferTaskRepo extends TaskRepo<TransferTask> implements Persiste
         this.tasks.forEach(t => {
             if (t.executer === id) { t.executer = undefined; }
         });
+    }
+
+    clearRoomRef(roomName: string): void {
+        // remove if room
+
+        const requests = this.tasks.filter(r => r.room === roomName);
+        if (requests.length > 0) {
+            //console.log(`before clearing ${this.key}: ${this.tasks.length}`)
+            this.tasks = _.difference(this.tasks, requests);
+            //console.log(`after clearing ${this.key}: ${this.tasks.length}`)
+        }
     }
 
 }

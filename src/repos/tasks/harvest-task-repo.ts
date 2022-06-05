@@ -41,11 +41,11 @@ export class HarvestTaskRepo extends TaskRepo<HarvestTask> implements Persistent
             }
         });
 
-        // merge empty task on requester
+        // merge empty task on requester > harvest tasks are persistent
         requesters.forEach(req => {
             const requests = this.tasks.filter(r => r.requester === req && !r.executer);
             if (requests.length > 1) {
-                this.tasks= _.difference(this.tasks, requests);
+                this.tasks = _.difference(this.tasks, requests);
                 const record = requests.reduce((prev: HarvestTask, curr: HarvestTask) => {
                     if (prev.amount) prev.amount += curr.amount ?? 0;
                     return prev;
@@ -54,6 +54,16 @@ export class HarvestTaskRepo extends TaskRepo<HarvestTask> implements Persistent
             }
         })
 
+    }
+
+    clearRoomRef(roomName: string): void {
+        // remove if room
+        const requests = _(this.tasks)
+            .filter(r => r.room === roomName)
+            .map(r => r.id);
+        for (let i in requests) {
+            this.removeById(i);
+        }
     }
 
 }

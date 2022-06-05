@@ -19,11 +19,11 @@ export const wrapMemory = (fn: () => void) => {
   const memory = Memory;
 
   return () => {
-    delete global.Memory;
-    global.Memory = memory;
+    //delete global.Memory;
+    //global.Memory = memory;
 
     fn();
 
-    RawMemory.set(JSON.stringify(Memory));
+    //RawMemory.set(JSON.stringify(Memory));
   };
 };

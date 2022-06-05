@@ -110,15 +110,16 @@ export class HarvesterRole implements Role {
         const key = 'supply';
         if (!creep.memory.tasks.hasOwnProperty(key)) { this.unlinkTask(creep, key); }
 
-        this.supplyToRepo(creep, this.containers, key);
         if (!creep.room.memory.stage || creep.room.memory.stage < STAGE_CONTAINER_MINING)
             this.supplyToRepo(creep, this.demands, key);
+        else
+            this.supplyToRepo(creep, this.containers, key);
 
     }
 
     private registerTask(creep: Creep, task: Task, key: string) {
-        task.executer = creep.id;
         creep.memory.tasks[key] = task.id;
+        task.executer = creep.id;
     }
 
     private finishTask(creep: Creep, task: Task, repo: TaskRepo<Task>, key: string) {
@@ -142,6 +143,7 @@ export class HarvesterRole implements Role {
 
         const memoryTaskId = creep.memory.tasks[key];
         if (memoryTaskId) {
+            this.log.debug(creep.room, `${creep.name}: supplying for task ${memoryTaskId}`);
             const task = repo.getById(memoryTaskId);
             if (task) {
                 // will be undefined for other repo

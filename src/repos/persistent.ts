@@ -8,6 +8,7 @@ export interface Persistent {
     restore(): void;
     save(): void;
     clearReference(id: Id<_HasId>): void;
+    clearRoomRef(roomName: string): void;
 }
 
 @registry([
