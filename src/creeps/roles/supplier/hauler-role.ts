@@ -28,7 +28,8 @@ export class HaulerRole extends SupplierRole<FIND_MY_STRUCTURES> implements Role
             filter: (structure) =>
                 (structure.structureType == STRUCTURE_SPAWN
                     || structure.structureType == STRUCTURE_EXTENSION
-                    || structure.structureType == STRUCTURE_TOWER) &&
+                    || structure.structureType == STRUCTURE_TOWER
+                    || structure.structureType == STRUCTURE_STORAGE) &&
                 structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0
             // todo limit range & prio sort ?
         }

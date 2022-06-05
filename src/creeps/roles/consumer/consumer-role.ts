@@ -1,6 +1,7 @@
 import { Pathing } from "creeps/pathing";
 import { CreepUtils } from "creeps/creep-utils";
 import { CreepState } from 'utils/creep-state';
+import { STAGE_CONTAINER_MINING } from "utils/constants";
 
 export abstract class ConsumerRole {
 
@@ -35,7 +36,8 @@ export abstract class ConsumerRole {
     private getEnergy(creep: Creep) {
         const prio: FilterOptions<FIND_STRUCTURES> = {
             filter: (structure) =>
-                structure.structureType == STRUCTURE_CONTAINER &&
+                (structure.structureType == STRUCTURE_CONTAINER
+                    || structure.structureType == STRUCTURE_STORAGE) &&
                 structure.store[RESOURCE_ENERGY]
         };
 
@@ -47,7 +49,8 @@ export abstract class ConsumerRole {
             if (loc != undefined) {
                 this.pathing.moveTo(creep, loc.pos);
             } else {
-                this.getEnergyNonPrio(creep);
+                if (!creep.room.memory.stage || creep.room.memory.stage < STAGE_CONTAINER_MINING)
+                    this.getEnergyNonPrio(creep);
             }
         }
     }
