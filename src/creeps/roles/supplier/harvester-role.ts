@@ -13,6 +13,7 @@ import { TaskRepo } from "repos/tasks/base/task-repo";
 import { Task } from "tasks/task";
 import { Logger } from "logger";
 import { isDefined } from "utils/utils";
+import { STAGE_CONTAINER_MINING } from "utils/constants";
 
 @injectable()
 /**
@@ -110,7 +111,7 @@ export class HarvesterRole implements Role {
         if (!creep.memory.tasks.hasOwnProperty(key)) { this.unlinkTask(creep, key); }
 
         this.supplyToRepo(creep, this.containers, key);
-        if (!creep.room.memory.stage || creep.room.memory.stage <= 2)
+        if (!creep.room.memory.stage || creep.room.memory.stage < STAGE_CONTAINER_MINING)
             this.supplyToRepo(creep, this.demands, key);
 
     }
