@@ -67,7 +67,7 @@ export class SpawnManager implements Manager {
                 .find(x => x !== undefined);
 
             if (prio) {
-                this.log.info(`Requesting new spawn for ${prio.role}`)
+                this.log.debug(room, `Requesting new spawn for ${prio.role}`)
                 var template = prio.template ?? stage.template ?? { 'work': 1, 'move': 1, 'carry': 1 };
                 var bodyTemplate = _.flatten(Object.entries(template)
                     .map(([key, value]) => this.isBodyTemplate(key) ? _.times(value, _ => key) : []));
@@ -77,7 +77,7 @@ export class SpawnManager implements Manager {
                 const ret = spawn.spawnCreep(bodyTemplate, newName,
                     { memory: this.initialMemory(spawn, prio) });
                 if (ret === OK) {
-                    this.log.critical(`Spawning new ${prio.role}: ${newName}`);
+                    this.log.debug(room, `Spawning new ${prio.role}: ${newName}`);
                     if (prio.condition && room.memory.hasOwnProperty(prio.condition)) {
                         (room.memory as any)[prio.condition] = false;
                     }
@@ -123,7 +123,7 @@ export class SpawnManager implements Manager {
     }
 
     private nameInUse(room: Room, role: string, name: string) {
-        this.log.critical(`name in use: ${name}`);
+        this.log.debug(room, `name in use: ${name}`);
         Memory.spawnSequence++;
     }
 
