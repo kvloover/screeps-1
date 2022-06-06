@@ -30,7 +30,7 @@ export class SpawnManager implements Manager {
             && (!cfg.condition || (room.memory.hasOwnProperty(cfg.condition) && (room.memory as any)[cfg.condition] == true))
             && (roomCreeps?.filter(c => c.memory.role === cfg.role
                 && (!c.ticksToLive // spawning
-                    || c.ticksToLive > 100
+                    || c.ticksToLive > 35
                 ))?.length < cfg.count);
     }
 
