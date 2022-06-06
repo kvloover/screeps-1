@@ -8,3 +8,4 @@ export * from './attacker/ranged-attacker-role';
 export * from './attacker/remote-attacker-role';
 export * from './hauler/hauler-role';
 export * from './utility/claimer-role';
+export * from './filler/filler-role';

@@ -1,15 +1,14 @@
-import { DependencyContainer, injectable } from "tsyringe";
+import { injectable } from "tsyringe";
 import { Logger } from "logger";
 import { Pathing } from "../../pathing";
 
 // import { RoleService } from "creeps/roles/role-service-registry";
-import { Roles } from "creeps/roles/role-registry";
 
 import { HaulerRole } from "./hauler-role";
 
 import { DemandTaskRepo } from "repos/tasks/demand-task-repo";
 import { ProviderTaskRepo } from "repos/tasks/providor-task-repo";
-import { StorageTaskRepo } from "repos/tasks/storage-task-repo";
+import { BatteryTaskRepo } from "repos/tasks/battery-task-repo";
 
 
 @injectable()
@@ -40,7 +39,7 @@ export class HaulerStorageRole extends HaulerRole {
     };
 
     constructor(log: Logger, pathing: Pathing,
-        provider: StorageTaskRepo, supply: DemandTaskRepo) {
+        provider: BatteryTaskRepo, supply: DemandTaskRepo) {
         super(log, pathing, provider, supply)
     }
 

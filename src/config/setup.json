@@ -313,8 +313,17 @@
                 }
             },
             {
-                "role": "harvester",
+                "role": "filler",
                 "priority": 4,
+                "count": 1,
+                "template": {
+                    "carry": 4,
+                    "move": 4
+                }
+            },
+            {
+                "role": "harvester",
+                "priority": 5,
                 "count": 2,
                 "template": {
                     "work": 5,
@@ -324,7 +333,7 @@
             },
             {
                 "role": "hauler",
-                "priority": 5,
+                "priority": 6,
                 "count": 2,
                 "template": {
                     "carry": 8,
@@ -333,7 +342,7 @@
             },
             {
                 "role": "upgrader",
-                "priority": 6,
+                "priority": 7,
                 "count": 1
             },
             {

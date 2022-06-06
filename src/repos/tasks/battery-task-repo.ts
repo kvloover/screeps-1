@@ -5,7 +5,7 @@ import { BatteryTask } from "../../tasks/task";
 import { TaskRepo } from "./_base/task-repo";
 
 /**
-* midstream demand
+* Storage provide
 **/
 @scoped(Lifecycle.ContainerScoped)
 export class BatteryTaskRepo extends TaskRepo<BatteryTask> implements Persistent {

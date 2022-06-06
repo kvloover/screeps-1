@@ -4,6 +4,8 @@ import { MidstreamTaskRepo } from "./tasks/midstream-task-repo";
 import { HarvestTaskRepo } from "./tasks/harvest-task-repo";
 import { DemandTaskRepo } from "./tasks/demand-task-repo";
 import { ProviderTaskRepo } from "./tasks/providor-task-repo";
+import { BatteryTaskRepo } from "./tasks/battery-task-repo";
+import { StorageTaskRepo } from "./tasks/storage-task-repo";
 
 export interface Persistent {
     restore(): void;
@@ -14,14 +16,18 @@ export interface Persistent {
 
 // HarvestTaskRepo      : Split sources till 10 energy/tick
 // MidstreamTaskRepo    : midstream demand (supplied by harvester)
-// ProvidorTaskRepo     : Available energy to take out (include midstream)
 // DemandTaskRepo       : Demands for spawning etc
+// ProvidorTaskRepo     : Available energy to take out (include midstream)
+// StorageTaskRepo      : Demands for storage
+// BatteryTaskRepo      : Provide from storage
 
 @registry([
     { token: Persistency.token, useToken: HarvestTaskRepo },
     { token: Persistency.token, useToken: MidstreamTaskRepo },
     { token: Persistency.token, useToken: DemandTaskRepo },
     { token: Persistency.token, useToken: ProviderTaskRepo },
+    { token: Persistency.token, useToken: BatteryTaskRepo },
+    { token: Persistency.token, useToken: StorageTaskRepo },
 ])
 export abstract class Persistency {
     public static Initialize(): void {

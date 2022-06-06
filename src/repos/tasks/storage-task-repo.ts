@@ -5,7 +5,7 @@ import { StorageTask } from "../../tasks/task";
 import { TaskRepo } from "./_base/task-repo";
 
 /**
-* midstream demand
+* Storage demand
 **/
 @scoped(Lifecycle.ContainerScoped)
 export class StorageTaskRepo extends TaskRepo<StorageTask> implements Persistent {

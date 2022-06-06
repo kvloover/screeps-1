@@ -7,7 +7,8 @@ import {
     UpgraderRole,
     RangedAttackerRole,
     RemoteAttackerRole,
-    ClaimerRole
+    ClaimerRole,
+    FillerRole
 } from ".";
 
 import { HarvestMidstreamRole, HarvestSupplierRole } from "./harvester/harvester-service";
@@ -33,6 +34,7 @@ export interface Role {
     { token: Roles.token, useToken: HarvestMidstreamRole },
     { token: Roles.token, useToken: HaulerMidstreamRole },
     { token: Roles.token, useToken: HaulerStorageRole },
+    { token: Roles.token, useToken: FillerRole },
 ])
 export abstract class Roles {
     static readonly token = Symbol('Role');
