@@ -4,17 +4,21 @@ import { CreepUtils } from "creeps/creep-utils";
 import { Pathing } from "creeps/pathing";
 import { CreepState } from "utils/creep-state";
 
-import { Role } from "../role";
+import { Role } from "../role-registry";
 import { RangedAttackerRole } from "./ranged-attacker-role";
 
 @injectable()
 export class RemoteAttackerRole extends RangedAttackerRole implements Role {
 
     name: string = 'remote-attacker'
+    phase = {
+        start: 1,
+        end: 9
+    };
 
     constructor(pathing: Pathing) { super(pathing); }
 
-     public override run(creep: Creep): void {
+    public override run(creep: Creep): void {
         // First entry to work: find target room
         if (!creep.memory.targetRoom) {
             // get setting on room:

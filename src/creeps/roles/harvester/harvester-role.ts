@@ -4,7 +4,7 @@ import { Pathing } from "creeps/pathing";
 import { CreepState } from "utils/creep-state";
 import { isDefined } from "utils/utils";
 
-import { Role } from "../role";
+import { Role } from "../role-registry";
 import { TransferRole } from "../_base/transfer-role";
 
 import { TaskRepo } from "repos/tasks/_base/task-repo";
@@ -17,6 +17,10 @@ import { Task } from "tasks/task";
 export abstract class HarvesterRole extends TransferRole implements Role {
 
     name: string = 'harvester'
+    phase = {
+        start: 1,
+        end: 9
+    };
 
     constructor(log: Logger,
         pathing: Pathing,

@@ -4,13 +4,17 @@ import { CreepUtils } from "creeps/creep-utils";
 import { Pathing } from "creeps/pathing";
 import { CreepState } from "utils/creep-state";
 
-import { Role } from "../role";
+import { Role } from "../role-registry";
 import { ConsumerRole } from "../_base/consumer-role";
 
 @injectable()
 export class UpgraderRole extends ConsumerRole implements Role {
 
     name: string = 'upgrader'
+    phase = {
+        start: 1,
+        end: 9
+    };
 
     constructor(pathing: Pathing) { super(pathing) }
 

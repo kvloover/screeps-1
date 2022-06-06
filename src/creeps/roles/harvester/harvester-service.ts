@@ -2,7 +2,7 @@ import { DependencyContainer, injectable } from "tsyringe";
 import { Logger } from "logger";
 import { Pathing } from "../../pathing";
 
-import { RoleService } from "creeps/roles/role-service";
+// import { RoleService } from "creeps/roles/role-service-registry";
 import { Roles } from "creeps/roles/role-registry";
 
 import { HarvesterRole } from "./harvester-role";
@@ -14,6 +14,12 @@ import { HarvestTaskRepo } from "repos/tasks/harvest-task-repo";
 
 @injectable()
 export class HarvestSupplierRole extends HarvesterRole {
+
+    phase = {
+        start: 1,
+        end: 1
+    };
+
     constructor(log: Logger, pathing: Pathing,
         provider: HarvestTaskRepo, supply: DemandTaskRepo) {
         super(log, pathing, provider, supply)
@@ -27,6 +33,12 @@ export class HarvestSupplierRole extends HarvesterRole {
 
 @injectable()
 export class HarvestMidstreamRole extends HarvesterRole {
+
+    phase = {
+        start: 2,
+        end: 9
+    };
+
     constructor(log: Logger, pathing: Pathing,
         provider: HarvestTaskRepo, supply: MidstreamTaskRepo) {
         super(log, pathing, provider, supply)
@@ -38,10 +50,10 @@ export class HarvestMidstreamRole extends HarvesterRole {
     }
 }
 
-@injectable()
-export class HarvesterService implements RoleService {
-    register(cont: DependencyContainer, phase: number): void {
-        if (phase === 1) { cont.register(Roles.token, { useToken: HarvestSupplierRole }); }
-        else if (phase >= 2) { cont.register(Roles.token, { useToken: HarvestMidstreamRole }); }
-    }
-}
+// @injectable()
+// export class HarvesterService implements RoleService {
+//     register(cont: DependencyContainer, phase: number, token: symbol): void {
+//         if (phase === 1) { cont.register(token, { useToken: HarvestSupplierRole }); }
+//         else if (phase >= 2) { cont.register(token, { useToken: HarvestMidstreamRole }); }
+//     }
+// }

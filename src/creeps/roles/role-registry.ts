@@ -10,14 +10,29 @@ import {
     ClaimerRole
 } from ".";
 
+import { HarvestMidstreamRole, HarvestSupplierRole } from "./harvester/harvester-service";
+import { HaulerMidstreamRole, HaulerStorageRole } from "./hauler/hauler-service";
+
+export interface Role {
+    name: string;
+    phase: {
+        start: number;
+        end: number;
+    }
+    run(creep: Creep): void;
+}
+
 @registry([
     { token: Roles.token, useToken: BuilderRole },
-    // { token: Roles.service, useToken: RemoteHarvesterRole },
     { token: Roles.token, useToken: UpgraderRole },
     { token: Roles.token, useToken: MeleeAttackerRole },
     { token: Roles.token, useToken: RangedAttackerRole },
     { token: Roles.token, useToken: RemoteAttackerRole },
     { token: Roles.token, useToken: ClaimerRole },
+    { token: Roles.token, useToken: HarvestSupplierRole },
+    { token: Roles.token, useToken: HarvestMidstreamRole },
+    { token: Roles.token, useToken: HaulerMidstreamRole },
+    { token: Roles.token, useToken: HaulerStorageRole },
 ])
 export abstract class Roles {
     static readonly token = Symbol('Role');

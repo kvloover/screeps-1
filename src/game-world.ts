@@ -3,6 +3,7 @@ import { container, injectable } from "tsyringe";
 import { Logger } from "logger";
 import { Manager, Managers } from "manager";
 import { Persistency, Persistent } from "repos/persistent";
+// import { RoleService, RoleServices } from "creeps/roles/role-service-registry";
 
 @injectable()
 export class GameWorld {
@@ -31,6 +32,15 @@ export class GameWorld {
     public run(): void {
         // this.log.Important(`Current game tick is ${Game.time}`);
         Persistency.Initialize();
+
+        // TODO avoid having to register all and limit by filtering in CreepsManager
+        // const services = container.resolveAll<RoleService>(RoleServices.token);
+        // RoleServices.phases.forEach(phase => {
+        //     const token = RoleServices.tokenPhase(phase)
+        //     if (!container.isRegistered(token)) {
+        //         services.forEach(s => s.register(container, phase, token))
+        //     }
+        // })
 
         // ? use resolveScope and resolve seperate for rooms ?
         const persistency = container.resolveAll<Persistent>(Persistency.token);

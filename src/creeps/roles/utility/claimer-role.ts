@@ -3,12 +3,16 @@ import { injectable } from "tsyringe";
 import { Pathing } from "creeps/pathing";
 import { CreepUtils } from "creeps/creep-utils";
 
-import { Role } from "creeps/roles/role";
+import { Role } from "../role-registry";
 
 @injectable()
 export class ClaimerRole implements Role {
 
     name: string = 'claimer';
+    phase = {
+        start: 1,
+        end: 9
+    };
 
     constructor(protected pathing: Pathing) { }
 

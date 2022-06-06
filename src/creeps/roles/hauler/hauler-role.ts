@@ -6,7 +6,7 @@ import { Pathing } from "creeps/pathing";
 import { CreepState } from "utils/creep-state";
 import { isDefined } from "utils/utils";
 
-import { Role } from "../role";
+import { Role } from "../role-registry";
 import { TransferRole } from "../_base/transfer-role";
 
 import { TaskRepo } from "repos/tasks/_base/task-repo";
@@ -20,6 +20,10 @@ export abstract class HaulerRole extends TransferRole implements Role {
     // TODO dropped and other resources
 
     name: string = 'hauler'
+    phase = {
+        start: 2,
+        end: 9
+    };
 
     constructor(log: Logger,
         pathing: Pathing,
