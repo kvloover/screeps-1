@@ -16,13 +16,11 @@ export class TransferTaskRepo extends TaskRepo<TransferTask> implements Persiste
     restore(): void {
         if (Memory.persistency?.hasOwnProperty(this.key))
             this.tasks = Memory.persistency.transfer;
-        //console.log(`on restore ${this.key}: ${this.tasks.length}`)
     }
 
     save(): void {
-        //console.log(`on saving ${this.key}: ${this.tasks.length}`)
+        this.mergeEmpty();
         Memory.persistency = Object.assign(Memory.persistency, { transfer: this.tasks ?? [] });
-        //console.log(`in persistency ${this.key}: ${Memory.persistency.transfer.length}`)
     }
 
     clearReference(id: Id<_HasId>): void {

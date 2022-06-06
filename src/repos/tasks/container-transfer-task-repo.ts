@@ -19,6 +19,7 @@ export class ContainerTransferTaskRepo extends TaskRepo<ContainerTransferTask> i
     }
 
     save(): void {
+        this.mergeEmpty();
         Memory.persistency = Object.assign(Memory.persistency, { container_transfer: this.tasks ?? [] });
     }
 

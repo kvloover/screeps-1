@@ -19,6 +19,7 @@ export class HarvestTaskRepo extends TaskRepo<HarvestTask> implements Persistent
     }
 
     save(): void {
+        this.mergeEmpty();
         Memory.persistency = Object.assign(Memory.persistency, { harvest: this.tasks ?? [] });
     }
 

@@ -1,4 +1,5 @@
 import { Logger } from "logger";
+import { isDefined } from "utils/utils";
 import { Task } from "../../../tasks/task";
 
 export abstract class TaskRepo<T extends Task> {
@@ -59,6 +60,28 @@ export abstract class TaskRepo<T extends Task> {
             return true;
         }
         return false;
+    }
+
+    public mergeEmpty() {
+        const nonExecuters = this.tasks.filter(r => !r.executer);
+        const requesters = _.unique(nonExecuters.map(i => i.requester));
+
+        if (isDefined(requesters)) {
+            // merge empty task on requester > harvest tasks are persistent
+            requesters.forEach(req => {
+                const requests = nonExecuters.filter(r => r.requester === req);
+                if (requests.length > 1) {
+                    // remove all, reduce all to one and re-add
+                    this.tasks = _.difference(this.tasks, requests);
+                    const record = requests.reduce((prev: T, curr: T) => {
+                        if (prev.amount) prev.amount += curr.amount ?? 0;
+                        return prev;
+                    })
+                    this.add(record);
+                }
+            })
+        }
+
     }
 
 }
