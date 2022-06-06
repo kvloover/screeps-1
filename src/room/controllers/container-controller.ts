@@ -32,7 +32,7 @@ export class ContainerController implements Controller {
                 const current = this.transferRepo.getForRequester(i.id);
                 const amount = current.reduce((p, c) => p + (c.amount ?? 0), 0);
                 if (amount < free) {
-                    this.transferRepo.add(new MidstreamTask(struct.room.name, 1, free - amount, i.id, undefined, i.pos));
+                    this.transferRepo.add(new MidstreamTask(struct.room.name, 2, free - amount, i.id, undefined, i.pos));
                     this.log.debug(room, `${i.pos}: added container midstream task`);
                 }
             }
@@ -42,7 +42,7 @@ export class ContainerController implements Controller {
                 const current = this.providerRepo.getForRequester(i.id);
                 const amount = current.reduce((p, c) => p + (c.amount ?? 0), 0);
                 if (amount < stored) {
-                    this.providerRepo.add(new ProviderTask(struct.room.name, 1, stored - amount, i.id, undefined, i.pos));
+                    this.providerRepo.add(new ProviderTask(struct.room.name, 2, stored - amount, i.id, undefined, i.pos));
                     this.log.debug(room, `${i.pos}: added container provider task`);
                 }
             }
