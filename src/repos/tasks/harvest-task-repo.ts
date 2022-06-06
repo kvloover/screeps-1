@@ -24,12 +24,12 @@ export class HarvestTaskRepo extends TaskRepo<HarvestTask> implements Persistent
 
     clearReference(id: Id<_HasId>): void {
         // remove if requester
-        const requests = _(this.tasks)
+        const requests = this.tasks
             .filter(r => r.requester === id)
             .map(r => r.id);
-        for (let i in requests) {
-            this.removeById(i);
-        }
+        requests.forEach(id => {
+            this.removeById(id);
+        })
 
         // remove other references
         const requesters: Id<_HasId>[] = []
@@ -58,12 +58,12 @@ export class HarvestTaskRepo extends TaskRepo<HarvestTask> implements Persistent
 
     clearRoomRef(roomName: string): void {
         // remove if room
-        const requests = _(this.tasks)
+        const requests = this.tasks
             .filter(r => r.room === roomName)
             .map(r => r.id);
-        for (let i in requests) {
-            this.removeById(i);
-        }
+        requests.forEach(id => {
+            this.removeById(id);
+        })
     }
 
 }

@@ -28,7 +28,12 @@ export abstract class TaskRepo<T extends Task> {
     }
 
     public removeById(id: string): void {
-        _.remove(this.tasks, i => i.id === id);
+        console.log(`removing ${id} on ${this.key}`)
+        const task = this.tasks.find(i => i.id === id);
+        if (task) {
+            console.log(`remove: task found ${id}`);
+            _.remove(this.tasks, task);
+        }
     }
 
     public remove(task: T): void {
@@ -39,7 +44,7 @@ export abstract class TaskRepo<T extends Task> {
         return _.filter(this.tasks, i => i.requester === id);
     }
 
-    public closestTask(pos: RoomPosition, room?:string): Task {
+    public closestTask(pos: RoomPosition, room?: string): Task {
         // i.pos = serialized = functions stripped, use values directly
         return _(this.list(room)).filter(e => !e.executer)
             .sortByAll(i => i.prio, i => { if (i.pos) { return pos.getRangeTo(i.pos.x, i.pos.y); } return undefined; })

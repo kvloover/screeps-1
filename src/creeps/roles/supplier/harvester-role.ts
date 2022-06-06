@@ -65,7 +65,7 @@ export class HarvesterRole implements Role {
         // targetId stays on source being harvested for creep
 
         const key = 'harvest';
-        if (!creep.memory.tasks.hasOwnProperty(key)) { this.unlinkTask(creep, key); }
+        // if (!creep.memory.tasks.hasOwnProperty(key)) { this.unlinkTask(creep, key); }
 
         if (!creep.memory.tasks.hasOwnProperty(key) || !creep.memory.tasks[key]) {
             const task = this.harvests.closestTask(creep.pos, creep.room.name);
@@ -108,7 +108,7 @@ export class HarvesterRole implements Role {
     protected deposit(creep: Creep) {
 
         const key = 'supply';
-        if (!creep.memory.tasks.hasOwnProperty(key)) { this.unlinkTask(creep, key); }
+        // if (!creep.memory.tasks.hasOwnProperty(key)) { this.unlinkTask(creep, key); }
 
         if (!creep.room.memory.stage || creep.room.memory.stage < STAGE_CONTAINER_MINING)
             this.supplyToRepo(creep, this.demands, key);
@@ -118,16 +118,19 @@ export class HarvesterRole implements Role {
     }
 
     private registerTask(creep: Creep, task: Task, key: string) {
+        this.log.debug(creep.room, `registering task on ${creep.name}: ${key} - ${task.id}`);
         creep.memory.tasks[key] = task.id;
         task.executer = creep.id;
     }
 
     private finishTask(creep: Creep, task: Task, repo: TaskRepo<Task>, key: string) {
+        this.log.debug(creep.room, `finished task on ${creep.name}: ${key} - ${task.id}`);
         this.unlinkTask(creep, key);
         repo.remove(task);
     }
 
     private unlinkTask(creep: Creep, key: string) {
+        this.log.debug(creep.room, `unlinking task on ${creep.name}: ${key}`);
         creep.memory.tasks[key] = undefined;
     }
 

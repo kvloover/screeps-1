@@ -13,7 +13,7 @@ export class SourceController implements Controller {
 
     public monitor(room: Room): void {
 
-        if (!room.memory.sources) {
+        if (!room.memory.sources || room.memory.sources.length == 0) {
             this.initializeRoom(room);
         }
 
@@ -22,7 +22,7 @@ export class SourceController implements Controller {
     // Set flags on sources and store names in room memory
     private initializeRoom(room: Room): void {
         const srces =
-        room.find(FIND_SOURCES)
+            room.find(FIND_SOURCES)
                 .map((src, ind) => { return { item: src, name: `${room.name}_source${ind}` } });
 
         // Add task for each source to be mined | TODO configurable ammount of harvesters

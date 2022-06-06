@@ -19,6 +19,7 @@ export class CreepsManager implements Manager {
                 && crp.memory.role == role.name)
                 .forEach(crp => {
                     try {
+                        this.log.debug(room, `running ${role.name} role for ${crp.name}`);
                         role.run(crp)
                     } catch (error) {
                         this.log.error(error, `error for creep ${crp.name}`);

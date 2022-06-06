@@ -27,12 +27,12 @@ export class TransferTaskRepo extends TaskRepo<TransferTask> implements Persiste
 
     clearReference(id: Id<_HasId>): void {
         // remove if requester
-        const requests = _(this.tasks)
+        const requests = this.tasks
             .filter(r => r.requester === id)
             .map(r => r.id);
-        for (let i in requests) {
-            this.removeById(i);
-        }
+        requests.forEach(id => {
+            this.removeById(id);
+        })
 
         // remove other references
         this.tasks.forEach(t => {
@@ -42,13 +42,12 @@ export class TransferTaskRepo extends TaskRepo<TransferTask> implements Persiste
 
     clearRoomRef(roomName: string): void {
         // remove if room
-
-        const requests = this.tasks.filter(r => r.room === roomName);
-        if (requests.length > 0) {
-            //console.log(`before clearing ${this.key}: ${this.tasks.length}`)
-            this.tasks = _.difference(this.tasks, requests);
-            //console.log(`after clearing ${this.key}: ${this.tasks.length}`)
-        }
+        const requests = this.tasks
+            .filter(r => r.room === roomName)
+            .map(r => r.id);
+        requests.forEach(id => {
+            this.removeById(id);
+        })
     }
 
 }

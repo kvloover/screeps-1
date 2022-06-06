@@ -1,6 +1,7 @@
 import { Persistency, Persistent } from "repos/persistent";
 import { container } from "tsyringe";
 import { CreepState } from "./creep-state";
+import { isDefined } from "./utils";
 
 export class ExConsole {
     static init() {
@@ -43,17 +44,16 @@ export class ExConsole {
         return `Room not known: ${roomName}`
     }
 
+    // TODO rework
     static reset(roomName: string): string {
         if (Memory.rooms.hasOwnProperty(roomName)) {
             const room = Memory.rooms[roomName];
 
             // Reset memory triggers
+            // TODO creep spawn conditions
             room.remote = undefined;
             room.attack = undefined;
 
-            // TODO creep spawn conditions
-
-            // TODO rework
             // TODO rework tasks crossing rooms
             const pers = container.resolveAll<Persistent>(Persistency.token);
             pers.forEach(p => {
@@ -69,6 +69,7 @@ export class ExConsole {
                 .forEach(m => {
                     m.tasks = {};
                     m.state = CreepState.idle;
+                    m.targetId = undefined;
                 });
 
             return `Reset room ${roomName}.`;
