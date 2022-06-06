@@ -1,13 +1,16 @@
 import { Logger } from "logger";
 import { Lifecycle, scoped } from "tsyringe";
 import { Persistent } from "../persistent";
-import { TransferTask } from "../../tasks/task";
+import { BatteryTask } from "../../tasks/task";
 import { TaskRepo } from "./base/task-repo";
 
+/**
+* midstream demand
+**/
 @scoped(Lifecycle.ContainerScoped)
-export class TransferTaskRepo extends TaskRepo<TransferTask> implements Persistent {
+export class BatteryTaskRepo extends TaskRepo<BatteryTask> implements Persistent {
 
-    constructor(log: Logger) { super('transfer', log); }
+    constructor(log: Logger) { super('battery', log); }
 
     // Repository
     // Cf. base class TaskRepo
@@ -15,12 +18,12 @@ export class TransferTaskRepo extends TaskRepo<TransferTask> implements Persiste
     // Persistency
     restore(): void {
         if (Memory.persistency?.hasOwnProperty(this.key))
-            this.tasks = Memory.persistency.transfer;
+            this.tasks = Memory.persistency.battery;
     }
 
     save(): void {
         this.mergeEmpty();
-        Memory.persistency = Object.assign(Memory.persistency, { transfer: this.tasks ?? [] });
+        Memory.persistency = Object.assign(Memory.persistency, { battery: this.tasks ?? [] });
     }
 
     clearReference(id: Id<_HasId>): void {
@@ -52,7 +55,7 @@ export class TransferTaskRepo extends TaskRepo<TransferTask> implements Persiste
 
 declare global {
     interface Persistency {
-        transfer: TransferTask[];
+        battery: BatteryTask[];
     }
 }
 

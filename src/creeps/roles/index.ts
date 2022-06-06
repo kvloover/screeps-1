@@ -4,7 +4,7 @@ export * from './supplier/harvester-role';
 export * from './supplier/hauler-role';
 export * from './attacker/melee-attacker-role';
 export * from './attacker/ranged-attacker-role';
-export * from './supplier/remote-harvester-role';
+// export * from './supplier/remote-harvester-role';
 export * from './attacker/remote-attacker-role';
 export * from './supplier/hauler-role';
 export * from './utility/claimer-role';

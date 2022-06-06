@@ -1,19 +1,19 @@
-import { inject, injectable, injectAll } from "tsyringe";
+import { container, injectable, injectAll } from "tsyringe";
 
 import { Manager } from "manager";
-import { Role, Roles } from "./role";
-import { object } from "lodash";
+import { Role, Roles, RoleService } from "./role";
 import { Logger } from "logger";
+import { memoryUsage } from "process";
 
 @injectable()
 export class CreepsManager implements Manager {
 
     constructor(private log: Logger,
-        @injectAll(Roles.token) private roles: Role[]
+        @injectAll(Roles.service) private services: RoleService[]
     ) { }
 
-    private performRole(room: Room): void {
-        this.roles.forEach(role => {
+    private performRole(room: Room, roles: Role[]): void {
+        roles.forEach(role => {
             _.filter(Game.creeps, crp =>
                 crp.room.name === room.name
                 && crp.memory.role == role.name)
@@ -29,7 +29,14 @@ export class CreepsManager implements Manager {
     }
 
     public run(room: Room): void {
-        this.performRole(room);
+        let phase = 1;
+        if (room.memory.stage && room.memory.stage >= 3) phase = 2;
+
+        const cont = container; //.createChildContainer(); //! container scope has seperate for each child
+        this.services.forEach(s => s.register(cont, phase))
+
+        const roles = cont.resolveAll<Role>(Roles.token);
+        this.performRole(room, roles);
     }
 
     // have idle creeps switch task/roles

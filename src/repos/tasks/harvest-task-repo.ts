@@ -4,6 +4,9 @@ import { Persistent } from "../persistent";
 import { HarvestTask } from "../../tasks/task";
 import { TaskRepo } from "./base/task-repo";
 
+/**
+* Sources to harvest
+**/
 @scoped(Lifecycle.ContainerScoped)
 export class HarvestTaskRepo extends TaskRepo<HarvestTask> implements Persistent {
 

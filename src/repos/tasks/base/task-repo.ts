@@ -18,6 +18,7 @@ export abstract class TaskRepo<T extends Task> {
     }
 
     public list(room?: string): T[] {
+        // this.log.critical(`${this.key}: has ${this.tasks.length}`);
         if (!room)
             return this.tasks;
         else
@@ -29,10 +30,10 @@ export abstract class TaskRepo<T extends Task> {
     }
 
     public removeById(id: string): void {
-        console.log(`removing ${id} on ${this.key}`)
+        // this.log.critical(`removing ${id} on ${this.key}`)
         const task = this.tasks.find(i => i.id === id);
         if (task) {
-            console.log(`remove: task found ${id}`);
+            // this.log.critical(`remove: task found ${id}`);
             _.remove(this.tasks, task);
         }
     }
@@ -47,7 +48,9 @@ export abstract class TaskRepo<T extends Task> {
 
     public closestTask(pos: RoomPosition, room?: string): Task {
         // i.pos = serialized = functions stripped, use values directly
-        return _(this.list(room)).filter(e => !e.executer)
+        const roomTasks = this.list(room);
+        // if (room) { this.log.debug(Game.rooms[room], `${this.key}: room ${room} found ${roomTasks.length}`); }
+        return _(roomTasks).filter(e => !e.executer)
             .sortByAll(i => i.prio, i => { if (i.pos) { return pos.getRangeTo(i.pos.x, i.pos.y); } return undefined; })
             .first();
     }

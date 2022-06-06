@@ -1,14 +1,14 @@
 import { injectable } from "tsyringe";
 
-import { TransferTaskRepo } from "repos/tasks/transfer-task-repo";
+import { DemandTaskRepo } from "repos/tasks/demand-task-repo";
 import { Controller } from "./controller";
-import { TransferTask } from "tasks/task";
+import { DemandTask } from "tasks/task";
 import { Logger } from "logger";
 
 @injectable()
 export class SpawnController implements Controller {
 
-    constructor(private log: Logger, private demands: TransferTaskRepo) {
+    constructor(private log: Logger, private demands: DemandTaskRepo) {
     }
 
     /// Monitor the spawn supplies: spawn + extensions for required demand
@@ -28,7 +28,7 @@ export class SpawnController implements Controller {
             if (struct) {
                 const task = demands.find(d => d.requester === s.id);
                 if (!task) {
-                    this.demands.add(new TransferTask(struct.room.name, 1, struct.store.getFreeCapacity(RESOURCE_ENERGY), struct.id, undefined, struct.pos ));
+                    this.demands.add(new DemandTask(struct.room.name, 1, struct.store.getFreeCapacity(RESOURCE_ENERGY), struct.id, undefined, struct.pos ));
                     this.log.debug(struct.room, `${struct.pos}: added supply task`);
                 }
             }

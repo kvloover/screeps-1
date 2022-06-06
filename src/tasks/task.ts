@@ -15,9 +15,12 @@ export class Task {
 export class AttackTask extends Task {}
 export class BuildTask extends Task {}
 export class ClaimTask extends Task {}
-export class HarvestTask extends Task {}
 // RangedAttack, RangedHeal, RangedMassAttack, Pull,
-export class RepairTasl extends Task {}
-export class TransferTask extends Task {}
-export class ContainerTransferTask extends Task {}
-export class WithdrawTask extends Task {}
+export class RepairTask extends Task {}
+
+export class HarvestTask extends Task {}
+export class DemandTask extends Task {}
+export class MidstreamTask extends Task {}
+export class ProviderTask extends Task {}
+export class StorageTask extends Task {}
+export class BatteryTask extends Task {}

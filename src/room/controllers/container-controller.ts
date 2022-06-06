@@ -1,14 +1,14 @@
 import { injectable } from "tsyringe";
 
-import { ContainerTransferTask } from "tasks/task";
+import { MidstreamTask } from "tasks/task";
 import { Controller } from "./controller";
 import { Logger } from "logger";
-import { ContainerTransferTaskRepo } from "repos/tasks/container-transfer-task-repo";
+import { MidstreamTaskRepo } from "repos/tasks/midstream-task-repo";
 
 @injectable()
 export class ContainerController implements Controller {
 
-    constructor(private log: Logger, private transferRepo: ContainerTransferTaskRepo) {
+    constructor(private log: Logger, private transferRepo: MidstreamTaskRepo) {
     }
 
     public monitor(room: Room): void {
@@ -28,7 +28,7 @@ export class ContainerController implements Controller {
                 const current = this.transferRepo.getForRequester(i.id);
                 const amount = current.reduce((p, c) => p + (c.amount ?? 0), 0);
                 if (amount < free) {
-                    this.transferRepo.add(new ContainerTransferTask(struct.room.name, 1, free - amount, i.id, undefined, i.pos));
+                    this.transferRepo.add(new MidstreamTask(struct.room.name, 1, free - amount, i.id, undefined, i.pos));
                     this.log.debug(room, `${i.pos}: added container task`);
                 }
             }
