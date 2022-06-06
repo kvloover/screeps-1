@@ -29,7 +29,7 @@
     },
     "stage-2": {
         "order": 2,
-        "energy": 240,
+        "energy": 300,
         "controller": 2,
         "creeps": 1,
         "template": {
@@ -52,22 +52,36 @@
             {
                 "role": "harvester",
                 "priority": 2,
-                "count": 1
+                "count": 1,
+                "template": {
+                    "work": 2,
+                    "carry": 1,
+                    "move": 1
+                }
             },
             {
                 "role": "hauler",
                 "priority": 3,
-                "count": 1
+                "count": 1,
+                "template": {
+                    "carry": 3,
+                    "move": 3
+                }
             },
             {
                 "role": "harvester",
                 "priority": 4,
-                "count": 2
+                "count": 2,
+                "template": {
+                    "work": 2,
+                    "carry": 1,
+                    "move": 1
+                }
             },
             {
                 "role": "upgrader",
                 "priority": 5,
-                "count": 3
+                "count": 2
             },
             {
                 "role": "builder",
@@ -101,7 +115,12 @@
             {
                 "role": "harvester",
                 "priority": 2,
-                "count": 1
+                "count": 1,
+                "template": {
+                    "work": 4,
+                    "carry": 1,
+                    "move": 2
+                }
             },
             {
                 "role": "upgrader",
@@ -111,7 +130,12 @@
             {
                 "role": "harvester",
                 "priority": 4,
-                "count": 2
+                "count": 2,
+                "template": {
+                    "work": 4,
+                    "carry": 1,
+                    "move": 2
+                }
             },
             {
                 "role": "builder",
