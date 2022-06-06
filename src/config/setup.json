@@ -232,7 +232,7 @@
         "order": 5,
         "energy": 1200,
         "controller": 4,
-        "creeps": 8,
+        "creeps": 5,
         "template": {
             "work": 6,
             "move": 6,
