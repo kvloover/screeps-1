@@ -31,6 +31,7 @@ export class ExConsole {
     static remote(roomName: string, value: string | undefined): string {
         if (Memory.rooms.hasOwnProperty(roomName)) {
             Memory.rooms[roomName].remote = value;
+            // Memory.rooms[roomName].remote-harvesting
             return `Remote set for ${roomName}.`;
         }
         return `Room not known: ${roomName}`
