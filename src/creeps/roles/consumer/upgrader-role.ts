@@ -5,7 +5,7 @@ import { Pathing } from "creeps/pathing";
 import { CreepState } from "utils/creep-state";
 
 import { Role } from "../../role";
-import { ConsumerRole } from "./consumer-role";
+import { ConsumerRole } from "../_base/consumer-role";
 
 @injectable()
 export class UpgraderRole extends ConsumerRole implements Role {

@@ -2,7 +2,7 @@ import { Logger } from "logger";
 import { Lifecycle, scoped } from "tsyringe";
 import { Persistent } from "../persistent";
 import { HarvestTask } from "../../tasks/task";
-import { TaskRepo } from "./base/task-repo";
+import { TaskRepo } from "./_base/task-repo";
 
 /**
 * Sources to harvest

@@ -5,7 +5,7 @@ import { Pathing } from "creeps/pathing";
 import { CreepState } from "utils/creep-state";
 
 import { Role } from "../../role";
-import { AttackerRole } from "./attacker-role";
+import { AttackerRole } from "../_base/attacker-role";
 
 @injectable()
 export class RangedAttackerRole extends AttackerRole implements Role {

@@ -2,7 +2,7 @@ import { Logger } from "logger";
 import { Lifecycle, scoped } from "tsyringe";
 import { Persistent } from "../persistent";
 import { MidstreamTask } from "../../tasks/task";
-import { TaskRepo } from "./base/task-repo";
+import { TaskRepo } from "./_base/task-repo";
 
 /**
 * midstream demand
