@@ -6,24 +6,25 @@ import { Pathing } from "creeps/pathing";
 import { CreepState } from "utils/creep-state";
 import { isDefined } from "utils/utils";
 
-import { Role } from "../../role";
+import { Role } from "../role";
 import { TransferRole } from "../_base/transfer-role";
 
-import { DemandTaskRepo } from "repos/tasks/demand-task-repo";
-import { ProviderTaskRepo } from "repos/tasks/providor-task-repo";
+import { TaskRepo } from "repos/tasks/_base/task-repo";
+import { Task } from "tasks/task";
 
-@injectable()
 /**
  * Get Energy from containers and store in buildings
  */
-export class HaulerRole extends TransferRole implements Role {
+export abstract class HaulerRole extends TransferRole implements Role {
+
+    // TODO dropped and other resources
 
     name: string = 'hauler'
 
     constructor(log: Logger,
         pathing: Pathing,
-        private providers: ProviderTaskRepo,
-        private demands: DemandTaskRepo
+        private providers: TaskRepo<Task>,
+        private demands: TaskRepo<Task>
     ) { super(log, pathing); }
 
     protected consume(creep: Creep): void {
@@ -33,49 +34,6 @@ export class HaulerRole extends TransferRole implements Role {
     protected supply(creep: Creep) {
         this.supplyToRepo(creep, this.demands, 'supply');
     }
-
-    // protected work(creep: Creep): void {
-
-    //     if (!CreepUtils.tryForFindInRoom(
-    //         creep, this.supplyRoom(creep), FIND_TOMBSTONES,
-    //         loc => creep.withdraw(loc, RESOURCE_ENERGY), { filter: (loc) => loc.store[RESOURCE_ENERGY] > 0 })
-    //     ) {
-    //         const loc = this.pathing.findClosest(creep, FIND_TOMBSTONES, { filter: (loc) => loc.store[RESOURCE_ENERGY] > 0 });
-    //         if (loc != undefined) {
-    //             this.pathing.moveTo(creep, loc.pos);
-
-    //         } else {
-    //             if (!CreepUtils.tryForFindInRoom(
-    //                 creep, this.supplyRoom(creep), FIND_DROPPED_RESOURCES,
-    //                 loc => creep.pickup(loc))
-    //             ) {
-    //                 const loc = this.pathing.findClosest(creep, FIND_DROPPED_RESOURCES);
-    //                 if (loc != undefined) {
-    //                     this.pathing.moveTo(creep, loc.pos);
-    //                 } else {
-
-    //                     const prio: FilterOptions<FIND_STRUCTURES> = {
-    //                         filter: (structure) =>
-    //                             structure.structureType == STRUCTURE_CONTAINER
-    //                             && structure.store[RESOURCE_ENERGY] > 0
-    //                     };
-
-    //                     if (!CreepUtils.tryForFindInRoom(
-    //                         creep, this.supplyRoom(creep), FIND_STRUCTURES,
-    //                         loc => creep.withdraw(loc, RESOURCE_ENERGY), prio
-    //                     )) {
-    //                         const loc = this.pathing.findClosest(creep, FIND_STRUCTURES, prio);
-    //                         if (loc != undefined) {
-    //                             this.pathing.moveTo(creep, loc.pos);
-    //                         } else {
-    //                             creep.memory.state = CreepState.idle;
-    //                         }
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //     }
-    // }
 
 }
 

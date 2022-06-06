@@ -3,7 +3,7 @@ import { injectable } from "tsyringe";
 import { Pathing } from "creeps/pathing";
 import { CreepUtils } from "creeps/creep-utils";
 
-import { Role } from "creeps/role";
+import { Role } from "creeps/roles/role";
 
 @injectable()
 export class ClaimerRole implements Role {

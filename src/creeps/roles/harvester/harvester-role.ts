@@ -4,7 +4,7 @@ import { Pathing } from "creeps/pathing";
 import { CreepState } from "utils/creep-state";
 import { isDefined } from "utils/utils";
 
-import { Role } from "../../role";
+import { Role } from "../role";
 import { TransferRole } from "../_base/transfer-role";
 
 import { TaskRepo } from "repos/tasks/_base/task-repo";

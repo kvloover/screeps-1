@@ -1,4 +1,4 @@
-import { Roles } from "creeps/role";
+import { Roles } from "creeps/roles";
 import {
     BuilderRole,
     ClaimerRole,

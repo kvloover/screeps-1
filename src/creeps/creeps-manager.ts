@@ -1,15 +1,18 @@
 import { container, injectable, injectAll } from "tsyringe";
 
-import { Manager } from "manager";
-import { Role, Roles, RoleService } from "./role";
 import { Logger } from "logger";
-import { memoryUsage } from "process";
+import { Manager } from "manager";
+
+import { Role } from "./roles/role";
+import { RoleService } from "./roles/role-service";
+import { Roles } from "./roles/role-registry";
+import { RoleServices } from "./roles/role-service-registry";
 
 @injectable()
 export class CreepsManager implements Manager {
 
     constructor(private log: Logger,
-        @injectAll(Roles.service) private services: RoleService[]
+        @injectAll(RoleServices.token) private services: RoleService[]
     ) { }
 
     private performRole(room: Room, roles: Role[]): void {

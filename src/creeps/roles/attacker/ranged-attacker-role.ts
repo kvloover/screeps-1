@@ -4,7 +4,7 @@ import { CreepUtils } from "creeps/creep-utils";
 import { Pathing } from "creeps/pathing";
 import { CreepState } from "utils/creep-state";
 
-import { Role } from "../../role";
+import { Role } from "../role";
 import { AttackerRole } from "../_base/attacker-role";
 
 @injectable()
