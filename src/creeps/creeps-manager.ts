@@ -37,8 +37,9 @@ export class CreepsManager implements Manager {
 
         const struct = room.find(FIND_STRUCTURES, { filter: (struct) => struct.structureType === STRUCTURE_CONTAINER })
         const storage = room.find(FIND_MY_STRUCTURES, { filter: (struct) => struct.structureType === STRUCTURE_STORAGE })
+        const links = room.find(FIND_MY_STRUCTURES, { filter: (struct) => struct.structureType === STRUCTURE_LINK })
         if (room.memory.stage && room.memory.stage >= 3 && struct.length > 0) phase = 2;
-        if (room.memory.stage && room.memory.stage >= 5 && storage.length > 0) phase = 3;
+        if (room.memory.stage && room.memory.stage >= 5 && storage.length > 0 && links.length > 0) phase = 3;
 
         const roles = container.resolveAll<Role>(Roles.token);
         this.performRole(room, roles, phase);
