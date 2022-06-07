@@ -5,11 +5,14 @@ export const isDefined =
   <T>(value: T | undefined | null): value is T => value !== undefined && value !== null;
 
 export const isStoreStructure =
-  (item: any): item is AnyStoreStructure => isDefined((item as AnyStoreStructure).store);
+  (item: any): item is AnyStoreStructure => isDefined((item as AnyStoreStructure)?.store);
 
 export const isTombStone =
-  (item: any): item is Tombstone => isDefined((item as Tombstone).store)
+  (item: any): item is Tombstone => isDefined((item as Tombstone)?.store)
 
 export const isRuin =
-  (item: any): item is Ruin => isDefined((item as Ruin).store)
+  (item: any): item is Ruin => isDefined((item as Ruin)?.store)
+
+export const isResource =
+  (item: any): item is Resource<ResourceConstant> => isDefined((item as Resource<ResourceConstant>)?.amount)
 
