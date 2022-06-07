@@ -1,87 +1,43 @@
-// import { injectable } from "tsyringe";
+import { injectable } from "tsyringe";
 
-// import { CreepUtils } from "creeps/creep-utils";
-// import { Pathing } from "creeps/pathing";
-// import { CreepState } from "utils/creep-state";
+import { Logger } from "logger";
+import { CreepUtils } from "creeps/creep-utils";
+import { Pathing } from "creeps/pathing";
+import { CreepState } from "utils/creep-state";
 
-// import { Role } from "../../role";
-// import { SupplierRole } from "./supplier-role";
+import { HarvesterRole } from "./harvester-role";
+import { Role } from "../role-registry";
 
-// @injectable()
-// export class RemoteHarvesterRole extends SupplierRole<FIND_STRUCTURES> implements Role {
+import { Task } from "repos/task";
+import { TaskRepo } from "repos/_base/task-repo";
 
-//     name: string = 'remote-harvester'
+@injectable()
+export class RemoteHarvesterRole extends HarvesterRole implements Role {
 
-//     constructor(pathing: Pathing) { super(pathing); }
+    name: string = 'remote-harvester'
 
-//     protected workState(creep: Creep): CreepState {
-//         return CreepState.consume;
-//     }
+    constructor(log: Logger,
+        pathing: Pathing,
+        protected harvests: TaskRepo<Task>,
+        protected demands: TaskRepo<Task>,
+    ) { super(log, pathing, harvests, demands) }
 
-//     // Run back to spawn room
-//     protected supplyRoom(creep: Creep): Room { return Game.rooms[creep.memory.room]; }
-//     protected findConstant(): FIND_STRUCTURES { return FIND_STRUCTURES };
-//     protected filter(): FilterOptions<FIND_STRUCTURES> {
-//         return {
-//             filter: (structure) =>
-//                 structure.structureType == STRUCTURE_CONTAINER
-//                 && structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0
-//             // todo limit range
-//         }
-//     }
+    protected consume(creep: Creep): void {
+        // First entry to work: find target room
+        if (!creep.memory.targetRoom) {
+            // get setting on room:
+            if (Memory.rooms[creep.memory.room]) {
+                const target = Memory.rooms[creep.memory.room].remote;
+                creep.memory.targetRoom = target;
+            }
+        }
 
-//     protected work(creep: Creep): void {
-//         // First entry to work: find target room
-//         if (!creep.memory.targetRoom) {
-//             // get setting on room:
-//             if (Memory.rooms[creep.memory.room]) {
-//                 const target = Memory.rooms[creep.memory.room].remote;
-//                 creep.memory.targetRoom = target;
-//             }
-//         }
+        super.harvest(creep, creep.memory.targetRoom);
+    }
 
-//         if (creep.memory.targetRoom && creep.room.name !== creep.memory.targetRoom) {
-//             // move to room
-//             this.pathing.moveTo(creep, new RoomPosition(25, 25, creep.memory.targetRoom));
-//         }
+    protected supply(creep: Creep) {
+        const key = 'supply';
+        this.supplyToRepo(creep, this.demands, key, creep.memory.room);
+    }
 
-//         // Once in room: find targetId
-//         if (creep.room.name === creep.memory.targetRoom && !creep.memory.targetId) {
-//             // find sources and set as target
-//             const loc = this.pathing.findClosest(creep, FIND_SOURCES);
-//             if (loc != undefined) {
-//                 creep.memory.targetId = loc.id;
-//             } else {
-//                 creep.memory.state = CreepState.supply;
-//             }
-//         }
-
-//         // if we have a targetId: move & harvest
-//         if (creep.memory.targetId) {
-//             const src = Game.getObjectById(creep.memory.targetId as Id<Source>);
-//             if (src) {
-//                 if (!CreepUtils.tryFor([src], loc => creep.harvest(loc))) {
-//                     if (src.energy > 0)
-//                         this.pathing.moveTo(creep, src.pos);
-//                     else {
-//                         this.clearMemory(creep);
-//                         creep.memory.state = CreepState.supply;
-//                     }
-//                     // TODO min capacity so we don't move for nothing ?
-//                 }
-//             }
-//         } else if (creep.memory.targetRoom) {
-//             // couldn't find a source in the room
-//             this.clearMemory(creep);
-//             creep.memory.state = CreepState.supply;
-//         }
-//     }
-
-//     private clearMemory(creep: Creep) {
-//         // clear memory so we can redetermine target when starting to work
-//         creep.memory.targetRoom = undefined;
-//         creep.memory.targetId = undefined;
-//     }
-
-
-// }
+}

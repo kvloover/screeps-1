@@ -67,13 +67,17 @@ export abstract class TransferRole {
         creep.memory.tasks[key] = undefined;
     }
 
-    protected consumeFromRepo(creep: Creep, repo: TaskRepo<Task>, key: string) {
+    protected consumeFromRepo(creep: Creep, repo: TaskRepo<Task>, key: string, room?: string) {
         if (!creep.memory.tasks.hasOwnProperty(key) || !creep.memory.tasks[key]) {
-            const task = repo.closestTask(creep.pos, creep.room.name);
-            if (task) {
-                this.registerTask(creep, task, key);
-                if (repo.trySplitTask(task, creep.store.getFreeCapacity(RESOURCE_ENERGY)))
-                    this.log.debug(creep.room, `${creep.name}: ${key} task split for remaining amount`);
+            if (room && !Game.rooms.hasOwnProperty(room)) {
+                this.scoutRoom(creep, room);
+            } else {
+                const task = repo.closestTask(creep.pos, room ?? creep.room.name);
+                if (task) {
+                    this.registerTask(creep, task, key);
+                    if (repo.trySplitTask(task, creep.store.getFreeCapacity(RESOURCE_ENERGY)))
+                        this.log.debug(creep.room, `${creep.name}: ${key} task split for remaining amount`);
+                }
             }
         }
 
@@ -120,13 +124,17 @@ export abstract class TransferRole {
         }
     }
 
-    protected supplyToRepo(creep: Creep, repo: TaskRepo<Task>, key: string) {
+    protected supplyToRepo(creep: Creep, repo: TaskRepo<Task>, key: string, room?: string) {
         if (!creep.memory.tasks[key]) {
-            const task = repo.closestTask(creep.pos, creep.room.name);
-            if (task) {
-                this.registerTask(creep, task, key);
-                if (repo.trySplitTask(task, creep.store.getUsedCapacity(RESOURCE_ENERGY)))
-                    this.log.debug(creep.room, `${creep.name}: ${key} task added to demands for remaining demand`);
+            if (room && !Game.rooms.hasOwnProperty(room)) {
+                this.scoutRoom(creep, room);
+            } else {
+                const task = repo.closestTask(creep.pos, room ?? creep.room.name);
+                if (task) {
+                    this.registerTask(creep, task, key);
+                    if (repo.trySplitTask(task, creep.store.getUsedCapacity(RESOURCE_ENERGY)))
+                        this.log.debug(creep.room, `${creep.name}: ${key} task added to demands for remaining demand`);
+                }
             }
         }
 
@@ -166,6 +174,13 @@ export abstract class TransferRole {
 
         // invalid location
         return [false, false];
+    }
+
+    private scoutRoom(creep: Creep, room: string) {
+        if (creep.room.name !== room) {
+            // move to room
+            this.pathing.moveTo(creep, new RoomPosition(25, 25, room));
+        }
     }
 
 }

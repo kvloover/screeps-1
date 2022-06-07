@@ -3,7 +3,7 @@ import { registry } from "tsyringe";
 import {
     MeleeAttackerRole,
     BuilderRole,
-    // RemoteHarvesterRole,
+    RemoteHarvesterRole,
     UpgraderRole,
     RangedAttackerRole,
     RemoteAttackerRole,
@@ -32,6 +32,7 @@ export interface Role {
     { token: Roles.token, useToken: ClaimerRole },
     { token: Roles.token, useToken: HarvestSupplierRole },
     { token: Roles.token, useToken: HarvestMidstreamRole },
+    { token: Roles.token, useToken: RemoteHarvesterRole },
     { token: Roles.token, useToken: HaulerStorageRole },
     { token: Roles.token, useToken: FillerSupplierRole },
     { token: Roles.token, useToken: FillerStorageRole },

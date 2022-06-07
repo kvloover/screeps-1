@@ -4,7 +4,6 @@ import { Pathing } from "../../pathing";
 
 // import { RoleService } from "creeps/roles/role-service-registry";
 import { Roles } from "creeps/roles/role-registry";
-
 import { HarvesterRole } from "./harvester-role";
 
 import { DemandTaskRepo } from "repos/demand-task-repo";

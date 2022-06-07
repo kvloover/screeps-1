@@ -29,6 +29,14 @@ export abstract class HarvesterRole extends TransferRole implements Role {
     ) { super(log, pathing) }
 
     protected consume(creep: Creep): void {
+        this.harvest(creep);
+    }
+
+    protected supply(creep: Creep) {
+        this.supplyToRepo(creep, this.demands, 'supply');
+    }
+
+    protected harvest(creep: Creep, room?: string) {
         // target lock on task if task not set
         // targetId stays on source being harvested for creep
 
@@ -77,10 +85,6 @@ export abstract class HarvesterRole extends TransferRole implements Role {
         }
     }
 
-    protected supply(creep: Creep) {
-        const key = 'supply';
-        this.supplyToRepo(creep, this.demands, key);
-    }
 
 }
 
