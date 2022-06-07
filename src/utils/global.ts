@@ -20,6 +20,8 @@ declare global {
         attack: string | undefined
 
         debug: boolean;
+        upgrading: boolean;
+        building: boolean;
         remote_mining: boolean;
         remote_attack: boolean;
         claim: boolean;

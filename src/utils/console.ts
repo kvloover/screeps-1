@@ -12,6 +12,8 @@ export class ExConsole {
         global.remote = this.remote;
         global.attack = this.attack;
 
+        global.upgrading = (m, v) => this.toggle(m, 'upgrading', v);
+        global.building = (m, v) => this.toggle(m, 'building', v);
         global.remote_attack = (m, v) => this.toggle(m, 'remote_attack', v);
         global.remote_mining = (m, v) => this.toggle(m, 'remote_mining', v);
         global.claim = (m, v) => this.toggle(m, 'claim', v);
@@ -103,6 +105,8 @@ declare global {
             attack: (room: string, value: string | undefined) => string;
 
             // Toggles
+            building: (roomName: string, value: boolean | undefined) => string;
+            upgrading: (roomName: string, value: boolean | undefined) => string;
             remote_attack: (roomName: string, value: boolean | undefined) => string;
             remote_mining: (roomName: string, value: boolean | undefined) => string;
             claim: (roomName: string, value: boolean | undefined) => string;
