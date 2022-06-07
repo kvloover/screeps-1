@@ -10,7 +10,7 @@ export class TowerManager implements Manager {
 
     private defend(tower: StructureTower) {
         const closestHostile = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
-        if (closestHostile) {
+        if (closestHostile && tower.pos.getRangeTo(closestHostile.pos) < 20) {
             tower.attack(closestHostile);
         }
 
