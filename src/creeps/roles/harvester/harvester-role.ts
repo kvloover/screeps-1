@@ -98,10 +98,3 @@ export abstract class HarvesterRole extends TransferRole implements Role {
 
 
 }
-
-// Only hold taskId ?
-declare global {
-    interface CreepMemory {
-        tasks: { [key: string]: { repo: string; id: string; } | undefined }
-    }
-}

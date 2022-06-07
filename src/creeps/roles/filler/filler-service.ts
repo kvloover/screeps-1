@@ -49,6 +49,12 @@ export class FillerStorageRole extends FillerRole {
 
     public run(creep: Creep): void {
         this.log.debug(creep.room, `Running filler storage`);
+        // supplyRepo: storage + container | storageRepo : storage => avoid supplying to storage from storage
+        if (!creep.memory.tasks_blacklist.hasOwnProperty('consume')) {
+            const storage = creep.room.find(FIND_MY_STRUCTURES, { filter: s => s.structureType === STRUCTURE_STORAGE });
+            if (storage.length > 0)
+                creep.memory.tasks_blacklist['consume'] = storage.map(i => i.id);
+        }
         super.run(creep);
     }
 }

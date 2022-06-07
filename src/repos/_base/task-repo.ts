@@ -46,11 +46,12 @@ export abstract class TaskRepo<T extends Task> {
         return _.filter(this.tasks, i => i.requester === id);
     }
 
-    public closestTask(pos: RoomPosition, room?: string): Task {
+    public closestTask(pos: RoomPosition, room?: string, blacklist?: string[]): Task {
         // i.pos = serialized = functions stripped, use values directly
         const roomTasks = this.list(room);
         // if (room) { this.log.debug(Game.rooms[room], `${this.key}: room ${room} found ${roomTasks.length}`); }
-        return _(roomTasks).filter(e => !e.executer)
+        return _(roomTasks)
+            .filter(e => !e.executer && (!blacklist || !blacklist.includes(e.requester ?? "")))
             .sortByAll(i => i.prio, i => { if (i.pos) { return pos.getRangeTo(i.pos.x, i.pos.y); } return undefined; })
             .first();
     }

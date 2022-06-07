@@ -32,6 +32,10 @@ declare global {
         state: CreepState;
         targetRoom: undefined | string;
         targetId: undefined | Id<_HasId>;
+
+        tasks: { [key: string]: { repo: string; id: string; } | undefined };
+        tasks_blacklist: { [key: string]: string[] }; // ignore specific requesters for the given type
+
     }
 
     // namespace NodeJS {

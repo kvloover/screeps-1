@@ -29,6 +29,7 @@ export abstract class TransferRole {
     protected switchState(creep: Creep): void {
         if (creep.spawning) return;
         if (!creep.memory.tasks) { creep.memory.tasks = {}; }
+        if (!creep.memory.tasks_blacklist) { creep.memory.tasks_blacklist = {}; }
 
         if (creep.memory.state == CreepState.consume) {
             this.log.debug(creep.room, `${creep.name}: running consume`);
@@ -72,7 +73,7 @@ export abstract class TransferRole {
             if (room && !Game.rooms.hasOwnProperty(room)) {
                 this.scoutRoom(creep, room);
             } else {
-                const task = repo.closestTask(creep.pos, room ?? creep.room.name);
+                const task = repo.closestTask(creep.pos, room ?? creep.room.name, creep.memory.tasks_blacklist[key]);
                 if (task) {
                     this.registerTask(creep, task, key);
                     if (repo.trySplitTask(task, creep.store.getFreeCapacity(RESOURCE_ENERGY)))
@@ -129,7 +130,7 @@ export abstract class TransferRole {
             if (room && !Game.rooms.hasOwnProperty(room)) {
                 this.scoutRoom(creep, room);
             } else {
-                const task = repo.closestTask(creep.pos, room ?? creep.room.name);
+                const task = repo.closestTask(creep.pos, room ?? creep.room.name, creep.memory.tasks_blacklist[key]);
                 if (task) {
                     this.registerTask(creep, task, key);
                     if (repo.trySplitTask(task, creep.store.getUsedCapacity(RESOURCE_ENERGY)))
