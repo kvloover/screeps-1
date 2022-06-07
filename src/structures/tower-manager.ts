@@ -8,9 +8,9 @@ export class TowerManager implements Manager {
 
     constructor(private log: Logger) { }
 
-    private defend(tower: StructureTower) {
+    private defend(room: Room, tower: StructureTower) {
         const closestHostile = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
-        if (closestHostile && tower.pos.getRangeTo(closestHostile.pos) < 20) {
+        if (closestHostile && tower.pos.getRangeTo(closestHostile.pos) < room.memory.towerRange) {
             tower.attack(closestHostile);
         }
 
@@ -31,8 +31,27 @@ export class TowerManager implements Manager {
             { filter: (struct) => struct.structureType == STRUCTURE_TOWER });
         // this.log.Information(`${towers.length} towers found in room ${room.name}`);
         if (towers.length > 0) {
-            towers.forEach(t => this.defend(t));
+
+            if (!room.memory.towerRange) {
+                const sources = room.find(FIND_SOURCES);
+                room.memory.towerRange = 8 + towers.reduce((p, c) => {
+                    const dist = sources.reduce((m, s) => {
+                        const distSrc = s.pos.getRangeTo(c.pos);
+                        return distSrc > p ? distSrc : p;
+                    }, 0);
+                    return p > dist ? p : dist;
+                }, 0);
+            }
+
+            towers.forEach(t => this.defend(room, t));
+
         }
 
+    }
+}
+
+declare global {
+    interface RoomMemory {
+        towerRange: number;
     }
 }
