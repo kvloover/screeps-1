@@ -6,14 +6,13 @@ import { Pathing } from "creeps/pathing";
 import { Role } from "../role-registry";
 import { TransferRole } from "../_base/transfer-role";
 
-import { ProviderTaskRepo } from "repos/provider-task-repo";
-import { StorageTaskRepo } from "repos/storage-task-repo";
+import { TaskRepo } from "repos/_base/task-repo";
+import { Task } from "repos/task";
 
 /**
  * Get Energy from containers and store in buildings
  */
- @injectable()
-export class FillerRole extends TransferRole implements Role {
+export abstract class FillerRole extends TransferRole implements Role {
 
     // TODO dropped and other resources
 
@@ -25,8 +24,8 @@ export class FillerRole extends TransferRole implements Role {
 
     constructor(log: Logger,
         pathing: Pathing,
-        private providers: ProviderTaskRepo,
-        private demands: StorageTaskRepo
+        private providers: TaskRepo<Task>,
+        private demands: TaskRepo<Task>
     ) { super(log, pathing); }
 
     protected consume(creep: Creep): void {

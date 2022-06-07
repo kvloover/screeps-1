@@ -2,12 +2,9 @@ import { injectable } from "tsyringe";
 import { Logger } from "logger";
 import { Pathing } from "../../pathing";
 
-// import { RoleService } from "creeps/roles/role-service-registry";
-
 import { HaulerRole } from "./hauler-role";
 
 import { DemandTaskRepo } from "repos/demand-task-repo";
-import { ProviderTaskRepo } from "repos/provider-task-repo";
 import { SupplyTaskRepo } from "repos/supply-task-repo";
 
 
@@ -48,13 +45,3 @@ export class HaulerStorageRole extends HaulerRole {
         super.run(creep);
     }
 }
-
-
-// @injectable()
-// export class HaulerService implements RoleService {
-//     register(cont: DependencyContainer, phase: number, token: symbol): void {
-//         // if downgraded from point of existence (phase 2): use lowest role
-//         if (phase <= 2) { cont.register(token, { useToken: HaulerMidstreamRole }); }
-//         else if (phase >= 3) { cont.register(token, { useToken: HaulerStorageRole }); }
-//     }
-// }

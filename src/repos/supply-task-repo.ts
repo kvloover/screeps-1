@@ -10,7 +10,7 @@ import { TaskRepo } from "./_base/task-repo";
 @scoped(Lifecycle.ContainerScoped)
 export class SupplyTaskRepo extends TaskRepo<SupplyTask> implements Persistent {
 
-    constructor(log: Logger) { super('battery', log); }
+    constructor(log: Logger) { super('supply', log); }
 
     // Repository
     // Cf. base class TaskRepo
@@ -18,12 +18,12 @@ export class SupplyTaskRepo extends TaskRepo<SupplyTask> implements Persistent {
     // Persistency
     restore(): void {
         if (Memory.persistency?.hasOwnProperty(this.key))
-            this.tasks = Memory.persistency.battery;
+            this.tasks = Memory.persistency.supply;
     }
 
     save(): void {
         this.mergeEmpty();
-        Memory.persistency = Object.assign(Memory.persistency, { battery: this.tasks ?? [] });
+        Memory.persistency = Object.assign(Memory.persistency, { supply: this.tasks ?? [] });
     }
 
     clearReference(id: Id<_HasId>): void {
@@ -55,7 +55,7 @@ export class SupplyTaskRepo extends TaskRepo<SupplyTask> implements Persistent {
 
 declare global {
     interface Persistency {
-        battery: SupplyTask[];
+        supply: SupplyTask[];
     }
 }
 
