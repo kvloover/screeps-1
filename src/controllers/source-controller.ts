@@ -1,7 +1,7 @@
 import { injectable } from "tsyringe";
 
-import { HarvestTaskRepo } from "repos/tasks/harvest-task-repo";
-import { HarvestTask } from "tasks/task";
+import { HarvestTaskRepo } from "repos/harvest-task-repo";
+import { HarvestTask } from "repos/task";
 import { Controller } from "./controller";
 import { Logger } from "logger";
 

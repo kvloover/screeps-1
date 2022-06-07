@@ -1,11 +1,11 @@
 import { injectable } from "tsyringe";
 
-import { MidstreamTask, ProviderTask } from "tasks/task";
+import { MidstreamTask, ProviderTask } from "repos/task";
 import { Controller } from "./controller";
 import { Logger } from "logger";
 
-import { MidstreamTaskRepo } from "repos/tasks/midstream-task-repo";
-import { ProviderTaskRepo } from "repos/tasks/providor-task-repo";
+import { MidstreamTaskRepo } from "repos/midstream-task-repo";
+import { ProviderTaskRepo } from "repos/provider-task-repo";
 
 @injectable()
 export class LinkController implements Controller {

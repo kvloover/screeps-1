@@ -1,11 +1,11 @@
 import { registry } from "tsyringe";
 
-import { MidstreamTaskRepo } from "./tasks/midstream-task-repo";
-import { HarvestTaskRepo } from "./tasks/harvest-task-repo";
-import { DemandTaskRepo } from "./tasks/demand-task-repo";
-import { ProviderTaskRepo } from "./tasks/providor-task-repo";
-import { BatteryTaskRepo } from "./tasks/battery-task-repo";
-import { StorageTaskRepo } from "./tasks/storage-task-repo";
+import { MidstreamTaskRepo } from "./midstream-task-repo";
+import { HarvestTaskRepo } from "./harvest-task-repo";
+import { DemandTaskRepo } from "./demand-task-repo";
+import { ProviderTaskRepo } from "./provider-task-repo";
+import { SupplyTaskRepo } from "./supply-task-repo";
+import { StorageTaskRepo } from "./storage-task-repo";
 
 export interface Persistent {
     restore(): void;
@@ -26,7 +26,7 @@ export interface Persistent {
     { token: Persistency.token, useToken: MidstreamTaskRepo },
     { token: Persistency.token, useToken: DemandTaskRepo },
     { token: Persistency.token, useToken: ProviderTaskRepo },
-    { token: Persistency.token, useToken: BatteryTaskRepo },
+    { token: Persistency.token, useToken: SupplyTaskRepo },
     { token: Persistency.token, useToken: StorageTaskRepo },
 ])
 export abstract class Persistency {

@@ -1,8 +1,8 @@
 import { injectable } from "tsyringe";
 
-import { DemandTaskRepo } from "repos/tasks/demand-task-repo";
+import { DemandTaskRepo } from "repos/demand-task-repo";
 import { Controller } from "./controller";
-import { DemandTask } from "tasks/task";
+import { DemandTask } from "repos/task";
 import { Logger } from "logger";
 
 @injectable()

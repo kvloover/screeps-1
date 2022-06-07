@@ -12,7 +12,7 @@ import {
 } from ".";
 
 import { HarvestMidstreamRole, HarvestSupplierRole } from "./harvester/harvester-service";
-import { HaulerMidstreamRole, HaulerStorageRole } from "./hauler/hauler-service";
+import { HaulerStorageRole } from "./hauler/hauler-service";
 
 export interface Role {
     name: string;
@@ -32,7 +32,6 @@ export interface Role {
     { token: Roles.token, useToken: ClaimerRole },
     { token: Roles.token, useToken: HarvestSupplierRole },
     { token: Roles.token, useToken: HarvestMidstreamRole },
-    { token: Roles.token, useToken: HaulerMidstreamRole },
     { token: Roles.token, useToken: HaulerStorageRole },
     { token: Roles.token, useToken: FillerRole },
 ])

@@ -1,7 +1,7 @@
 import { injectable, injectAll } from "tsyringe";
 
 import { Manager } from "manager";
-import { Controller, Controllers } from "./controllers/controller";
+import { Controller, Controllers } from "../controllers/controller";
 
 @injectable()
 export class RoomManager implements Manager {

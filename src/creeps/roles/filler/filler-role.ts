@@ -6,8 +6,8 @@ import { Pathing } from "creeps/pathing";
 import { Role } from "../role-registry";
 import { TransferRole } from "../_base/transfer-role";
 
-import { ProviderTaskRepo } from "repos/tasks/providor-task-repo";
-import { StorageTaskRepo } from "repos/tasks/storage-task-repo";
+import { ProviderTaskRepo } from "repos/provider-task-repo";
+import { StorageTaskRepo } from "repos/storage-task-repo";
 
 /**
  * Get Energy from containers and store in buildings

@@ -7,8 +7,8 @@ import { isDefined } from "utils/utils";
 import { Role } from "../role-registry";
 import { TransferRole } from "../_base/transfer-role";
 
-import { TaskRepo } from "repos/tasks/_base/task-repo";
-import { Task } from "tasks/task";
+import { TaskRepo } from "repos/_base/task-repo";
+import { Task } from "repos/task";
 
 /**
  * Get Energy from Sources and store in containers

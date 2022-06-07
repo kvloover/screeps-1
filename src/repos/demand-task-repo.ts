@@ -1,16 +1,16 @@
 import { Logger } from "logger";
 import { Lifecycle, scoped } from "tsyringe";
-import { Persistent } from "../persistent";
-import { MidstreamTask } from "../../tasks/task";
+import { Persistent } from "./persistent";
+import { DemandTask } from "./task";
 import { TaskRepo } from "./_base/task-repo";
 
 /**
-* midstream demand
+* Demanding structures
 **/
 @scoped(Lifecycle.ContainerScoped)
-export class MidstreamTaskRepo extends TaskRepo<MidstreamTask> implements Persistent {
+export class DemandTaskRepo extends TaskRepo<DemandTask> implements Persistent {
 
-    constructor(log: Logger) { super('midstream', log); }
+    constructor(log: Logger) { super('demand', log); }
 
     // Repository
     // Cf. base class TaskRepo
@@ -18,12 +18,12 @@ export class MidstreamTaskRepo extends TaskRepo<MidstreamTask> implements Persis
     // Persistency
     restore(): void {
         if (Memory.persistency?.hasOwnProperty(this.key))
-            this.tasks = Memory.persistency.midstream;
+            this.tasks = Memory.persistency.demand;
     }
 
     save(): void {
         this.mergeEmpty();
-        Memory.persistency = Object.assign(Memory.persistency, { midstream: this.tasks ?? [] });
+        Memory.persistency = Object.assign(Memory.persistency, { demand: this.tasks ?? [] });
     }
 
     clearReference(id: Id<_HasId>): void {
@@ -55,7 +55,7 @@ export class MidstreamTaskRepo extends TaskRepo<MidstreamTask> implements Persis
 
 declare global {
     interface Persistency {
-        midstream: MidstreamTask[];
+        demand: DemandTask[];
     }
 }
 

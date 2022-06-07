@@ -7,9 +7,9 @@ import { Roles } from "creeps/roles/role-registry";
 
 import { HarvesterRole } from "./harvester-role";
 
-import { DemandTaskRepo } from "repos/tasks/demand-task-repo";
-import { MidstreamTaskRepo } from "repos/tasks/midstream-task-repo";
-import { HarvestTaskRepo } from "repos/tasks/harvest-task-repo";
+import { DemandTaskRepo } from "repos/demand-task-repo";
+import { MidstreamTaskRepo } from "repos/midstream-task-repo";
+import { HarvestTaskRepo } from "repos/harvest-task-repo";
 
 
 @injectable()

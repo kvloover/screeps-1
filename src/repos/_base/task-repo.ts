@@ -1,6 +1,6 @@
 import { Logger } from "logger";
 import { isDefined } from "utils/utils";
-import { Task } from "../../../tasks/task";
+import { Task } from "../task";
 
 export abstract class TaskRepo<T extends Task> {
     // getById(id: string): T | undefined;

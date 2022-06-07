@@ -23,4 +23,4 @@ export class DemandTask extends Task {}
 export class MidstreamTask extends Task {}
 export class ProviderTask extends Task {}
 export class StorageTask extends Task {}
-export class BatteryTask extends Task {}
+export class SupplyTask extends Task {}

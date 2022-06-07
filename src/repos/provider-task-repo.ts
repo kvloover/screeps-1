@@ -1,7 +1,7 @@
 import { Logger } from "logger";
 import { Lifecycle, scoped } from "tsyringe";
-import { Persistent } from "../persistent";
-import { ProviderTask } from "../../tasks/task";
+import { Persistent } from "./persistent";
+import { ProviderTask } from "./task";
 import { TaskRepo } from "./_base/task-repo";
 
 /**

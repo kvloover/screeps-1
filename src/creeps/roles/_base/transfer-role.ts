@@ -2,8 +2,8 @@ import { Logger } from "logger";
 import { Pathing } from "creeps/pathing";
 import { CreepState } from 'utils/creep-state';
 
-import { TaskRepo } from "repos/tasks/_base/task-repo";
-import { Task } from "tasks/task";
+import { TaskRepo } from "repos/_base/task-repo";
+import { Task } from "repos/task";
 import { isStoreStructure, isTombStone, isRuin } from "utils/utils";
 
 export abstract class TransferRole {
