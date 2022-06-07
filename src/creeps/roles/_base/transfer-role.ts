@@ -4,10 +4,21 @@ import { CreepState } from 'utils/creep-state';
 
 import { TaskRepo } from "repos/tasks/_base/task-repo";
 import { Task } from "tasks/task";
+import { isDefined } from "utils/utils";
 
 export abstract class TransferRole {
 
     constructor(protected log: Logger, protected pathing: Pathing) { }
+
+    private isStoreStructure(item: any): item is AnyStoreStructure {
+        return isDefined((item as AnyStoreStructure).store)
+    }
+    private isTombStone(item: any): item is Tombstone {
+        return isDefined((item as Tombstone).store)
+    }
+    private isRuin(item: any): item is Ruin {
+        return isDefined((item as Ruin).store)
+    }
 
     public run(creep: Creep): void {
         this.setState(creep);
@@ -127,9 +138,11 @@ export abstract class TransferRole {
     }
 
     protected trySupplyForTask(creep: Creep, task: Task): [succes: boolean, transferred: boolean] {
-        const dest = Game.getObjectById(task.requester as Id<AnyStoreStructure>);
+        const dest = Game.getObjectById(task.requester as Id<_HasId>);
 
-        if (dest != null) {
+        if (dest &&
+            (this.isStoreStructure(dest))
+        ) {
             if ((dest.store.getFreeCapacity(RESOURCE_ENERGY) ?? 0) > 0 && creep.transfer(dest, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
                 this.pathing.moveTo(creep, dest.pos);
                 return [true, false]
@@ -143,19 +156,27 @@ export abstract class TransferRole {
     }
 
     protected tryConsumeForTask(creep: Creep, task: Task): [succes: boolean, transferred: boolean] {
-        const dest = Game.getObjectById(task.requester as Id<AnyStoreStructure>);
+        const dest = Game.getObjectById(task.requester as Id<_HasId>)
 
-        if (dest != null) {
+        if (dest &&
+            (this.isStoreStructure(dest) || this.isTombStone(dest) || this.isRuin(dest))
+        ) {
             if ((dest.store.getUsedCapacity(RESOURCE_ENERGY) ?? 0) > 0 && creep.withdraw(dest, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
                 this.pathing.moveTo(creep, dest.pos);
                 return [true, false]
+            } else {
+                // transferred or empty:
+                return [true, true];
             }
-            // transferred or empty:
-            return [true, true];
+        } else {
+            if (dest) {
+                this.log.debug(creep.room, `could not fetch store object for ${dest.id}`)
+            } else {
+                this.log.debug(creep.room, `could not fetch dest object for ${task.requester}`)
+            }
+            // invalid location
+            return [false, false];
         }
-
-        // invalid location
-        return [false, false];
     }
 
 }

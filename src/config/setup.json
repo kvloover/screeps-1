@@ -317,8 +317,8 @@
                 "priority": 4,
                 "count": 1,
                 "template": {
-                    "carry": 4,
-                    "move": 4
+                    "carry": 8,
+                    "move": 8
                 }
             },
             {
@@ -353,7 +353,7 @@
             {
                 "role": "upgrader",
                 "priority": 8,
-                "count": 3
+                "count": 2
             },
             {
                 "role": "remote-harvester",
