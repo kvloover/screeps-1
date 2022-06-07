@@ -183,4 +183,11 @@ export abstract class TransferRole {
         }
     }
 
+    protected gotoRoom(creep: Creep, pos: RoomPosition) {
+        if (creep.room.name !== pos.roomName) {
+            // move to room
+            this.pathing.moveTo(creep, pos);
+        }
+    }
+
 }

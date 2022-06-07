@@ -267,6 +267,7 @@
                 "role": "claimer",
                 "priority": 1,
                 "condition": "claim",
+                "reset_condition": true,
                 "count": 1,
                 "template": {
                     "claim": 1,

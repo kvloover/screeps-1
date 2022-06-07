@@ -78,7 +78,8 @@ export class SpawnManager implements Manager {
                     { memory: this.initialMemory(spawn, prio) });
                 if (ret === OK) {
                     this.log.debug(room, `Spawning new ${prio.role}: ${newName}`);
-                    if (prio.condition && room.memory.hasOwnProperty(prio.condition)) {
+                    if (prio.condition && prio.reset_condition
+                        && room.memory.hasOwnProperty(prio.condition)) {
                         (room.memory as any)[prio.condition] = false;
                     }
                     this.nameInUse(room, prio.role, newName);

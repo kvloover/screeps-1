@@ -67,7 +67,12 @@ export abstract class HarvesterRole extends TransferRole implements Role {
             if (isDefined(taskId)) {
                 const task = this.harvests.getById(taskId);
                 if (task) {
-                    creep.memory.targetId = task.requester;
+                    if (task.room != creep.room.name && task.pos) {
+                        this.gotoRoom(creep, task.pos)
+                    } else {
+                        // Only lock on in room
+                        creep.memory.targetId = task.requester;
+                    }
                 } else {
                     this.unlinkTask(creep, key);
                 }
@@ -85,6 +90,8 @@ export abstract class HarvesterRole extends TransferRole implements Role {
                         creep.memory.state = CreepState.supply;
                     }
                 }
+            } else {
+                creep.memory.targetId = undefined;
             }
         }
     }
