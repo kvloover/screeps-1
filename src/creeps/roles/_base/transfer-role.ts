@@ -176,7 +176,7 @@ export abstract class TransferRole {
         return [false, false];
     }
 
-    private scoutRoom(creep: Creep, room: string) {
+    protected scoutRoom(creep: Creep, room: string) {
         if (creep.room.name !== room) {
             // move to room
             this.pathing.moveTo(creep, new RoomPosition(25, 25, room));

@@ -22,11 +22,3 @@ export class RoomManager implements Manager {
     }
 
 }
-
-declare global {
-    interface RoomMemory {
-        debug: boolean
-        remote: string | undefined
-        attack: string | undefined
-    }
-}

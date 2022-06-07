@@ -287,7 +287,7 @@
                 "role": "remote-attacker",
                 "priority": 1,
                 "count": 2,
-                "condition": "defend-remote",
+                "condition": "defend_remote",
                 "template": {
                     "attack": 8,
                     "move": 4
@@ -359,7 +359,7 @@
                 "role": "remote-harvester",
                 "priority": 9,
                 "count": 4,
-                "condition": "remote-mining",
+                "condition": "remote_mining",
                 "template": {
                     "work": 3,
                     "carry": 7,

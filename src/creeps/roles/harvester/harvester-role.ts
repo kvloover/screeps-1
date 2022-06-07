@@ -45,14 +45,18 @@ export abstract class HarvesterRole extends TransferRole implements Role {
 
         if (!creep.memory.tasks.hasOwnProperty(key) || !creep.memory.tasks[key]) {
             this.log.debug(creep.room, `${creep.name}: searching closest harvest task`);
-            const task = this.harvests.closestTask(creep.pos, creep.room.name);
-            if (task) {
-                this.log.debug(creep.room, `${creep.name}: found new harvest task`);
-                this.registerTask(creep, task, key);
-                creep.memory.targetId = task.requester;
-                // Mine 2 per tick per worker part
-                if (this.harvests.trySplitTask(task, 2 * creep.getActiveBodyparts(WORK)))
-                    this.log.debug(creep.room, `${creep.name}: task split to harvests for remaining work`);
+            if (room && !Game.rooms.hasOwnProperty(room)) {
+                this.scoutRoom(creep, room);
+            } else {
+                const task = this.harvests.closestTask(creep.pos, room ?? creep.room.name);
+                if (task) {
+                    this.log.debug(creep.room, `${creep.name}: found new harvest task`);
+                    this.registerTask(creep, task, key);
+                    creep.memory.targetId = task.requester;
+                    // Mine 2 per tick per worker part
+                    if (this.harvests.trySplitTask(task, 2 * creep.getActiveBodyparts(WORK)))
+                        this.log.debug(creep.room, `${creep.name}: task split to harvests for remaining work`);
+                }
             }
         }
 

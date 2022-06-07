@@ -9,6 +9,7 @@ import { HarvesterRole } from "./harvester-role";
 import { DemandTaskRepo } from "repos/demand-task-repo";
 import { MidstreamTaskRepo } from "repos/midstream-task-repo";
 import { HarvestTaskRepo } from "repos/harvest-task-repo";
+import { RemoteHarvesterRole } from "./remote-harvester-role";
 
 
 @injectable()
@@ -45,6 +46,25 @@ export class HarvestMidstreamRole extends HarvesterRole {
 
     public run(creep: Creep): void {
         this.log.debug(creep.room, `Running harvester midstream`);
+        super.run(creep);
+    }
+}
+
+@injectable()
+export class RemoteHarvestMidstreamRole extends RemoteHarvesterRole {
+
+    phase = {
+        start: 1,
+        end: 9
+    };
+
+    constructor(log: Logger, pathing: Pathing,
+        provider: HarvestTaskRepo, supply: MidstreamTaskRepo) {
+        super(log, pathing, provider, supply)
+    }
+
+    public run(creep: Creep): void {
+        this.log.debug(creep.room, `Running remote harvester midstream`);
         super.run(creep);
     }
 }

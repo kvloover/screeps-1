@@ -3,7 +3,6 @@ import { registry } from "tsyringe";
 import {
     MeleeAttackerRole,
     BuilderRole,
-    RemoteHarvesterRole,
     UpgraderRole,
     RangedAttackerRole,
     RemoteAttackerRole,
@@ -11,7 +10,7 @@ import {
 } from ".";
 
 import { FillerLinkRole, FillerStorageRole, FillerSupplierRole } from "./filler/filler-service";
-import { HarvestMidstreamRole, HarvestSupplierRole } from "./harvester/harvester-service";
+import { HarvestMidstreamRole, HarvestSupplierRole, RemoteHarvestMidstreamRole } from "./harvester/harvester-service";
 import { HaulerStorageRole } from "./hauler/hauler-service";
 
 export interface Role {
@@ -32,7 +31,7 @@ export interface Role {
     { token: Roles.token, useToken: ClaimerRole },
     { token: Roles.token, useToken: HarvestSupplierRole },
     { token: Roles.token, useToken: HarvestMidstreamRole },
-    { token: Roles.token, useToken: RemoteHarvesterRole },
+    { token: Roles.token, useToken: RemoteHarvestMidstreamRole },
     { token: Roles.token, useToken: HaulerStorageRole },
     { token: Roles.token, useToken: FillerSupplierRole },
     { token: Roles.token, useToken: FillerStorageRole },

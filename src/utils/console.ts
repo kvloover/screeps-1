@@ -7,9 +7,14 @@ export class ExConsole {
     static init() {
         global.debug = this.debug;
         global.stopDebug = this.stopDebug;
+        global.reset = this.reset;
+
         global.remote = this.remote;
         global.attack = this.attack;
-        global.reset = this.reset;
+
+        global.remote_attack = (m, v) => this.toggle(m, 'remote_attack', v);
+        global.remote_mining = (m, v) => this.toggle(m, 'remote_mining', v);
+        global.claim = (m, v) => this.toggle(m, 'claim', v);
     }
 
     static debug(roomName: string): string {
@@ -31,7 +36,6 @@ export class ExConsole {
     static remote(roomName: string, value: string | undefined): string {
         if (Memory.rooms.hasOwnProperty(roomName)) {
             Memory.rooms[roomName].remote = value;
-            // Memory.rooms[roomName].remote-harvesting
             return `Remote set for ${roomName}.`;
         }
         return `Room not known: ${roomName}`
@@ -39,7 +43,7 @@ export class ExConsole {
 
     static attack(roomName: string, value: string | undefined): string {
         if (Memory.rooms.hasOwnProperty(roomName)) {
-            Memory.rooms[roomName].attack = value;
+            Memory.rooms[roomName].remote = value;
             return `Attack set for ${roomName}.`;
         }
         return `Room not known: ${roomName}`
@@ -77,6 +81,15 @@ export class ExConsole {
         }
         return `Room not known: ${roomName}`
     }
+
+    private static toggle(roomName: string, key: keyof RoomMemory, value: boolean | undefined): string {
+        if (Memory.rooms.hasOwnProperty(roomName)) {
+            const room = Memory.rooms[roomName];
+            (room as any)[key] = value;
+            return `${key} set for ${roomName}.`;
+        }
+        return `Room not known: ${roomName}`
+    }
 }
 
 declare global {
@@ -85,8 +98,14 @@ declare global {
             debug: (room: string) => string;
             stopDebug: (room: string) => string;
             reset: (room: string) => string;
+
             remote: (room: string, value: string | undefined) => string;
             attack: (room: string, value: string | undefined) => string;
+
+            // Toggles
+            remote_attack: (roomName: string, value: boolean | undefined) => string;
+            remote_mining: (roomName: string, value: boolean | undefined) => string;
+            claim: (roomName: string, value: boolean | undefined) => string;
         }
     }
 }

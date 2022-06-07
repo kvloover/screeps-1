@@ -15,8 +15,14 @@ declare global {
     }
 
     interface RoomMemory {
-        debug: boolean;
         stage: number;
+        remote: string | undefined
+        attack: string | undefined
+
+        debug: boolean;
+        remote_mining: boolean;
+        remote_attack: boolean;
+        claim: boolean;
     }
 
     interface CreepMemory {

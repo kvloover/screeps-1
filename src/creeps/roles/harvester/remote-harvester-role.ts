@@ -1,9 +1,7 @@
 import { injectable } from "tsyringe";
 
 import { Logger } from "logger";
-import { CreepUtils } from "creeps/creep-utils";
 import { Pathing } from "creeps/pathing";
-import { CreepState } from "utils/creep-state";
 
 import { HarvesterRole } from "./harvester-role";
 import { Role } from "../role-registry";
@@ -11,7 +9,6 @@ import { Role } from "../role-registry";
 import { Task } from "repos/task";
 import { TaskRepo } from "repos/_base/task-repo";
 
-@injectable()
 export class RemoteHarvesterRole extends HarvesterRole implements Role {
 
     name: string = 'remote-harvester'
