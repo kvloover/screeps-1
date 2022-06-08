@@ -34,8 +34,13 @@ export class CreepsManager implements Manager {
     }
 
     public run(room: Room): void {
-        let phase = 1;
+        const phase = this.phase(room);
+        const roles = container.resolveAll<Role>(Roles.token);
+        this.performRole(room, roles, phase);
+    }
 
+    private phase(room: Room): number {
+        let phase = 1;
         const struct = room.find(FIND_STRUCTURES, { filter: (struct) => struct.structureType === STRUCTURE_CONTAINER })
         const storage = room.find(FIND_MY_STRUCTURES, { filter: (struct) => struct.structureType === STRUCTURE_STORAGE })
         const links = room.find(FIND_MY_STRUCTURES, { filter: (struct) => struct.structureType === STRUCTURE_LINK })
@@ -43,8 +48,7 @@ export class CreepsManager implements Manager {
         if (room.memory.stage && room.memory.stage >= 5 && storage.length > 0) phase = 3;
         if (phase === 3 && links.length > 0) phase = 4;
 
-        const roles = container.resolveAll<Role>(Roles.token);
-        this.performRole(room, roles, phase);
+        return phase;
     }
 
     // have idle creeps switch task/roles
