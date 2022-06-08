@@ -15,13 +15,11 @@ export class CreepsManager implements Manager {
         // @injectAll(RoleServices.token) private services: RoleService[]
     ) { }
 
-    private performRole(room: Room, roles: Role[], phase: number): void {
+    private performRole(room: Room, phase: number, roles: Role[], creeps: Creep[]): void {
         roles
             .filter(i => i.phase.start <= phase && i.phase.end >= phase)
             .forEach(role => {
-                _.filter(Game.creeps, crp =>
-                    crp.room.name === room.name
-                    && crp.memory.role == role.name)
+                _.filter(creeps, crp => crp.memory.role == role.name)
                     .forEach(crp => {
                         try {
                             this.log.debug(room, `running ${role.name} role for ${crp.name}`);
@@ -34,9 +32,11 @@ export class CreepsManager implements Manager {
     }
 
     public run(room: Room): void {
+        const creeps = _.filter(Game.creeps, crp => crp.room.name === room.name);
+        if (creeps.length == 0) return;
         const phase = this.phase(room);
         const roles = container.resolveAll<Role>(Roles.token);
-        this.performRole(room, roles, phase);
+        this.performRole(room, phase, roles, creeps);
     }
 
     private phase(room: Room): number {
