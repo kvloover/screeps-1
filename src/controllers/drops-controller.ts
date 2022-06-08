@@ -1,10 +1,9 @@
 import { injectable } from "tsyringe";
 
-import { ProviderTask, SupplyTask } from "repos/task";
+import { SupplyTask } from "repos/task";
 import { Controller } from "./controller";
 import { Logger } from "logger";
 
-import { ProviderTaskRepo } from "repos/provider-task-repo";
 import { SupplyTaskRepo } from "repos/supply-task-repo";
 
 @injectable()
@@ -15,6 +14,8 @@ export class DropsController implements Controller {
     }
 
     public monitor(room: Room): void {
+        if (!room.controller || !room.controller.my) return;
+
         const tombs =
             room.find(FIND_TOMBSTONES, {
                 filter: tomb => tomb.store[RESOURCE_ENERGY] > 0

@@ -53,7 +53,7 @@ export abstract class TransferRole {
 
     protected registerTask(creep: Creep, task: Task, key: string) {
         this.log.debug(creep.room, `registering task on ${creep.name}: ${key} - ${task.id}`);
-        creep.memory.tasks[key] = { repo: key, id: task.id };
+        creep.memory.tasks[key] = { repo: key, id: task.id, task: task };
         task.executer = creep.id;
     }
 
@@ -82,23 +82,23 @@ export abstract class TransferRole {
             }
         }
 
-        const memoryTaskId = creep.memory.tasks[key]?.id;
-        if (memoryTaskId) {
-            this.log.debug(creep.room, `${creep.name}: consuming for ${key} task ${memoryTaskId}`);
-            const task = repo.getById(memoryTaskId);
-            if (task) {
+        const memTask = creep.memory.tasks[key]?.task;
+        if (memTask) {
+            this.log.debug(creep.room, `${creep.name}: consuming for ${key} task ${memTask.id}`);
+            // const task = repo.getById(memoryTaskId);
+            // if (task) {
                 // will be undefined for other repo
-                const [succes, transferred] = this.tryConsumeForTask(creep, task);
+                const [succes, transferred] = this.tryConsumeForTask(creep, memTask);
                 if (!succes) {
-                    this.finishTask(creep, task, repo, key);
-                    console.log(`${creep.name}: could not consume for ${key} task: ${task.id}`);
+                    this.finishTask(creep, memTask, repo, key);
+                    console.log(`${creep.name}: could not consume for ${key} task: ${memTask.id}`);
                 } else if (transferred) {
-                    this.finishTask(creep, task, repo, key);
-                    this.log.debug(creep.room, `${creep.name}: consume ${key} task removed for ${task.id}`);
+                    this.finishTask(creep, memTask, repo, key);
+                    this.log.debug(creep.room, `${creep.name}: consume ${key} task removed for ${memTask.id}`);
                 }
-            } else {
-                this.unlinkTask(creep, key);
-            }
+            // } else {
+            //     this.unlinkTask(creep, key);
+            // }
         }
     }
 
@@ -139,23 +139,23 @@ export abstract class TransferRole {
             }
         }
 
-        const memoryTaskId = creep.memory.tasks[key]?.id;
-        if (memoryTaskId) {
-            this.log.debug(creep.room, `${creep.name}: supplying for ${key} task ${memoryTaskId}`);
-            const task = repo.getById(memoryTaskId);
-            if (task) {
+        const memTask = creep.memory.tasks[key]?.task;
+        if (memTask) {
+            this.log.debug(creep.room, `${creep.name}: supplying for ${key} task ${memTask.id}`);
+            // const task = repo.getById(memoryTaskId);
+            // if (task) {
                 // will be undefined for other repo
-                const [succes, transferred] = this.trySupplyForTask(creep, task);
+                const [succes, transferred] = this.trySupplyForTask(creep, memTask);
                 if (!succes) {
-                    this.finishTask(creep, task, repo, key);
-                    console.log(`${creep.name}: could not supply for ${key} task: ${task.id}`);
+                    this.finishTask(creep, memTask, repo, key);
+                    console.log(`${creep.name}: could not supply for ${key} task: ${memTask.id}`);
                 } else if (transferred) {
-                    this.finishTask(creep, task, repo, key);
-                    this.log.debug(creep.room, `${creep.name}: supply ${key} task removed for ${task.id}`);
+                    this.finishTask(creep, memTask, repo, key);
+                    this.log.debug(creep.room, `${creep.name}: supply ${key} task removed for ${memTask.id}`);
                 }
-            } else {
-                this.unlinkTask(creep, key);
-            }
+            // } else {
+            //     this.unlinkTask(creep, key);
+            // }
         }
     }
 

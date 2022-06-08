@@ -7,12 +7,20 @@ import { ExConsole } from "utils/console";
 
 import { GameWorld } from "game-world";
 
-export const loop = ErrorMapper.wrapLoop(
-  wrapMemory(
-    () => {
-      ExConsole.init();
-      container.resolve(GameWorld)
-        .run();
-    }
-  )
-);
+import profiler from 'screeps-profiler';
+
+profiler.enable();
+ExConsole.init();
+
+profiler.registerObject(container, 'container');
+
+export const loop =
+  ErrorMapper.wrapLoop(
+    wrapMemory(
+      () => {
+        profiler.wrap(function () {
+          container.resolve(GameWorld).run();
+        });
+      }
+    )
+  );

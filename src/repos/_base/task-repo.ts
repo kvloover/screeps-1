@@ -2,6 +2,8 @@ import { Logger } from "logger";
 import { isDefined } from "utils/utils";
 import { Task } from "../task";
 
+import profiler from 'screeps-profiler';
+
 export abstract class TaskRepo<T extends Task> {
     // getById(id: string): T | undefined;
     // list(): T[];
@@ -90,4 +92,4 @@ export abstract class TaskRepo<T extends Task> {
 
 }
 
-
+profiler.registerClass(TaskRepo, 'TaskRepo');

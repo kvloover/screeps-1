@@ -1,3 +1,4 @@
+import { Task } from "repos/task";
 import { CreepState } from "./creep-state";
 
 export { };
@@ -35,7 +36,7 @@ declare global {
         targetRoom: undefined | string;
         targetId: undefined | Id<_HasId>;
 
-        tasks: { [key: string]: { repo: string; id: string; } | undefined };
+        tasks: { [key: string]: { repo: string; task: Task; } | undefined };
         tasks_blacklist: { [key: string]: string[] }; // ignore specific requesters for the given type
 
     }
