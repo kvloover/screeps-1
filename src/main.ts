@@ -6,7 +6,7 @@ import { wrapMemory } from "utils/memory-hack";
 import { ExConsole } from "utils/console";
 
 import { GameWorld } from "game-world";
-
+import "traveller/traveler";
 import profiler from 'screeps-profiler';
 
 profiler.enable();

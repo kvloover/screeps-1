@@ -24,7 +24,8 @@ export class Pathing {
     }
 
     public moveTo(creep: Creep, pos: RoomPosition) {
-
+        creep.travelTo(pos);
+        /*
         const options: PathFinderOpts = this.opt.optimalFinder();
         const pathing = PathFinder.search(creep.pos, { pos: pos, range: 1 }, options);
 
@@ -34,6 +35,7 @@ export class Pathing {
             this.log.debug(creep.room, `next step for ${creep.name}: ${JSON.stringify(pos)}`)
             creep.move(creep.pos.getDirectionTo(pos));
         }
+        */
     }
 }
 
