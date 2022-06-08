@@ -6,6 +6,7 @@ import { CreepState } from "utils/creep-state";
 
 import { Role } from "../role-registry";
 import { RangedAttackerRole } from "./ranged-attacker-role";
+import profiler from "screeps-profiler";
 
 @injectable()
 export class RemoteAttackerRole extends RangedAttackerRole implements Role {
@@ -46,3 +47,5 @@ export class RemoteAttackerRole extends RangedAttackerRole implements Role {
     }
 
 }
+
+profiler.registerClass(RemoteAttackerRole, 'RemoteAttackerRole');

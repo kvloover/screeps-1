@@ -6,6 +6,7 @@ import { CreepState } from "utils/creep-state";
 
 import { Role } from "../role-registry";
 import { AttackerRole } from "../_base/attacker-role";
+import profiler from "screeps-profiler";
 
 @injectable()
 export class MeleeAttackerRole extends AttackerRole implements Role {
@@ -22,3 +23,5 @@ export class MeleeAttackerRole extends AttackerRole implements Role {
         return creep.attack(hostile);
     }
 }
+
+profiler.registerClass(MeleeAttackerRole, 'MeleeAttackerRole');

@@ -6,6 +6,7 @@ import { CreepState } from "utils/creep-state";
 
 import { Role } from "../role-registry";
 import { ConsumerRole } from "../_base/consumer-role";
+import profiler from "screeps-profiler";
 
 @injectable()
 export class BuilderRole extends ConsumerRole implements Role {
@@ -85,3 +86,5 @@ export class BuilderRole extends ConsumerRole implements Role {
         }
     }
 }
+
+profiler.registerClass(BuilderRole, 'BuilderRole');

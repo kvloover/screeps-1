@@ -10,6 +10,7 @@ import { DemandTaskRepo } from "repos/demand-task-repo";
 import { MidstreamTaskRepo } from "repos/midstream-task-repo";
 import { HarvestTaskRepo } from "repos/harvest-task-repo";
 import { RemoteHarvesterRole } from "./remote-harvester-role";
+import profiler from "screeps-profiler";
 
 
 @injectable()
@@ -50,6 +51,8 @@ export class HarvestMidstreamRole extends HarvesterRole {
     }
 }
 
+profiler.registerClass(HarvestMidstreamRole, 'HarvestMidstreamRole');
+
 @injectable()
 export class RemoteHarvestMidstreamRole extends RemoteHarvesterRole {
 
@@ -69,10 +72,4 @@ export class RemoteHarvestMidstreamRole extends RemoteHarvesterRole {
     }
 }
 
-// @injectable()
-// export class HarvesterService implements RoleService {
-//     register(cont: DependencyContainer, phase: number, token: symbol): void {
-//         if (phase === 1) { cont.register(token, { useToken: HarvestSupplierRole }); }
-//         else if (phase >= 2) { cont.register(token, { useToken: HarvestMidstreamRole }); }
-//     }
-// }
+profiler.registerClass(RemoteHarvestMidstreamRole, 'RemoteHarvestMidstreamRole');

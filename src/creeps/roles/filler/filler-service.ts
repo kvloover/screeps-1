@@ -10,6 +10,7 @@ import { DemandTaskRepo } from "repos/demand-task-repo";
 import { SupplyTaskRepo } from "repos/supply-task-repo";
 import { ProviderTaskRepo } from "repos/provider-task-repo";
 import { StorageTaskRepo } from "repos/storage-task-repo";
+import profiler from "screeps-profiler";
 
 /**
  * container to demand ~ hauler
@@ -61,6 +62,8 @@ export class FillerStorageRole extends FillerRole {
     }
 }
 
+profiler.registerClass(FillerStorageRole, 'FillerStorageRole');
+
 /**
  * link to storage
  */
@@ -81,3 +84,5 @@ export class FillerLinkRole extends FillerRole {
         super.run(creep);
     }
 }
+
+profiler.registerClass(FillerLinkRole, 'FillerLinkRole');

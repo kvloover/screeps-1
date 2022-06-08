@@ -6,6 +6,7 @@ import { HaulerRole } from "./hauler-role";
 
 import { DemandTaskRepo } from "repos/demand-task-repo";
 import { SupplyTaskRepo } from "repos/supply-task-repo";
+import profiler from "screeps-profiler";
 
 
 // @injectable()
@@ -45,3 +46,5 @@ export class HaulerStorageRole extends HaulerRole {
         super.run(creep);
     }
 }
+
+profiler.registerClass(HaulerStorageRole, 'HaulerStorageRole');

@@ -8,6 +8,7 @@ import { Role } from "../role-registry";
 
 import { Task } from "repos/task";
 import { TaskRepo } from "repos/_base/task-repo";
+import profiler from "screeps-profiler";
 
 export class RemoteHarvesterRole extends HarvesterRole implements Role {
 
@@ -38,3 +39,5 @@ export class RemoteHarvesterRole extends HarvesterRole implements Role {
     }
 
 }
+
+profiler.registerClass(RemoteHarvesterRole, 'RemoteHarvesterRole');
