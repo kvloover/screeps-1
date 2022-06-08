@@ -53,7 +53,7 @@ export abstract class TransferRole {
 
     protected registerTask(creep: Creep, task: Task, key: string) {
         this.log.debug(creep.room, `registering task on ${creep.name}: ${key} - ${task.id}`);
-        creep.memory.tasks[key] = { repo: key, id: task.id, task: task };
+        creep.memory.tasks[key] = { repo: key,  task: task };
         task.executer = creep.id;
     }
 
