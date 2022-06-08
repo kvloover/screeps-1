@@ -6,6 +6,8 @@ import { Logger } from "logger";
 
 import { SupplyTaskRepo } from "repos/supply-task-repo";
 
+import profiler from "screeps-profiler";
+
 @injectable()
 export class DropsController implements Controller {
 
@@ -51,3 +53,5 @@ export class DropsController implements Controller {
         })
     }
 }
+
+profiler.registerClass(DropsController, 'DropsController');

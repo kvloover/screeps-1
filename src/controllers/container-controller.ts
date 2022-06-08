@@ -7,6 +7,8 @@ import { Logger } from "logger";
 import { MidstreamTaskRepo } from "repos/midstream-task-repo";
 import { SupplyTaskRepo } from "repos/supply-task-repo";
 
+import profiler from "screeps-profiler";
+
 @injectable()
 export class ContainerController implements Controller {
 
@@ -49,3 +51,5 @@ export class ContainerController implements Controller {
         })
     }
 }
+
+profiler.registerClass(ContainerController, 'ContainerController');
