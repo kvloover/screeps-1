@@ -3,6 +3,8 @@ import { injectable } from "tsyringe";
 import { Logger } from "logger";
 import { Controller } from "./controller";
 
+import profiler from "screeps-profiler";
+
 @injectable()
 export class EmergencyController implements Controller {
 
@@ -83,3 +85,5 @@ declare global {
         notified: boolean;
     }
 }
+
+profiler.registerClass(EmergencyController, 'EmergencyController');

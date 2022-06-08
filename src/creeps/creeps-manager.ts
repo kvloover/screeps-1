@@ -5,6 +5,7 @@ import { Manager } from "manager";
 
 // import { RoleService } from "./roles/role-service";
 import { Role, Roles } from "./roles/role-registry";
+import profiler from "screeps-profiler";
 // import { RoleServices } from "./roles/role-service-registry";
 
 @injectable()
@@ -48,3 +49,5 @@ export class CreepsManager implements Manager {
 
     // have idle creeps switch task/roles
 }
+
+profiler.registerClass(CreepsManager, 'CreepsManager');

@@ -3,6 +3,8 @@ import { injectable } from "tsyringe";
 import { Logger } from "logger";
 import { PathingOptions } from "./pathing-options";
 
+import profiler from "screeps-profiler";
+
 @injectable()
 export class Pathing {
 
@@ -34,3 +36,5 @@ export class Pathing {
         }
     }
 }
+
+profiler.registerClass(Pathing, 'Pathing');

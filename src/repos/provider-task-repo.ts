@@ -1,4 +1,5 @@
 import { Logger } from "logger";
+import profiler from "screeps-profiler";
 import { Lifecycle, scoped } from "tsyringe";
 import { Persistent } from "./persistent";
 import { ProviderTask } from "./task";
@@ -59,4 +60,5 @@ declare global {
     }
 }
 
+profiler.registerClass(ProviderTaskRepo, 'ProviderTaskRepo');
 

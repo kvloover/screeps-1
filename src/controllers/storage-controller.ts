@@ -1,13 +1,13 @@
 import { injectable } from "tsyringe";
 
-import { SupplyTask, MidstreamTask, ProviderTask, StorageTask } from "repos/task";
+import { SupplyTask, StorageTask } from "repos/task";
 import { Controller } from "./controller";
 import { Logger } from "logger";
 
-import { MidstreamTaskRepo } from "repos/midstream-task-repo";
-import { ProviderTaskRepo } from "repos/provider-task-repo";
 import { SupplyTaskRepo } from "repos/supply-task-repo";
 import { StorageTaskRepo } from "repos/storage-task-repo";
+
+import profiler from "screeps-profiler";
 
 @injectable()
 export class StorageController implements Controller {
@@ -51,3 +51,5 @@ export class StorageController implements Controller {
         })
     }
 }
+
+profiler.registerClass(StorageController, 'StorageController');

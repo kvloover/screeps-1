@@ -1,4 +1,5 @@
 import { Logger } from "logger";
+import profiler from "screeps-profiler";
 import { Lifecycle, scoped } from "tsyringe";
 import { Persistent } from "./persistent";
 import { SupplyTask } from "./task";
@@ -59,4 +60,4 @@ declare global {
     }
 }
 
-
+profiler.registerClass(SupplyTaskRepo, 'SupplyTaskRepo');

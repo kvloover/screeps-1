@@ -3,6 +3,8 @@ import { injectable } from "tsyringe";
 import { Manager } from "manager";
 import { Logger } from "logger";
 
+import profiler from "screeps-profiler";
+
 @injectable()
 export class LinkManager implements Manager {
 
@@ -31,3 +33,5 @@ export class LinkManager implements Manager {
 
     }
 }
+
+profiler.registerClass(LinkManager, 'LinkManager');

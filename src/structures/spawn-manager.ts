@@ -8,6 +8,8 @@ import setup from "../config/setup.json";
 import { config, roleConfig, stageConfig } from "../config/config";
 import { isDefined } from "utils/utils";
 
+import profiler from "screeps-profiler";
+
 @injectable()
 export class SpawnManager implements Manager {
 
@@ -111,7 +113,8 @@ export class SpawnManager implements Manager {
             room: spawn.room.name,
             targetRoom: undefined,
             targetId: undefined,
-            tasks: {}
+            tasks: {},
+            tasks_blacklist: {}
         };
     }
 
@@ -149,3 +152,5 @@ declare global {
         spawnSequence: number;
     }
 }
+
+profiler.registerClass(SpawnManager, 'SpawnManager');

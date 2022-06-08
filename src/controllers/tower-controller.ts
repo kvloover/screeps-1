@@ -5,6 +5,8 @@ import { Controller } from "./controller";
 import { DemandTask } from "repos/task";
 import { Logger } from "logger";
 
+import profiler from "screeps-profiler";
+
 @injectable()
 export class TowerController implements Controller {
 
@@ -34,3 +36,4 @@ export class TowerController implements Controller {
     }
 }
 
+profiler.registerClass(TowerController, 'TowerController');

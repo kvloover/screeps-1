@@ -5,6 +5,8 @@ import { HarvestTask } from "repos/task";
 import { Controller } from "./controller";
 import { Logger } from "logger";
 
+import profiler from "screeps-profiler";
+
 @injectable()
 export class SourceController implements Controller {
 
@@ -58,3 +60,5 @@ declare global {
         sources: string[];
     }
 }
+
+profiler.registerClass(SourceController, 'SourceController');

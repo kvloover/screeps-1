@@ -3,6 +3,8 @@ import { injectable, injectAll } from "tsyringe";
 import { Manager } from "manager";
 import { Controller, Controllers } from "../controllers/controller";
 
+import profiler from "screeps-profiler";
+
 @injectable()
 export class RoomManager implements Manager {
 
@@ -22,3 +24,5 @@ export class RoomManager implements Manager {
     }
 
 }
+
+profiler.registerClass(RoomManager, 'RoomManager');

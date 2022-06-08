@@ -3,6 +3,8 @@ import { injectable } from "tsyringe";
 import { Manager } from "manager";
 import { Logger } from "logger";
 
+import profiler from "screeps-profiler";
+
 @injectable()
 export class TowerManager implements Manager {
 
@@ -55,3 +57,5 @@ declare global {
         towerRange: number;
     }
 }
+
+profiler.registerClass(TowerManager, 'TowerManager');
