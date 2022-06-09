@@ -23,7 +23,7 @@ export class HarvestSupplierRole extends HarvesterRole {
 
     constructor(log: Logger, pathing: Pathing,
         provider: HarvestTaskRepo, supply: DemandTaskRepo) {
-        super(log, pathing, provider, supply)
+        super(log, pathing, provider, supply, undefined)
     }
 
     public run(creep: Creep): void {
@@ -42,7 +42,7 @@ export class HarvestMidstreamRole extends HarvesterRole {
 
     constructor(log: Logger, pathing: Pathing,
         provider: HarvestTaskRepo, supply: MidstreamTaskRepo) {
-        super(log, pathing, provider, supply)
+        super(log, pathing, provider, supply, 5) // limit range
     }
 
     public run(creep: Creep): void {

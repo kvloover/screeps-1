@@ -26,6 +26,7 @@ export abstract class HarvesterRole extends TransferRole implements Role {
         pathing: Pathing,
         protected harvests: TaskRepo<Task>,
         protected demands: TaskRepo<Task>,
+        private rangeLimit?: number
     ) { super(log, pathing) }
 
     protected consume(creep: Creep): void {
@@ -33,7 +34,7 @@ export abstract class HarvesterRole extends TransferRole implements Role {
     }
 
     protected supply(creep: Creep) {
-        this.supplyToRepo(creep, this.demands, 'supply');
+        this.supplyToRepo(creep, this.demands, 'supply', undefined, this.rangeLimit);
     }
 
     protected harvest(creep: Creep, room?: string) {

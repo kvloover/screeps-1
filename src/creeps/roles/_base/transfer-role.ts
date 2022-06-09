@@ -68,12 +68,12 @@ export abstract class TransferRole {
         creep.memory.tasks[key] = undefined;
     }
 
-    protected consumeFromRepo(creep: Creep, repo: TaskRepo<Task>, key: string, room?: string) {
+    protected consumeFromRepo(creep: Creep, repo: TaskRepo<Task>, key: string, room?: string, rangeLimit?:number) {
         if (!creep.memory.tasks.hasOwnProperty(key) || !creep.memory.tasks[key]) {
             if (room && !Game.rooms.hasOwnProperty(room)) {
                 this.scoutRoom(creep, room);
             } else {
-                const task = repo.closestTask(creep.pos, room ?? creep.room.name, creep.memory.tasks_blacklist[key]);
+                const task = repo.closestTask(creep.pos, room ?? creep.room.name, creep.memory.tasks_blacklist[key], rangeLimit);
                 if (task) {
                     this.registerTask(creep, task, key);
                     if (repo.trySplitTask(task, creep.store.getFreeCapacity(RESOURCE_ENERGY)))
@@ -125,12 +125,12 @@ export abstract class TransferRole {
         }
     }
 
-    protected supplyToRepo(creep: Creep, repo: TaskRepo<Task>, key: string, room?: string) {
+    protected supplyToRepo(creep: Creep, repo: TaskRepo<Task>, key: string, room?: string, rangeLimit?:number) {
         if (!creep.memory.tasks[key]) {
             if (room && !Game.rooms.hasOwnProperty(room)) {
                 this.scoutRoom(creep, room);
             } else {
-                const task = repo.closestTask(creep.pos, room ?? creep.room.name, creep.memory.tasks_blacklist[key]);
+                const task = repo.closestTask(creep.pos, room ?? creep.room.name, creep.memory.tasks_blacklist[key], rangeLimit);
                 if (task) {
                     this.registerTask(creep, task, key);
                     if (repo.trySplitTask(task, creep.store.getUsedCapacity(RESOURCE_ENERGY)))
