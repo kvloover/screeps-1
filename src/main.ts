@@ -1,12 +1,15 @@
 import "reflect-metadata";
 import { container } from "tsyringe";
 
-import { ErrorMapper } from "utils/ErrorMapper";
+import { ErrorMapper } from "utils/error-mapper";
 import { wrapMemory } from "utils/memory-hack";
 import { ExConsole } from "utils/console";
 
 import { GameWorld } from "game-world";
+
 import "traveller/traveler";
+import "utils/hacks";
+
 import profiler from 'screeps-profiler';
 
 profiler.enable();
