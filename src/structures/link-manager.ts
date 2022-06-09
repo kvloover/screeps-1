@@ -4,6 +4,7 @@ import { Manager } from "manager";
 import { Logger } from "logger";
 
 import profiler from "screeps-profiler";
+import { isLinkStructure } from "utils/utils";
 
 @injectable()
 export class LinkManager implements Manager {
@@ -12,25 +13,43 @@ export class LinkManager implements Manager {
 
     public run(room: Room): void {
 
-        // TODO rewrite
-        const links = room.find<StructureLink>(FIND_MY_STRUCTURES,
-            { filter: (struct) => struct.structureType == STRUCTURE_LINK });
+        const links = room.memory.links;
 
-        const sources = room.find(FIND_SOURCES);
+        if (links && links.length > 0) {
 
-        // this.log.Information(`${towers.length} towers found in room ${room.name}`);
-        if (sources.length > 0 && links.length >= 2) {
-            const inputs = links.filter(i => sources.some(s => s.pos.getRangeTo(i.pos) < 5))
+            const dest = links.filter(i => i.storage);
+            const srces = links.filter(i => !i.storage);
 
-            if (inputs.length > 0) {
-                const src = inputs[0];
-                const dest = links.filter(i => i.id !== src.id)[0];
-                if (src.store.getUsedCapacity(RESOURCE_ENERGY) > 0 && dest.store.getFreeCapacity(RESOURCE_ENERGY) > 0) {
-                    src.transferEnergy(dest);
+            if (dest.length > 0) {
+                const destLink = Game.getObjectById(dest[0].id);
+                if (isLinkStructure(destLink)) {
+                    srces.forEach(src => {
+                        const srcLink = Game.getObjectById(src.id);
+                        if (isLinkStructure(srcLink)) {
+                            if (srcLink.store.getUsedCapacity(RESOURCE_ENERGY) > 0.25 * srcLink.store.getCapacity(RESOURCE_ENERGY)
+                                && destLink.store.getFreeCapacity(RESOURCE_ENERGY) > 0.25 * destLink.store.getCapacity(RESOURCE_ENERGY)) {
+                                srcLink.transferEnergy(destLink,
+                                     Math.min(destLink.store.getFreeCapacity(RESOURCE_ENERGY), srcLink.store.getUsedCapacity(RESOURCE_ENERGY)));
+                            }
+                        }
+                    });
                 }
             }
-        }
 
+        }
+    }
+
+    public static init(room: Room): void {
+        room.memory.links = [];
+
+        const storages = room.find(FIND_MY_STRUCTURES, { filter: (struct) => struct.structureType == STRUCTURE_STORAGE })
+        const storage = storages.length > 0 ? storages[0] : undefined;
+
+        room.find(FIND_MY_STRUCTURES, { filter: (struct) => struct.structureType == STRUCTURE_LINK })
+            .forEach(l => {
+                const nearStorage = storage ? storage.pos.getRangeTo(l.pos) < 5 : false;
+                room.memory.links.push({ id: l.id, pos: l.pos, storage: nearStorage })
+            });
     }
 }
 

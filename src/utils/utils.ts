@@ -7,6 +7,9 @@ export const isDefined =
 export const isStoreStructure =
   (item: any): item is AnyStoreStructure => isDefined((item as AnyStoreStructure)?.store);
 
+export const isLinkStructure =
+  (item: any): item is StructureLink => isDefined((item as StructureLink)?.store);
+
 export const isTombStone =
   (item: any): item is Tombstone => isDefined((item as Tombstone)?.store)
 

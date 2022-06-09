@@ -26,7 +26,11 @@ declare global {
         remote_mining: boolean;
         remote_attack: boolean;
         claim: boolean;
+
+        sources: { id: Id<_HasId>, pos: RoomPosition }[];
+        links: { id: Id<_HasId>, pos: RoomPosition, storage: boolean }[];
     }
+
 
     interface CreepMemory {
         id: undefined | Id<_HasId>;

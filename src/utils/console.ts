@@ -1,4 +1,5 @@
 import { Persistency, Persistent } from "repos/persistent";
+import { LinkManager } from "structures";
 import { container } from "tsyringe";
 import { CreepState } from "./creep-state";
 import { isDefined } from "./utils";
@@ -11,6 +12,8 @@ export class ExConsole {
 
         global.remote = this.remote;
         global.attack = this.attack;
+
+        global.init_links = this.init_links;
 
         global.upgrading = (m, v) => this.toggle(m, 'upgrading', v);
         global.building = (m, v) => this.toggle(m, 'building', v);
@@ -84,6 +87,15 @@ export class ExConsole {
         return `Room not known: ${roomName}`
     }
 
+    private static init_links(roomName: string): string {
+        if (Game.rooms.hasOwnProperty(roomName)) {
+            const room = Game.rooms[roomName];
+            LinkManager.init(room)
+            return `room links init for ${roomName}.`;
+        }
+        return `Room not known: ${roomName}`
+    }
+
     private static toggle(roomName: string, key: keyof RoomMemory, value: boolean | undefined): string {
         if (Memory.rooms.hasOwnProperty(roomName)) {
             const room = Memory.rooms[roomName];
@@ -100,6 +112,8 @@ declare global {
             debug: (room: string) => string;
             stopDebug: (room: string) => string;
             reset: (room: string) => string;
+
+            init_links: (room: string) => string;
 
             remote: (room: string, value: string | undefined) => string;
             attack: (room: string, value: string | undefined) => string;
