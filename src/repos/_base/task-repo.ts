@@ -4,7 +4,19 @@ import { Task } from "../task";
 
 // import profiler from 'screeps-profiler';
 
-export abstract class TaskRepo<T extends Task> {
+export interface TaskRepo<T extends Task> {
+    getById(id: string): T | undefined;
+    list(room?: string): T[];
+    add(task: T): void;
+    removeById(id: string): void;
+    remove(task: T): void;
+    getForRequester(id: string): T[];
+    closestTask(pos: RoomPosition, room?: string, blacklist?: string[], limitrange?: number): Task;
+    trySplitTask(task: Task, amount: number, opt?: (task: Task) => T): boolean;
+    mergeEmpty(): void;
+}
+
+export abstract class BaseRepo<T extends Task> implements TaskRepo<T>{
     // getById(id: string): T | undefined;
     // list(): T[];
     // add(task: T): void;
@@ -49,9 +61,7 @@ export abstract class TaskRepo<T extends Task> {
     }
 
     public closestTask(pos: RoomPosition, room?: string, blacklist?: string[], limitrange?: number): Task {
-        // i.pos = serialized = functions stripped, use values directly
         const roomTasks = this.list(room);
-        // if (room) { this.log.debug(Game.rooms[room], `${this.key}: room ${room} found ${roomTasks.length}`); }
         return _(roomTasks)
             .map(e => { return { task: e, range: pos.getRangeTo(e.pos?.x ?? 0, e.pos?.y ?? 0) }; })
             .filter(e => !e.task.executer
@@ -72,7 +82,7 @@ export abstract class TaskRepo<T extends Task> {
         return false;
     }
 
-    public mergeEmpty() {
+    public mergeEmpty(): void {
         const nonExecuters = this.tasks.filter(r => !r.executer);
         const requesters = _.unique(nonExecuters.map(i => i.requester));
 

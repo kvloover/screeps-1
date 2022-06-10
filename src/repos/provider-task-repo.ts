@@ -3,13 +3,13 @@ import profiler from "screeps-profiler";
 import { Lifecycle, scoped } from "tsyringe";
 import { Persistent } from "./persistent";
 import { ProviderTask } from "./task";
-import { TaskRepo } from "./_base/task-repo";
+import { BaseRepo } from "./_base/task-repo";
 
 /**
 * Midstream providing
 **/
 @scoped(Lifecycle.ContainerScoped)
-export class ProviderTaskRepo extends TaskRepo<ProviderTask> implements Persistent {
+export class ProviderTaskRepo extends BaseRepo<ProviderTask> implements Persistent {
 
     constructor(log: Logger) { super('provider', log); }
 

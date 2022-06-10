@@ -42,7 +42,7 @@ declare global {
 
         tasks: { [key: string]: { repo: string; task: Task; } | undefined };
         tasks_blacklist: { [key: string]: string[] }; // ignore specific requesters for the given type
-
+        lastId: Id<_HasId> | undefined;
     }
 
     // namespace NodeJS {

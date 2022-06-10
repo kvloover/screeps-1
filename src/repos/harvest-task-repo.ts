@@ -3,13 +3,13 @@ import profiler from "screeps-profiler";
 import { Lifecycle, scoped } from "tsyringe";
 import { Persistent } from "./persistent";
 import { HarvestTask } from "./task";
-import { TaskRepo } from "./_base/task-repo";
+import { BaseRepo } from "./_base/task-repo";
 
 /**
 * Sources to harvest
 **/
 @scoped(Lifecycle.ContainerScoped)
-export class HarvestTaskRepo extends TaskRepo<HarvestTask> implements Persistent {
+export class HarvestTaskRepo extends BaseRepo<HarvestTask> implements Persistent {
 
     constructor(log: Logger) { super('harvest', log); }
 

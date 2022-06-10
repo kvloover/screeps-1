@@ -3,13 +3,13 @@ import profiler from "screeps-profiler";
 import { Lifecycle, scoped } from "tsyringe";
 import { Persistent } from "./persistent";
 import { StorageTask } from "./task";
-import { TaskRepo } from "./_base/task-repo";
+import { BaseRepo } from "./_base/task-repo";
 
 /**
 * Storage demand
 **/
 @scoped(Lifecycle.ContainerScoped)
-export class StorageTaskRepo extends TaskRepo<StorageTask> implements Persistent {
+export class StorageTaskRepo extends BaseRepo<StorageTask> implements Persistent {
 
     constructor(log: Logger) { super('storage', log); }
 
