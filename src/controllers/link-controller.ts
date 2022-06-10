@@ -42,7 +42,7 @@ export class LinkController implements Controller {
                         const free = struct.store.getFreeCapacity(RESOURCE_ENERGY);
                         if (free > 0) {
                             const current = this.transferRepo.getForRequester(i.id);
-                            const amount = current.reduce((p, c) => p + (c.amount ?? 0), 0);
+                            const amount = current.reduce((p, c) => p + (c?.amount ?? 0), 0);
                             if (amount < free) {
                                 this.transferRepo.add(new MidstreamTask(struct.room.name, 1, free - amount, i.id, undefined, i.pos));
                                 this.log.debug(room, `${i.pos}: added link midstream task`);

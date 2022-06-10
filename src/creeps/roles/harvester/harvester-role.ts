@@ -16,6 +16,8 @@ import { Task } from "repos/task";
  */
 export abstract class HarvesterRole extends TransferRole implements Role {
 
+    protected skipLast: boolean = false;
+
     name: string = 'harvester'
     phase = {
         start: 1,

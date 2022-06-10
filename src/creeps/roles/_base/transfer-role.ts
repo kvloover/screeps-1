@@ -8,6 +8,8 @@ import { isStoreStructure, isTombStone, isRuin, isResource, isDefined } from "ut
 
 export abstract class TransferRole {
 
+    protected skipLast = true;
+
     constructor(protected log: Logger, protected pathing: Pathing) { }
 
     public run(creep: Creep): void {
@@ -76,6 +78,8 @@ export abstract class TransferRole {
 
     protected blacklist(creep: Creep, key: string): string[] | undefined {
         const blacklist = creep.memory.tasks_blacklist[key];
+        if (!this.skipLast) return blacklist;
+
         const lastId = creep.memory.lastId;
         if (isDefined(lastId))
             return (blacklist ?? []).concat([lastId]);
