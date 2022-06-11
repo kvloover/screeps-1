@@ -54,23 +54,6 @@ export abstract class TransferRole {
         this.log.debug(creep.room, `unknown state for ${creep.name} : ${creep.memory.state}`);
     }
 
-    protected registerTask(creep: Creep, task: Task, key: string) {
-        this.log.debug(creep.room, `registering task on ${creep.name}: ${key} - ${task.id}`);
-        creep.memory.tasks[key] = { repo: key, task: task };
-        task.executer = creep.id;
-    }
-
-    protected finishTask(creep: Creep, task: Task, repo: TaskRepo<Task>, key: string) {
-        this.log.debug(creep.room, `finished task on ${creep.name}: ${key} - ${task.id}`);
-        this.unlinkTask(creep, key);
-        repo.remove(task);
-    }
-
-    protected unlinkTask(creep: Creep, key: string) {
-        this.log.debug(creep.room, `unlinking task on ${creep.name}: ${key}`);
-        creep.memory.tasks[key] = undefined;
-    }
-
     protected storeLast(creep: Creep, task: Task) {
         this.log.debug(creep.room, `set lastId for ${creep.name}: ${task.requester}`);
         creep.memory.lastId = task.requester;
@@ -98,11 +81,11 @@ export abstract class TransferRole {
     protected consumeFromRepo(creep: Creep, repo: TaskRepo<Task>, key: string, room?: string, rangeLimit?: number) {
         if (!creep.memory.tasks.hasOwnProperty(key) || !creep.memory.tasks[key]) {
             if (room && !Game.rooms.hasOwnProperty(room)) {
-                this.scoutRoom(creep, room);
+                this.pathing.scoutRoom(creep, room);
             } else {
                 const task = repo.closestTask(creep.pos, room ?? creep.room.name, this.blacklist(creep, key), rangeLimit);
                 if (task) {
-                    this.registerTask(creep, task, key);
+                    repo.registerTask(creep, task, key);
                     if (repo.trySplitTask(task, creep.store.getFreeCapacity(RESOURCE_ENERGY)))
                         this.log.debug(creep.room, `${creep.name}: ${key} task split for remaining amount`);
                 }
@@ -117,11 +100,11 @@ export abstract class TransferRole {
             // will be undefined for other repo
             const [succes, transferred] = this.tryConsumeForTask(creep, memTask);
             if (!succes) {
-                this.finishTask(creep, memTask, repo, key);
+                repo.finishTask(creep, memTask, key);
                 console.log(`${creep.name}: could not consume for ${key} task: ${memTask.id}`);
             } else if (transferred) {
                 this.storeLast(creep, memTask);
-                this.finishTask(creep, memTask, repo, key);
+                repo.finishTask(creep, memTask, key);
                 this.log.debug(creep.room, `${creep.name}: consume ${key} task removed for ${memTask.id}`);
             }
         }
@@ -131,17 +114,20 @@ export abstract class TransferRole {
         const dest = Game.getObjectById(task.requester as Id<_HasId>)
 
         if (dest) {
+            let ret: number = -999;
             if (
                 ((isStoreStructure(dest) || isTombStone(dest) || isRuin(dest))
                     && (dest.store.getUsedCapacity(RESOURCE_ENERGY) ?? 0) > 0
-                    && creep.withdraw(dest, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE)
+                    && (ret = creep.withdraw(dest, RESOURCE_ENERGY)) === ERR_NOT_IN_RANGE)
                 || (isResource(dest)
-                    && creep.pickup(dest) === ERR_NOT_IN_RANGE)
+                    && (ret = creep.pickup(dest)) === ERR_NOT_IN_RANGE)
             ) {
+                this.log.debug(creep.room, `${creep.name}: consume returned ${ret}`);
                 this.pathing.moveTo(creep, dest.pos);
                 return [true, false]
             } else {
                 // transferred or empty:
+                this.log.debug(creep.room, `${creep.name}: consume returned ${ret}`);
                 return [true, true];
             }
         } else {
@@ -153,11 +139,11 @@ export abstract class TransferRole {
     protected supplyToRepo(creep: Creep, repo: TaskRepo<Task>, key: string, room?: string, rangeLimit?: number) {
         if (!creep.memory.tasks[key]) {
             if (room && !Game.rooms.hasOwnProperty(room)) {
-                this.scoutRoom(creep, room);
+                this.pathing.scoutRoom(creep, room);
             } else {
                 const task = repo.closestTask(creep.pos, room ?? creep.room.name, this.blacklist(creep, key), rangeLimit);
                 if (task) {
-                    this.registerTask(creep, task, key);
+                    repo.registerTask(creep, task, key);
                     if (repo.trySplitTask(task, creep.store.getUsedCapacity(RESOURCE_ENERGY)))
                         this.log.debug(creep.room, `${creep.name}: ${key} task added to demands for remaining demand`);
                 }
@@ -172,10 +158,10 @@ export abstract class TransferRole {
             // will be undefined for other repo
             const [succes, transferred] = this.trySupplyForTask(creep, memTask);
             if (!succes) {
-                this.finishTask(creep, memTask, repo, key);
+                repo.finishTask(creep, memTask, key);
                 console.log(`${creep.name}: could not supply for ${key} task: ${memTask.id}`);
             } else if (transferred) {
-                this.finishTask(creep, memTask, repo, key);
+                repo.finishTask(creep, memTask, key);
                 this.log.debug(creep.room, `${creep.name}: supply ${key} task removed for ${memTask.id}`);
             }
             // } else {
@@ -190,30 +176,18 @@ export abstract class TransferRole {
         if (dest &&
             (isStoreStructure(dest))
         ) {
-            if ((dest.store.getFreeCapacity(RESOURCE_ENERGY) ?? 0) > 0 && creep.transfer(dest, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
+            let ret: number = -999;
+            if ((dest.store.getFreeCapacity(RESOURCE_ENERGY) ?? 0) > 0 && (ret = creep.transfer(dest, RESOURCE_ENERGY)) === ERR_NOT_IN_RANGE) {
+                this.log.debug(creep.room, `${creep.name}: supply returned ${ret}`);
                 this.pathing.moveTo(creep, dest.pos);
                 return [true, false]
             }
             // transferred or already full:
+            this.log.debug(creep.room, `${creep.name}: supply returned ${ret}`);
             return [true, true];
         }
 
         // invalid location
         return [false, false];
     }
-
-    protected scoutRoom(creep: Creep, room: string) {
-        if (creep.room.name !== room) {
-            // move to room
-            this.pathing.moveTo(creep, new RoomPosition(25, 25, room));
-        }
-    }
-
-    protected gotoRoom(creep: Creep, pos: RoomPosition) {
-        if (creep.room.name !== pos.roomName) {
-            // move to room
-            this.pathing.moveTo(creep, pos);
-        }
-    }
-
 }

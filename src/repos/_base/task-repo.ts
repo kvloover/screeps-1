@@ -4,6 +4,7 @@ import { Task } from "../task";
 
 // import profiler from 'screeps-profiler';
 
+// TODO split logic to have only clean repo logic
 export interface TaskRepo<T extends Task> {
     getById(id: string): T | undefined;
     list(room?: string): T[];
@@ -14,6 +15,9 @@ export interface TaskRepo<T extends Task> {
     closestTask(pos: RoomPosition, room?: string, blacklist?: string[], limitrange?: number): Task;
     trySplitTask(task: Task, amount: number, opt?: (task: Task) => T): boolean;
     mergeEmpty(): void;
+    registerTask(creep: Creep, task: Task, key: string): void;
+    finishTask(creep: Creep, task: Task, key: string): void;
+    unlinkTask(creep: Creep, key: string): void;
 }
 
 export abstract class BaseRepo<T extends Task> implements TaskRepo<T>{
@@ -102,6 +106,23 @@ export abstract class BaseRepo<T extends Task> implements TaskRepo<T>{
             })
         }
 
+    }
+
+    public registerTask(creep: Creep, task: Task, key: string): void {
+        this.log.debug(creep.room, `registering task on ${creep.name}: ${key} - ${task.id}`);
+        creep.memory.tasks[key] = { repo: key, task: task };
+        task.executer = creep.id;
+    }
+
+    public finishTask(creep: Creep, task: Task, key: string): void {
+        this.log.debug(creep.room, `finished task on ${creep.name}: ${key} - ${task.id}`);
+        this.unlinkTask(creep, key);
+        this.remove(task as T);
+    }
+
+    public unlinkTask(creep: Creep, key: string): void {
+        this.log.debug(creep.room, `unlinking task on ${creep.name}: ${key}`);
+        creep.memory.tasks[key] = undefined;
     }
 
 }

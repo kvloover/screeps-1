@@ -39,6 +39,8 @@ export class FillerSupplierRole extends FillerRole {
 @injectable()
 export class FillerStorageRole extends FillerRole {
 
+    protected skipLast: boolean = false;
+
     phase = {
         start: 3,
         end: 3
@@ -69,6 +71,8 @@ profiler.registerClass(FillerStorageRole, 'FillerStorageRole');
  */
 @injectable()
 export class FillerLinkRole extends FillerRole {
+
+    protected skipLast: boolean = false;
 
     phase = {
         start: 4,

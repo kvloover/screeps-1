@@ -2,16 +2,16 @@ import { registry } from "tsyringe";
 
 import {
     MeleeAttackerRole,
-    BuilderRole,
-    UpgraderRole,
     RangedAttackerRole,
     RemoteAttackerRole,
     ClaimerRole,
 } from ".";
 
-import { FillerLinkRole, FillerStorageRole, FillerSupplierRole } from "./filler/filler-service";
 import { HarvestMidstreamRole, HarvestSupplierRole, RemoteHarvestMidstreamRole } from "./harvester/harvester-service";
+import { UpgraderSourceRole, UpgraderStorageRole } from "./upgrader/upgrader-service";
+import { BuilderSourceRole, BuilderStorageRole } from "./builder/builder-service";
 import { HaulerStorageRole } from "./hauler/hauler-service";
+import { FillerLinkRole, FillerStorageRole, FillerSupplierRole } from "./filler/filler-service";
 
 export interface Role {
     name: string;
@@ -23,12 +23,14 @@ export interface Role {
 }
 
 @registry([
-    { token: Roles.token, useToken: BuilderRole },
-    { token: Roles.token, useToken: UpgraderRole },
     { token: Roles.token, useToken: MeleeAttackerRole },
     { token: Roles.token, useToken: RangedAttackerRole },
     { token: Roles.token, useToken: RemoteAttackerRole },
     { token: Roles.token, useToken: ClaimerRole },
+    { token: Roles.token, useToken: BuilderSourceRole },
+    { token: Roles.token, useToken: BuilderStorageRole },
+    { token: Roles.token, useToken: UpgraderSourceRole },
+    { token: Roles.token, useToken: UpgraderStorageRole },
     { token: Roles.token, useToken: HarvestSupplierRole },
     { token: Roles.token, useToken: HarvestMidstreamRole },
     { token: Roles.token, useToken: RemoteHarvestMidstreamRole },

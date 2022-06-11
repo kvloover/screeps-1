@@ -21,7 +21,7 @@ export class CombinedRepo implements TaskRepo<Task> {
             .concat(this.rightRepo.list(room).map(i => { return { ...i, prio: i.prio + this.offset } }));
     }
     add(task: Task): void {
-        throw new Error("Method not implemented.");
+        throw new Error(`Can't add on a combined repo: ${this.key}`);
     }
     removeById(id: string): void {
         this.leftRepo.removeById(id);
@@ -47,15 +47,36 @@ export class CombinedRepo implements TaskRepo<Task> {
             .first();
     }
     trySplitTask(task: Task, amount: number, opt?: (task: Task) => Task): boolean {
-        const foundLeft = this.leftRepo.getById(task.id);
-        if (foundLeft) return this.leftRepo.trySplitTask(task, amount, opt);
-        const foundRight = this.rightRepo.getById(task.id);
-        if (foundRight) return this.rightRepo.trySplitTask(task, amount, opt);
-        return false;
+        const repo = this.repoForTask(task);
+        if (repo)
+            return repo.trySplitTask(task, amount, opt);
+        else
+            return false;
     }
     mergeEmpty(): void {
         this.leftRepo.mergeEmpty();
         this.rightRepo.mergeEmpty();
+    }
+    registerTask(creep: Creep, task: Task, key: string): void {
+        const repo = this.repoForTask(task);
+        if (repo) { repo.registerTask(creep, task, key); }
+    }
+    finishTask(creep: Creep, task: Task, key: string): void {
+        const repo = this.repoForTask(task);
+        if (repo) { repo.finishTask(creep, task, key); }
+    }
+    unlinkTask(creep: Creep, key: string): void {
+        // Only need one, not real task logic...
+        this.leftRepo.unlinkTask(creep, key);
+        this.rightRepo.unlinkTask(creep, key);
+    }
+
+    private repoForTask(task: Task): TaskRepo<Task> | undefined {
+        const foundLeft = this.leftRepo.getById(task.id);
+        if (foundLeft) return this.leftRepo;
+        const foundRight = this.rightRepo.getById(task.id);
+        if (foundRight) return this.rightRepo;
+        return undefined;
     }
 
 }

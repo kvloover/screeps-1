@@ -114,7 +114,8 @@ export class SpawnManager implements Manager {
             targetRoom: undefined,
             targetId: undefined,
             tasks: {},
-            tasks_blacklist: {}
+            tasks_blacklist: {},
+            lastId: undefined
         };
     }
 

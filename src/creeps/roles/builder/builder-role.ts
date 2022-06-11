@@ -1,30 +1,28 @@
-import { injectable } from "tsyringe";
-
-import { CreepUtils } from "creeps/creep-utils";
+import { Logger } from "logger";
 import { Pathing } from "creeps/pathing";
-import { CreepState } from "utils/creep-state";
 
 import { Role } from "../role-registry";
-import { ConsumerRole } from "../_base/consumer-role";
-import profiler from "screeps-profiler";
+import { TransferRole } from "../_base/transfer-role";
 
-@injectable()
-export class BuilderRole extends ConsumerRole implements Role {
+import { CreepState } from "utils/creep-state";
+import { CreepUtils } from "creeps/creep-utils";
+
+// TODO rework for tasks for build/repair
+
+// @injectable()
+export abstract class BuilderRole extends TransferRole implements Role {
 
     name: string = 'builder'
     phase = {
         start: 1,
         end: 9
     };
-    maxHits: number = 15000;
 
-    constructor(pathing: Pathing) { super(pathing); }
+    constructor(log: Logger, pathing: Pathing) { super(log, pathing) }
 
-    protected workState(creep: Creep): CreepState {
-        return CreepState.build;
-    }
+    // Override consume on implementing class
 
-    protected work(creep: Creep): void {
+    protected supply(creep: Creep): void {
         // priority repairs > construction > repairs
         const emergency = creep.room.find(FIND_STRUCTURES, {
             filter: (struct) => struct.hits < 1500 && struct.hits < struct.hitsMax
@@ -85,6 +83,5 @@ export class BuilderRole extends ConsumerRole implements Role {
             }
         }
     }
-}
 
-profiler.registerClass(BuilderRole, 'BuilderRole');
+}

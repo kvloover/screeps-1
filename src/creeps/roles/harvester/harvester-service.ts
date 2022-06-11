@@ -11,6 +11,7 @@ import { MidstreamTaskRepo } from "repos/midstream-task-repo";
 import { HarvestTaskRepo } from "repos/harvest-task-repo";
 import { RemoteHarvesterRole } from "./remote-harvester-role";
 import profiler from "screeps-profiler";
+import { HarvestAction } from "./harvest-action";
 
 
 @injectable()
@@ -22,8 +23,8 @@ export class HarvestSupplierRole extends HarvesterRole {
     };
 
     constructor(log: Logger, pathing: Pathing,
-        provider: HarvestTaskRepo, supply: DemandTaskRepo) {
-        super(log, pathing, provider, supply, undefined)
+        supply: DemandTaskRepo, action: HarvestAction) {
+        super(log, pathing, supply, action, undefined)
     }
 
     public run(creep: Creep): void {
@@ -41,8 +42,8 @@ export class HarvestMidstreamRole extends HarvesterRole {
     };
 
     constructor(log: Logger, pathing: Pathing,
-        provider: HarvestTaskRepo, supply: MidstreamTaskRepo) {
-        super(log, pathing, provider, supply, 5) // limit range
+        supply: MidstreamTaskRepo, action: HarvestAction) {
+        super(log, pathing, supply, action, 5) // limit range
     }
 
     public run(creep: Creep): void {
@@ -62,8 +63,8 @@ export class RemoteHarvestMidstreamRole extends RemoteHarvesterRole {
     };
 
     constructor(log: Logger, pathing: Pathing,
-        provider: HarvestTaskRepo, supply: MidstreamTaskRepo) {
-        super(log, pathing, provider, supply)
+        supply: MidstreamTaskRepo, action: HarvestAction) {
+        super(log, pathing, supply, action)
     }
 
     public run(creep: Creep): void {
