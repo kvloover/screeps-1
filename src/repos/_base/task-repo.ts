@@ -15,7 +15,7 @@ export interface TaskRepo<T extends Task> {
     removeById(id: string): void;
     remove(task: T): void;
     getForRequester(id: string): T[];
-    closestTask(pos: RoomPosition, room?: string, blacklist?: string[], limitrange?: number): Task;
+    closestTask(pos: RoomPosition, type?: ResourceConstant, room?: string, blacklist?: string[], limitrange?: number): Task;
     trySplitTask(task: Task, amount: number, opt?: (task: Task) => T): boolean;
     mergeEmpty(): void;
     registerTask(creep: Creep, task: Task, key: string): void;
@@ -63,15 +63,16 @@ export abstract class BaseRepo<T extends Task> implements TaskRepo<T>{
         this.removeById(task.id);
     }
 
-    public getForRequester(id: string): T[] {
-        return _.filter(this.tasks, i => i.requester === id);
+    public getForRequester(id: string, type?: ResourceConstant): T[] {
+        return _.filter(this.tasks, i => i.requester === id && (!type || (i.type && i.type == type)));
     }
 
-    public closestTask(pos: RoomPosition, room?: string, blacklist?: string[], limitrange?: number): Task {
+    public closestTask(pos: RoomPosition, type?: ResourceConstant, room?: string, blacklist?: string[], limitrange?: number): Task {
         const roomTasks = this.list(room);
         return _(roomTasks)
             .map(e => { return { task: e, range: pos.getRangeTo(e.pos?.x ?? 0, e.pos?.y ?? 0) }; })
             .filter(e => !e.task.executer
+                && (!type || (e.task.type && e.task.type == type))
                 && (!blacklist || !blacklist.includes(e.task.requester ?? ""))
                 && (!limitrange || limitrange > e.range)
             ).sortByAll(i => i.task.prio, i => i.range)
@@ -81,7 +82,7 @@ export abstract class BaseRepo<T extends Task> implements TaskRepo<T>{
 
     public trySplitTask(task: Task, amount: number, opt?: (task: Task) => T): boolean {
         if (task.amount && task.amount > amount) {
-            const newTask = new Task(task.room, task.prio, task.amount - amount, task.requester, undefined, task.pos);
+            const newTask = new Task(task.room, task.prio, task.amount - amount, task.type, task.requester, undefined, task.pos);
             this.add(opt ? opt(newTask) : newTask as T);
             task.amount = amount;
             return true;
@@ -113,7 +114,7 @@ export abstract class BaseRepo<T extends Task> implements TaskRepo<T>{
 
     public registerTask(creep: Creep, task: Task, key: string): void {
         this.log.debug(creep.room, `registering task on ${creep.name}: ${key} - ${task.id}`);
-        creep.memory.tasks[key] = { repo: key, tick: Game.time ,task: task };
+        creep.memory.tasks[key] = { repo: key, tick: Game.time, task: task };
         task.executer = creep.id;
     }
 

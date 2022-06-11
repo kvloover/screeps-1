@@ -4,7 +4,8 @@ import { CreepState } from 'utils/creep-state';
 
 import { TaskRepo } from "repos/_base/task-repo";
 import { Task } from "repos/task";
-import { isStoreStructure, isTombStone, isRuin, isResource, isDefined } from "utils/utils";
+import { isStoreStructure, isTombStone, isRuin, isResource, isDefined, isResourceConstant } from "utils/utils";
+import { each, forEach } from "lodash";
 
 export abstract class TransferRole {
 
@@ -99,8 +100,8 @@ export abstract class TransferRole {
         return retVal;
     }
 
-    protected findAndRegisterTask(creep: Creep, repo: TaskRepo<Task>, key: string, amount: number, room?: string, rangeLimit?: number): Task | undefined {
-        const task = repo.closestTask(creep.pos, room ?? creep.room.name, this.blacklist(creep, key), rangeLimit);
+    protected findAndRegisterTask(creep: Creep, repo: TaskRepo<Task>, key: string, amount: number, type?: ResourceConstant, room?: string, rangeLimit?: number): Task | undefined {
+        const task = repo.closestTask(creep.pos, type, room ?? creep.room.name, this.blacklist(creep, key), rangeLimit);
         if (task) {
             repo.registerTask(creep, task, key);
             if (repo.trySplitTask(task, amount))
@@ -109,13 +110,13 @@ export abstract class TransferRole {
         return task;
     }
 
-    protected consumeFromRepo(creep: Creep, repo: TaskRepo<Task>, key: string, room?: string, rangeLimit?: number) {
+    protected consumeFromRepo(creep: Creep, repo: TaskRepo<Task>, key: string, type?: ResourceConstant, room?: string, rangeLimit?: number) {
 
         if (!creep.memory.tasks[key]) {
             if (room && !Game.rooms.hasOwnProperty(room)) {
                 this.pathing.scoutRoom(creep, room);
             } else {
-                this.findAndRegisterTask(creep, repo, key, creep.store.getFreeCapacity(RESOURCE_ENERGY), room, rangeLimit)
+                this.findAndRegisterTask(creep, repo, key, creep.store.getFreeCapacity(type), type, room, rangeLimit)
             }
         }
 
@@ -137,11 +138,12 @@ export abstract class TransferRole {
         const dest = Game.getObjectById(task.requester as Id<_HasId>)
 
         if (dest) {
+            const type = task.type ?? RESOURCE_ENERGY; // Only supply should be undefined type -> fetch from dest using store
             let ret: number = -999;
             if (
                 ((isStoreStructure(dest) || isTombStone(dest) || isRuin(dest))
-                    && (dest.store.getUsedCapacity(RESOURCE_ENERGY) ?? 0) > 0
-                    && (ret = creep.withdraw(dest, RESOURCE_ENERGY)) === ERR_NOT_IN_RANGE)
+                    && (dest.store.getUsedCapacity(type) ?? 0) > 0
+                    && (ret = creep.withdraw(dest, type)) === ERR_NOT_IN_RANGE)
                 || (isResource(dest)
                     && (ret = creep.pickup(dest)) === ERR_NOT_IN_RANGE)
             ) {
@@ -159,13 +161,13 @@ export abstract class TransferRole {
         }
     }
 
-    protected supplyToRepo(creep: Creep, repo: TaskRepo<Task>, key: string, room?: string, rangeLimit?: number) {
+    protected supplyToRepo(creep: Creep, repo: TaskRepo<Task>, key: string, type?: ResourceConstant, room?: string, rangeLimit?: number) {
 
         if (!creep.memory.tasks[key]) {
             if (room && !Game.rooms.hasOwnProperty(room)) {
                 this.pathing.scoutRoom(creep, room);
             } else {
-                this.findAndRegisterTask(creep, repo, key, creep.store.getUsedCapacity(RESOURCE_ENERGY), room, rangeLimit)
+                this.findAndRegisterTask(creep, repo, key, creep.store.getUsedCapacity(type), type, room, rangeLimit)
             }
         }
 
@@ -189,15 +191,32 @@ export abstract class TransferRole {
         if (dest &&
             (isStoreStructure(dest))
         ) {
-            let ret: number = -999;
-            if ((dest.store.getFreeCapacity(RESOURCE_ENERGY) ?? 0) > 0 && (ret = creep.transfer(dest, RESOURCE_ENERGY)) === ERR_NOT_IN_RANGE) {
-                this.log.debug(creep.room, `${creep.name}: supply returned ${ret}`);
-                this.pathing.moveTo(creep, dest.pos);
-                return [true, false]
+            const types = [];
+            if (!task.type) {
+                // supply task can be generic deposit: no type provided
+                types.push(Object.keys(creep.store));
+            } else {
+                types.push(task.type);
             }
-            // transferred or already full:
-            this.log.debug(creep.room, `${creep.name}: supply returned ${ret}`);
-            return [true, true];
+
+            let ret: number = -999;
+            for (let type of types) {
+                if (isResourceConstant(type)) {
+                    if (dest.store.getFreeCapacity(type) ?? 0) {
+                        if ((ret = creep.transfer(dest, type)) === ERR_NOT_IN_RANGE) {
+                            this.log.debug(creep.room, `${creep.name}: supply returned ${ret}`);
+                            this.pathing.moveTo(creep, dest.pos);
+                            return [true, false]
+                        } else {
+                            this.log.debug(creep.room, `${creep.name}: supply returned ${ret}`);
+                            return [true, true]
+                        }
+                    } else {
+                        // no transfer possible
+                        return [true, true]
+                    }
+                }
+            }
         }
 
         // invalid location

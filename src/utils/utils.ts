@@ -19,3 +19,5 @@ export const isRuin =
 export const isResource =
   (item: any): item is Resource<ResourceConstant> => isDefined((item as Resource<ResourceConstant>)?.amount)
 
+export const isResourceConstant =
+  (item: any): item is ResourceConstant => isDefined((item as ResourceConstant))

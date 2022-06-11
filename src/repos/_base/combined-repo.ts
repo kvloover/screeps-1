@@ -35,11 +35,12 @@ export class CombinedRepo implements TaskRepo<Task> {
         return this.leftRepo.getForRequester(id)
             .concat(this.rightRepo.getForRequester(id));
     }
-    closestTask(pos: RoomPosition, room?: string, blacklist?: string[], limitrange?: number): Task {
+    closestTask(pos: RoomPosition, type?: ResourceConstant, room?: string, blacklist?: string[], limitrange?: number): Task {
         const roomTasks = this.list(room);
         return _(roomTasks)
             .map(e => { return { task: e, range: pos.getRangeTo(e.pos?.x ?? 0, e.pos?.y ?? 0) }; })
             .filter(e => !e.task.executer
+                && ((!type && (e.task.type == RESOURCE_ENERGY || !e.task.type)) || (type && e.task.type && e.task.type == type))
                 && (!blacklist || !blacklist.includes(e.task.requester ?? ""))
                 && (!limitrange || limitrange > e.range)
             ).sortByAll(i => i.task.prio, i => i.range)

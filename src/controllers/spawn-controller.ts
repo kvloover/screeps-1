@@ -24,13 +24,12 @@ export class SpawnController implements Controller {
         }
         const structs = room.find(FIND_MY_STRUCTURES, opt);
 
-        const demands = this.demands.list(room.name);
         structs.forEach(s => {
             const struct = s as StructureSpawn | StructureExtension
             if (struct) {
-                const task = demands.find(d => d.requester === s.id);
+                const task = this.demands.getForRequester(s.id, RESOURCE_ENERGY);
                 if (!task) {
-                    this.demands.add(new DemandTask(struct.room.name, 1, struct.store.getFreeCapacity(RESOURCE_ENERGY), struct.id, undefined, struct.pos ));
+                    this.demands.add(new DemandTask(struct.room.name, 1, struct.store.getFreeCapacity(RESOURCE_ENERGY), RESOURCE_ENERGY, struct.id, undefined, struct.pos ));
                     this.log.debug(struct.room, `${struct.pos}: added supply task`);
                 }
             }

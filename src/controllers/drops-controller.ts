@@ -7,6 +7,7 @@ import { Logger } from "logger";
 import { SupplyTaskRepo } from "repos/supply-task-repo";
 
 import profiler from "screeps-profiler";
+import { isResourceConstant } from "utils/utils";
 
 @injectable()
 export class DropsController implements Controller {
@@ -25,15 +26,21 @@ export class DropsController implements Controller {
 
         // Add task for each container to be supplied
         tombs.forEach(i => {
-            const stored = i.store[RESOURCE_ENERGY];
-            if (stored > 0) {
-                const current = this.supplyRepo.getForRequester(i.id);
-                const amount = current.reduce((p, c) => p + (c.amount ?? 0), 0);
-                if (amount < stored && i.room) {
-                    this.supplyRepo.add(new SupplyTask(i.room.name, 1, stored - amount, i.id, undefined, i.pos));
-                    this.log.debug(room, `${i.pos}: added tomb supply task`);
+
+            Object.keys(i.store).forEach(type => {
+                if (isResourceConstant(type)) {
+                    const stored = i.store[type];
+                    if (stored > 0) {
+                        const current = this.supplyRepo.getForRequester(i.id, type);
+                        const amount = current.reduce((p, c) => p + (c.amount ?? 0), 0);
+                        if (amount < stored && i.room) {
+                            this.supplyRepo.add(new SupplyTask(i.room.name, 1, stored - amount, type, i.id, undefined, i.pos));
+                            this.log.debug(room, `${i.pos}: added tomb supply task`);
+                        }
+                    }
                 }
-            }
+            });
+
         })
 
         const dropped =
@@ -43,10 +50,10 @@ export class DropsController implements Controller {
         dropped.forEach(i => {
             const stored = i.amount;
             if (stored > 0) {
-                const current = this.supplyRepo.getForRequester(i.id);
+                const current = this.supplyRepo.getForRequester(i.id, i.resourceType);
                 const amount = current.reduce((p, c) => p + (c.amount ?? 0), 0);
                 if (amount < stored && i.room) {
-                    this.supplyRepo.add(new SupplyTask(i.room.name, 1, stored - amount, i.id, undefined, i.pos));
+                    this.supplyRepo.add(new SupplyTask(i.room.name, 1, stored - amount, i.resourceType, i.id, undefined, i.pos));
                     this.log.debug(room, `${i.pos}: added dropped supply task`);
                 }
             }
