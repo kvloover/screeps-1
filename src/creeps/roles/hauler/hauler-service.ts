@@ -53,7 +53,7 @@ export class HaulerStorageRole extends HaulerRole {
     protected consume(creep: Creep): void {
         // will look for a new consume task
         if (!creep.memory.tasks['consume']) {
-            const task = this.findAndRegisterTask(creep, this.demands, 'supply', creep.store.getCapacity(RESOURCE_ENERGY));
+            const task = this.findAndRegisterTask(creep, this.providers, 'consume', creep.store.getCapacity(RESOURCE_ENERGY));
             if (!task) {
                 const supply = creep.memory.tasks['supply'];
                 if (supply && Game.time - supply.tick > 5) {
