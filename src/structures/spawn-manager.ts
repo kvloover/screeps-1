@@ -8,6 +8,8 @@ import setup from "../config/setup.json";
 import { config, roleConfig, stageConfig } from "../config/config";
 import { isDefined } from "utils/utils";
 
+import profiler from "screeps-profiler";
+
 @injectable()
 export class SpawnManager implements Manager {
 
@@ -78,7 +80,8 @@ export class SpawnManager implements Manager {
                     { memory: this.initialMemory(spawn, prio) });
                 if (ret === OK) {
                     this.log.debug(room, `Spawning new ${prio.role}: ${newName}`);
-                    if (prio.condition && room.memory.hasOwnProperty(prio.condition)) {
+                    if (prio.condition && prio.reset_condition
+                        && room.memory.hasOwnProperty(prio.condition)) {
                         (room.memory as any)[prio.condition] = false;
                     }
                     this.nameInUse(room, prio.role, newName);
@@ -110,7 +113,9 @@ export class SpawnManager implements Manager {
             room: spawn.room.name,
             targetRoom: undefined,
             targetId: undefined,
-            tasks: {}
+            tasks: {},
+            tasks_blacklist: {},
+            lastId: undefined
         };
     }
 
@@ -148,3 +153,5 @@ declare global {
         spawnSequence: number;
     }
 }
+
+profiler.registerClass(SpawnManager, 'SpawnManager');

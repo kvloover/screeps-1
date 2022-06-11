@@ -1,3 +1,4 @@
+import { Task } from "repos/task";
 import { CreepState } from "./creep-state";
 
 export { };
@@ -15,9 +16,21 @@ declare global {
     }
 
     interface RoomMemory {
-        debug: boolean;
         stage: number;
+        remote: string | undefined
+        attack: string | undefined
+
+        debug: boolean;
+        upgrading: boolean;
+        building: boolean;
+        remote_mining: boolean;
+        remote_attack: boolean;
+        claim: boolean;
+
+        sources: { id: Id<_HasId>, pos: RoomPosition }[];
+        links: { id: Id<_HasId>, pos: RoomPosition, storage: boolean }[];
     }
+
 
     interface CreepMemory {
         id: undefined | Id<_HasId>;
@@ -26,6 +39,10 @@ declare global {
         state: CreepState;
         targetRoom: undefined | string;
         targetId: undefined | Id<_HasId>;
+
+        tasks: { [key: string]: { repo: string; task: Task; } | undefined };
+        tasks_blacklist: { [key: string]: string[] }; // ignore specific requesters for the given type
+        lastId: Id<_HasId> | undefined;
     }
 
     // namespace NodeJS {

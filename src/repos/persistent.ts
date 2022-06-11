@@ -1,8 +1,11 @@
 import { registry } from "tsyringe";
 
-import { ContainerTransferTaskRepo } from "./tasks/container-transfer-task-repo";
-import { HarvestTaskRepo } from "./tasks/harvest-task-repo";
-import { TransferTaskRepo } from "./tasks/transfer-task-repo";
+import { MidstreamTaskRepo } from "./midstream-task-repo";
+import { HarvestTaskRepo } from "./harvest-task-repo";
+import { DemandTaskRepo } from "./demand-task-repo";
+import { ProviderTaskRepo } from "./provider-task-repo";
+import { SupplyTaskRepo } from "./supply-task-repo";
+import { StorageTaskRepo } from "./storage-task-repo";
 
 export interface Persistent {
     restore(): void;
@@ -11,10 +14,20 @@ export interface Persistent {
     clearRoomRef(roomName: string): void;
 }
 
+// HarvestTaskRepo      : Split sources till 10 energy/tick
+// MidstreamTaskRepo    : midstream demand (supplied by harvester)
+// DemandTaskRepo       : Demands for spawning etc
+// ProvidorTaskRepo     : Available energy to take out (include midstream)
+// StorageTaskRepo      : Demands for storage
+// BatteryTaskRepo      : Provide from storage
+
 @registry([
     { token: Persistency.token, useToken: HarvestTaskRepo },
-    { token: Persistency.token, useToken: TransferTaskRepo },
-    { token: Persistency.token, useToken: ContainerTransferTaskRepo },
+    { token: Persistency.token, useToken: MidstreamTaskRepo },
+    { token: Persistency.token, useToken: DemandTaskRepo },
+    { token: Persistency.token, useToken: ProviderTaskRepo },
+    { token: Persistency.token, useToken: SupplyTaskRepo },
+    { token: Persistency.token, useToken: StorageTaskRepo },
 ])
 export abstract class Persistency {
     public static Initialize(): void {

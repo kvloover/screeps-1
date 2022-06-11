@@ -3,23 +3,27 @@ import { injectable } from "tsyringe";
 import { Pathing } from "creeps/pathing";
 import { CreepUtils } from "creeps/creep-utils";
 
-import { Role } from "creeps/role";
+import { Role } from "../role-registry";
+import profiler from "screeps-profiler";
 
 @injectable()
 export class ClaimerRole implements Role {
 
     name: string = 'claimer';
+    phase = {
+        start: 1,
+        end: 9
+    };
 
     constructor(protected pathing: Pathing) { }
 
     public run(creep: Creep): void {
         if (!creep.memory.targetRoom) {
-            // find room to check
-            // const exits = Game.map.describeExits(creep.memory.room);
-            // _.filter(exits, e => Game.map.getRoomStatus(e).status === "normal")
-            const targetRoom = 'E6S47'; // todo
-
-            creep.memory.targetRoom = targetRoom
+            // get setting on room:
+            if (Memory.rooms[creep.memory.room]) {
+                const target = Memory.rooms[creep.memory.room].remote;
+                creep.memory.targetRoom = target;
+            }
         }
 
         if (creep.memory.targetRoom && creep.room.name !== creep.memory.targetRoom) {
@@ -41,4 +45,6 @@ export class ClaimerRole implements Role {
         }
     }
 }
+
+profiler.registerClass(ClaimerRole, 'ClaimerRole');
 

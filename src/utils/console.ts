@@ -1,4 +1,5 @@
 import { Persistency, Persistent } from "repos/persistent";
+import { LinkManager } from "structures";
 import { container } from "tsyringe";
 import { CreepState } from "./creep-state";
 import { isDefined } from "./utils";
@@ -7,9 +8,18 @@ export class ExConsole {
     static init() {
         global.debug = this.debug;
         global.stopDebug = this.stopDebug;
+        global.reset = this.reset;
+
         global.remote = this.remote;
         global.attack = this.attack;
-        global.reset = this.reset;
+
+        global.init_links = this.init_links;
+
+        global.upgrading = (m, v) => this.toggle(m, 'upgrading', v);
+        global.building = (m, v) => this.toggle(m, 'building', v);
+        global.remote_attack = (m, v) => this.toggle(m, 'remote_attack', v);
+        global.remote_mining = (m, v) => this.toggle(m, 'remote_mining', v);
+        global.claim = (m, v) => this.toggle(m, 'claim', v);
     }
 
     static debug(roomName: string): string {
@@ -38,7 +48,7 @@ export class ExConsole {
 
     static attack(roomName: string, value: string | undefined): string {
         if (Memory.rooms.hasOwnProperty(roomName)) {
-            Memory.rooms[roomName].attack = value;
+            Memory.rooms[roomName].remote = value;
             return `Attack set for ${roomName}.`;
         }
         return `Room not known: ${roomName}`
@@ -76,6 +86,24 @@ export class ExConsole {
         }
         return `Room not known: ${roomName}`
     }
+
+    private static init_links(roomName: string): string {
+        if (Game.rooms.hasOwnProperty(roomName)) {
+            const room = Game.rooms[roomName];
+            LinkManager.init(room)
+            return `room links init for ${roomName}.`;
+        }
+        return `Room not known: ${roomName}`
+    }
+
+    private static toggle(roomName: string, key: keyof RoomMemory, value: boolean | undefined): string {
+        if (Memory.rooms.hasOwnProperty(roomName)) {
+            const room = Memory.rooms[roomName];
+            (room as any)[key] = value;
+            return `${key} set for ${roomName}.`;
+        }
+        return `Room not known: ${roomName}`
+    }
 }
 
 declare global {
@@ -84,8 +112,18 @@ declare global {
             debug: (room: string) => string;
             stopDebug: (room: string) => string;
             reset: (room: string) => string;
+
+            init_links: (room: string) => string;
+
             remote: (room: string, value: string | undefined) => string;
             attack: (room: string, value: string | undefined) => string;
+
+            // Toggles
+            building: (roomName: string, value: boolean | undefined) => string;
+            upgrading: (roomName: string, value: boolean | undefined) => string;
+            remote_attack: (roomName: string, value: boolean | undefined) => string;
+            remote_mining: (roomName: string, value: boolean | undefined) => string;
+            claim: (roomName: string, value: boolean | undefined) => string;
         }
     }
 }

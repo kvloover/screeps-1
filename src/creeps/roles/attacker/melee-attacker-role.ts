@@ -4,13 +4,18 @@ import { CreepUtils } from "creeps/creep-utils";
 import { Pathing } from "creeps/pathing";
 import { CreepState } from "utils/creep-state";
 
-import { Role } from "../../role";
-import { AttackerRole } from "./attacker-role";
+import { Role } from "../role-registry";
+import { AttackerRole } from "../_base/attacker-role";
+import profiler from "screeps-profiler";
 
 @injectable()
 export class MeleeAttackerRole extends AttackerRole implements Role {
 
     name: string = 'melee';
+    phase = {
+        start: 1,
+        end: 9
+    };
 
     constructor(pathing: Pathing) { super(pathing); }
 
@@ -18,3 +23,5 @@ export class MeleeAttackerRole extends AttackerRole implements Role {
         return creep.attack(hostile);
     }
 }
+
+profiler.registerClass(MeleeAttackerRole, 'MeleeAttackerRole');

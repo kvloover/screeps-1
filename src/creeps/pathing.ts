@@ -3,6 +3,8 @@ import { injectable } from "tsyringe";
 import { Logger } from "logger";
 import { PathingOptions } from "./pathing-options";
 
+import profiler from "screeps-profiler";
+
 @injectable()
 export class Pathing {
 
@@ -22,7 +24,8 @@ export class Pathing {
     }
 
     public moveTo(creep: Creep, pos: RoomPosition) {
-
+        creep.travelTo(pos);
+        /*
         const options: PathFinderOpts = this.opt.optimalFinder();
         const pathing = PathFinder.search(creep.pos, { pos: pos, range: 1 }, options);
 
@@ -32,5 +35,22 @@ export class Pathing {
             this.log.debug(creep.room, `next step for ${creep.name}: ${JSON.stringify(pos)}`)
             creep.move(creep.pos.getDirectionTo(pos));
         }
+        */
+    }
+
+    public scoutRoom(creep: Creep, room: string) {
+        if (creep.room.name !== room) {
+            // move to room
+            this.moveTo(creep, new RoomPosition(25, 25, room));
+        }
+    }
+
+    public gotoRoom(creep: Creep, pos: RoomPosition) {
+        if (creep.room.name !== pos.roomName) {
+            // move to room
+            this.moveTo(creep, pos);
+        }
     }
 }
+
+profiler.registerClass(Pathing, 'Pathing');
