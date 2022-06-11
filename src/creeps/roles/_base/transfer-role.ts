@@ -16,7 +16,7 @@ export abstract class TransferRole {
     }
 
     protected determineState(creep: Creep): void {
-        if (!this.hasSupply(creep)) {
+        if (!this.continueSupply(creep)) {
             // No ongoing supply = go to idle unless we can find a new task
             this.setState(creep, CreepState.idle);
         }
@@ -70,7 +70,7 @@ export abstract class TransferRole {
     }
 
     /** has an ongoing supply */
-    protected hasSupply(creep: Creep): boolean {
+    protected continueSupply(creep: Creep): boolean {
         return true; // default continue switching between consume and supply
     }
 
@@ -78,40 +78,46 @@ export abstract class TransferRole {
     protected abstract consume(creep: Creep): void;
     protected idle(creep: Creep): void { }
 
-    protected blacklist(creep: Creep, key: string): string[] | undefined {
-        const retVal = creep.memory.tasks_blacklist[key];
-        // if (!this.skipLast) return blacklist;
+    protected blacklistFor(creep: Creep, key: string): string[] | undefined {
+        return undefined;
+    }
 
-        // const lastId = creep.memory.lastId;
-        // const retVal = isDefined(lastId)
-        //     ? (blacklist ?? []).concat([lastId])
-        //     : blacklist;
+    private blacklist(creep: Creep, key: string): string[] | undefined {
+        const blacklist = creep.memory.tasks_blacklist[key];
+
+        const ignore = creep.memory.lastId;
+        const retVal = isDefined(ignore)
+            ? (blacklist ?? []).concat(ignore)
+            : blacklist;
 
         this.log.debug(creep.room, `blacklist for ${creep.name} on ${key}: ${JSON.stringify(retVal)}`);
 
         return retVal;
     }
 
+    protected findAndRegisterTask(creep: Creep, repo: TaskRepo<Task>, key: string, amount: number, room?: string, rangeLimit?: number): Task | undefined {
+        const task = repo.closestTask(creep.pos, room ?? creep.room.name, this.blacklist(creep, key), rangeLimit);
+        if (task) {
+            repo.registerTask(creep, task, key);
+            if (repo.trySplitTask(task, amount))
+                this.log.debug(creep.room, `${creep.name}: ${key} task split for remaining amount`);
+        }
+        return task;
+    }
+
     protected consumeFromRepo(creep: Creep, repo: TaskRepo<Task>, key: string, room?: string, rangeLimit?: number) {
-        if (!creep.memory.tasks.hasOwnProperty(key) || !creep.memory.tasks[key]) {
+
+        if (!creep.memory.tasks[key]) {
             if (room && !Game.rooms.hasOwnProperty(room)) {
                 this.pathing.scoutRoom(creep, room);
             } else {
-                const task = repo.closestTask(creep.pos, room ?? creep.room.name, this.blacklist(creep, key), rangeLimit);
-                if (task) {
-                    repo.registerTask(creep, task, key);
-                    if (repo.trySplitTask(task, creep.store.getFreeCapacity(RESOURCE_ENERGY)))
-                        this.log.debug(creep.room, `${creep.name}: ${key} task split for remaining amount`);
-                }
+                this.findAndRegisterTask(creep, repo, key, creep.store.getFreeCapacity(RESOURCE_ENERGY), room, rangeLimit)
             }
         }
 
         const memTask = creep.memory.tasks[key]?.task;
         if (memTask) {
             this.log.debug(creep.room, `${creep.name}: consuming for ${key} task ${memTask.id}`);
-            // const task = repo.getById(memoryTaskId);
-            // if (task) {
-            // will be undefined for other repo
             const [succes, transferred] = this.tryConsumeForTask(creep, memTask);
             if (!succes) {
                 repo.finishTask(creep, memTask, key);
@@ -150,25 +156,18 @@ export abstract class TransferRole {
     }
 
     protected supplyToRepo(creep: Creep, repo: TaskRepo<Task>, key: string, room?: string, rangeLimit?: number) {
+
         if (!creep.memory.tasks[key]) {
             if (room && !Game.rooms.hasOwnProperty(room)) {
                 this.pathing.scoutRoom(creep, room);
             } else {
-                const task = repo.closestTask(creep.pos, room ?? creep.room.name, this.blacklist(creep, key), rangeLimit);
-                if (task) {
-                    repo.registerTask(creep, task, key);
-                    if (repo.trySplitTask(task, creep.store.getUsedCapacity(RESOURCE_ENERGY)))
-                        this.log.debug(creep.room, `${creep.name}: ${key} task added to demands for remaining demand`);
-                }
+                this.findAndRegisterTask(creep, repo, key, creep.store.getUsedCapacity(RESOURCE_ENERGY), room, rangeLimit)
             }
         }
 
         const memTask = creep.memory.tasks[key]?.task;
         if (memTask) {
             this.log.debug(creep.room, `${creep.name}: supplying for ${key} task ${memTask.id}`);
-            // const task = repo.getById(memoryTaskId);
-            // if (task) {
-            // will be undefined for other repo
             const [succes, transferred] = this.trySupplyForTask(creep, memTask);
             if (!succes) {
                 repo.finishTask(creep, memTask, key);
@@ -177,9 +176,6 @@ export abstract class TransferRole {
                 repo.finishTask(creep, memTask, key);
                 this.log.debug(creep.room, `${creep.name}: supply ${key} task removed for ${memTask.id}`);
             }
-            // } else {
-            //     this.unlinkTask(creep, key);
-            // }
         }
     }
 
