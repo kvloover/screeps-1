@@ -44,7 +44,7 @@ export class ContainerController implements Controller {
                 const current = this.supplyRepo.getForRequester(i.id);
                 const amount = current.reduce((p, c) => p + (c.amount ?? 0), 0);
                 if (amount < stored) {
-                    this.supplyRepo.add(new SupplyTask(struct.room.name, 2, stored - amount, i.id, undefined, i.pos));
+                    this.supplyRepo.add(new SupplyTask(struct.room.name, 1, stored - amount, i.id, undefined, i.pos));
                     this.log.debug(room, `${i.pos}: added container supply task`);
                 }
             }

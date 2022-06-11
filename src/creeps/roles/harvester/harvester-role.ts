@@ -17,8 +17,6 @@ import { HarvestAction } from "./harvest-action";
  */
 export abstract class HarvesterRole extends TransferRole implements Role {
 
-    protected skipLast: boolean = false;
-
     name: string = 'harvester'
     phase = {
         start: 1,
