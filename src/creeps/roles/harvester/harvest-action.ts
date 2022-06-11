@@ -53,14 +53,14 @@ export class HarvestAction {
             this.log.debug(creep.room, `${creep.name}: locking on targetId`);
             const src = Game.getObjectById(creep.memory.targetId as Id<Source>);
             if (src) {
-                if (!CreepUtils.tryFor([src], loc => creep.harvest(loc))) {
-                    if (src.energy > 0)
-                        this.pathing.moveTo(creep, src.pos);
-                    else {
-                        creep.memory.state = CreepState.supply;
-                    }
+                this.log.debug(creep.room, `${creep.name}: targetId locked`);
+                const ret = creep.harvest(src);
+                this.log.debug(creep.room, `${creep.name}: targetId returnd ${ret}`);
+                if (ret === ERR_NOT_IN_RANGE) {
+                    this.pathing.moveTo(creep, src.pos);
                 }
             } else {
+                this.log.debug(creep.room, `${creep.name}: targetId couldn't be locked`);
                 creep.memory.targetId = undefined;
             }
         }

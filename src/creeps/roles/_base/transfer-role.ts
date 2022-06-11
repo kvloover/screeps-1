@@ -104,7 +104,9 @@ export abstract class TransferRole {
         if (task) {
             repo.registerTask(creep, task, key);
             if (repo.trySplitTask(task, amount))
-                this.log.debug(creep.room, `${creep.name}: ${key} task split for remaining amount`);
+                this.log.debug(creep.room, `${creep.name}: ${key} task split for remaining amount on ${repo.key}`);
+        } else {
+            this.log.debug(creep.room, `${creep.name}: ${key} no task found on repo ${repo.key}`);
         }
         return task;
     }
@@ -121,14 +123,14 @@ export abstract class TransferRole {
 
         const memTask = creep.memory.tasks[key]?.task;
         if (memTask) {
-            this.log.debug(creep.room, `${creep.name}: consuming for ${key} task ${memTask.id}`);
+            this.log.debug(creep.room, `${creep.name}: consuming for ${key} task ${memTask.id} on ${repo.key}`);
             const [succes, transferred] = this.tryConsumeForTask(creep, memTask);
             if (!succes) {
                 repo.finishTask(creep, memTask, key);
-                console.log(`${creep.name}: could not consume for ${key} task: ${memTask.id}`);
+                console.log(`${creep.name}: could not consume for ${key} task: ${memTask.id} on ${repo.key}`);
             } else if (transferred) {
                 repo.finishTask(creep, memTask, key);
-                this.log.debug(creep.room, `${creep.name}: consume ${key} task removed for ${memTask.id}`);
+                this.log.debug(creep.room, `${creep.name}: consume ${key} task removed for ${memTask.id} on ${repo.key}`);
             }
         }
     }
