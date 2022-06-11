@@ -120,7 +120,7 @@ export abstract class BaseRepo<T extends Task> implements TaskRepo<T>{
     public finishTask(creep: Creep, task: Task, key: string): void {
         this.log.debug(creep.room, `finished task on ${creep.name}: ${key} - ${task.id}`);
         this.unlinkTask(creep, key);
-        this.remove(task as T);
+        this.removeById(task.id);
     }
 
     public unlinkTask(creep: Creep, key: string): void {
