@@ -6,6 +6,9 @@ import { Task } from "../task";
 
 // TODO split logic to have only clean repo logic
 export interface TaskRepo<T extends Task> {
+
+    key: string;
+
     getById(id: string): T | undefined;
     list(room?: string): T[];
     add(task: T): void;
@@ -27,7 +30,7 @@ export abstract class BaseRepo<T extends Task> implements TaskRepo<T>{
     // removeById(id: string): void;
     // remove(task: T): void;
 
-    constructor(protected key: string, protected log: Logger) { }
+    constructor(public key: string, protected log: Logger) { }
 
     protected tasks: T[] = [];
 
@@ -110,7 +113,7 @@ export abstract class BaseRepo<T extends Task> implements TaskRepo<T>{
 
     public registerTask(creep: Creep, task: Task, key: string): void {
         this.log.debug(creep.room, `registering task on ${creep.name}: ${key} - ${task.id}`);
-        creep.memory.tasks[key] = { repo: key, task: task };
+        creep.memory.tasks[key] = { repo: key, tick: Game.time ,task: task };
         task.executer = creep.id;
     }
 

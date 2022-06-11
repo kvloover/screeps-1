@@ -8,7 +8,7 @@ export class CombinedRepo implements TaskRepo<Task> {
         protected leftRepo: TaskRepo<Task>,
         protected rightRepo: TaskRepo<Task>,
         protected offset: number,
-        protected key: string,
+        public key: string,
         protected log: Logger
     ) { }
 
@@ -48,8 +48,13 @@ export class CombinedRepo implements TaskRepo<Task> {
     }
     trySplitTask(task: Task, amount: number, opt?: (task: Task) => Task): boolean {
         const repo = this.repoForTask(task);
-        if (repo)
-            return repo.trySplitTask(task, amount, opt);
+        if (repo) {
+            if (repo.key == this.rightRepo.key) {
+                return repo.trySplitTask({ ...task, prio: task.prio - this.offset }, amount, opt);
+            } else {
+                return repo.trySplitTask(task, amount, opt);
+            }
+        }
         else
             return false;
     }

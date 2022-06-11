@@ -17,8 +17,6 @@ import { Task } from "repos/task";
  */
 export abstract class HaulerRole extends TransferRole implements Role {
 
-    // TODO dropped and other resources
-
     name: string = 'hauler'
     phase = {
         start: 2,
@@ -27,15 +25,13 @@ export abstract class HaulerRole extends TransferRole implements Role {
 
     constructor(log: Logger,
         pathing: Pathing,
-        private providers: TaskRepo<Task>,
-        private demands: TaskRepo<Task>
+        protected providers: TaskRepo<Task>,
+        protected demands: TaskRepo<Task>
     ) { super(log, pathing); }
 
-    protected consume(creep: Creep): void {
-        this.consumeFromRepo(creep, this.providers, 'consume');
-    }
 
     protected supply(creep: Creep) {
+        // will use found supply task
         this.supplyToRepo(creep, this.demands, 'supply');
     }
 
