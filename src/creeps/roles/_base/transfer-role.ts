@@ -11,45 +11,72 @@ export abstract class TransferRole {
     constructor(protected log: Logger, protected pathing: Pathing) { }
 
     public run(creep: Creep): void {
-        this.setState(creep);
-        this.switchState(creep);
+        this.determineState(creep);
+        this.runState(creep);
     }
 
-    protected setState(creep: Creep): void {
-        if (creep.store.getFreeCapacity() == 0
-            || creep.memory.state == CreepState.idle)
-            creep.memory.state = CreepState.supply;
+    protected determineState(creep: Creep): void {
+        if (!this.hasSupply(creep)) {
+            // No ongoing supply = go to idle unless we can find a new task
+            this.setState(creep, CreepState.idle);
+        }
 
-        if (creep.memory.state == CreepState.supply
-            && creep.store[RESOURCE_ENERGY] == 0) {
-            creep.memory.state = CreepState.consume;
+        if (this.getState(creep) == CreepState.idle) {
+            // Check for supply task
+            if (this.findSupply(creep)) {
+                this.setState(creep, CreepState.supply);
+            }
+        }
+
+        if (this.getState(creep) == CreepState.supply && creep.store[RESOURCE_ENERGY] == 0) {
+            this.setState(creep, CreepState.consume);
+        }
+
+        if (this.getState(creep) == CreepState.consume && creep.store.getFreeCapacity(RESOURCE_ENERGY) == 0) {
+            this.setState(creep, CreepState.supply);
         }
     }
 
-    protected switchState(creep: Creep): void {
+    protected runState(creep: Creep): void {
         if (creep.spawning) return;
         if (!creep.memory.tasks) { creep.memory.tasks = {}; }
         if (!creep.memory.tasks_blacklist) { creep.memory.tasks_blacklist = {}; }
 
-        if (creep.memory.state == CreepState.consume) {
+        if (this.getState(creep) == CreepState.consume) {
             this.log.debug(creep.room, `${creep.name}: running consume`);
             this.consume(creep);
         }
-        if (creep.memory.state == CreepState.supply) {
+        if (this.getState(creep) == CreepState.supply) {
             this.log.debug(creep.room, `${creep.name}: running supply`);
             this.supply(creep);
         }
-        if (creep.memory.state != CreepState.supply
-            && creep.memory.state != CreepState.consume) {
-            this.supply(creep);
+        if (this.getState(creep) == CreepState.idle) {
+            this.log.debug(creep.room, `${creep.name}: running idle`);
+            this.idle(creep);
         }
+    }
+
+    protected setState(creep: Creep, state: CreepState): void {
+        creep.memory.state = state;
+    }
+
+    protected getState(creep: Creep): CreepState {
+        return creep.memory.state;
+    }
+
+    /** look for a new supply */
+    protected findSupply(creep: Creep): boolean {
+        return true; // default without search
+    }
+
+    /** has an ongoing supply */
+    protected hasSupply(creep: Creep): boolean {
+        return true; // default continue switching between consume and supply
     }
 
     protected abstract supply(creep: Creep): void;
     protected abstract consume(creep: Creep): void;
-    protected misc(creep: Creep): void {
-        this.log.debug(creep.room, `unknown state for ${creep.name} : ${creep.memory.state}`);
-    }
+    protected idle(creep: Creep): void { }
 
     protected blacklist(creep: Creep, key: string): string[] | undefined {
         const retVal = creep.memory.tasks_blacklist[key];
