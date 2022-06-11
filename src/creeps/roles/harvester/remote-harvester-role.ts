@@ -51,7 +51,7 @@ export class RemoteHarvesterRole extends TransferRole implements Role {
             this.pathing.scoutRoom(creep, creep.memory.room);
             // this.gotoRoom(creep, new RoomPosition(25, 25, creep.memory.room));
         } else {
-            this.supplyToRepo(creep, this.demands, 'supply', creep.memory.room);
+            this.supplyToRepo(creep, this.demands, 'supply', RESOURCE_ENERGY, creep.memory.room);
         }
     }
 }

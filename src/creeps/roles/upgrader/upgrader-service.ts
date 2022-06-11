@@ -47,7 +47,7 @@ export class UpgraderStorageRole extends UpgraderRole {
     }
 
     protected consume(creep: Creep): void {
-        this.consumeFromRepo(creep, this.provider, 'consume');
+        this.consumeFromRepo(creep, this.provider, 'consume', RESOURCE_ENERGY);
     }
 
     public run(creep: Creep): void {

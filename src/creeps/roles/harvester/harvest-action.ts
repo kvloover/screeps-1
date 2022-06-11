@@ -25,7 +25,7 @@ export class HarvestAction {
 
         if (!creep.memory.tasks.hasOwnProperty(key) || !creep.memory.tasks[key]) {
             this.log.debug(creep.room, `${creep.name}: searching closest harvest task`); {
-                const task = this.harvests.closestTask(creep.pos, room ?? creep.room.name);
+                const task = this.harvests.closestTask(creep.pos, RESOURCE_ENERGY ,room ?? creep.room.name);
                 if (task) {
                     this.log.debug(creep.room, `${creep.name}: found new harvest task`);
                     this.harvests.registerTask(creep, task, key);

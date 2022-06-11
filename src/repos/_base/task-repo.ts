@@ -14,7 +14,7 @@ export interface TaskRepo<T extends Task> {
     add(task: T): void;
     removeById(id: string): void;
     remove(task: T): void;
-    getForRequester(id: string): T[];
+    getForRequester(id: string, type?: ResourceConstant): T[];
     closestTask(pos: RoomPosition, type?: ResourceConstant, room?: string, blacklist?: string[], limitrange?: number): Task;
     trySplitTask(task: Task, amount: number, opt?: (task: Task) => T): boolean;
     mergeEmpty(): void;

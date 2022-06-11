@@ -29,11 +29,11 @@ export abstract class FillerRole extends TransferRole implements Role {
     ) { super(log, pathing); }
 
     protected consume(creep: Creep): void {
-        this.consumeFromRepo(creep, this.providers, 'consume');
+        this.consumeFromRepo(creep, this.providers, 'consume', RESOURCE_ENERGY);
     }
 
     protected supply(creep: Creep) {
-        this.supplyToRepo(creep, this.demands, 'supply');
+        this.supplyToRepo(creep, this.demands, 'supply', RESOURCE_ENERGY);
     }
 
 }

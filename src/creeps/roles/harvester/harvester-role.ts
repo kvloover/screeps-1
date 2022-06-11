@@ -35,7 +35,7 @@ export abstract class HarvesterRole extends TransferRole implements Role {
     }
 
     protected supply(creep: Creep) {
-        this.supplyToRepo(creep, this.demands, 'supply', undefined, this.rangeLimit);
+        this.supplyToRepo(creep, this.demands, 'supply', RESOURCE_ENERGY, undefined, this.rangeLimit);
     }
 
 }

@@ -31,9 +31,9 @@ export class CombinedRepo implements TaskRepo<Task> {
         this.leftRepo.remove(task);
         this.rightRepo.remove(task);
     }
-    getForRequester(id: string): Task[] {
-        return this.leftRepo.getForRequester(id)
-            .concat(this.rightRepo.getForRequester(id));
+    getForRequester(id: string, type?: ResourceConstant): Task[] {
+        return this.leftRepo.getForRequester(id, type)
+            .concat(this.rightRepo.getForRequester(id, type));
     }
     closestTask(pos: RoomPosition, type?: ResourceConstant, room?: string, blacklist?: string[], limitrange?: number): Task {
         const roomTasks = this.list(room);
