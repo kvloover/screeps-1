@@ -27,9 +27,11 @@ export class SpawnController implements Controller {
         structs.forEach(s => {
             const struct = s as StructureSpawn | StructureExtension
             if (struct) {
-                const task = this.demands.getForRequester(s.id, RESOURCE_ENERGY);
-                if (!task) {
-                    this.demands.add(new DemandTask(struct.room.name, 1, struct.store.getFreeCapacity(RESOURCE_ENERGY), RESOURCE_ENERGY, struct.id, undefined, struct.pos ));
+                const free = struct.store.getFreeCapacity(RESOURCE_ENERGY)
+                const tasks = this.demands.getForRequester(struct.id, RESOURCE_ENERGY);
+                const amount = tasks.reduce((p, c) => p + (c?.amount ?? 0), 0);
+                if (amount < free) {
+                    this.demands.add(new DemandTask(struct.room.name, 1, free-amount, RESOURCE_ENERGY, struct.id, undefined, struct.pos ));
                     this.log.debug(struct.room, `${struct.pos}: added supply task`);
                 }
             }

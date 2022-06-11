@@ -115,7 +115,7 @@ export class SpawnManager implements Manager {
             targetId: undefined,
             tasks: {},
             tasks_blacklist: {},
-            lastId: undefined
+            started: 0
         };
     }
 

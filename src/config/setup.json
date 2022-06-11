@@ -123,9 +123,13 @@
                 }
             },
             {
-                "role": "upgrader",
+                "role": "hauler",
                 "priority": 3,
-                "count": 1
+                "count": 1,
+                "template": {
+                    "carry": 3,
+                    "move": 2
+                }
             },
             {
                 "role": "harvester",
@@ -145,7 +149,7 @@
             {
                 "role": "upgrader",
                 "priority": 6,
-                "count": 3
+                "count": 2
             },
             {
                 "role": "builder",

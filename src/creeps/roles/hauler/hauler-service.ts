@@ -13,30 +13,42 @@ import { isDefined } from "utils/utils";
 import { CreepState } from "utils/creep-state";
 
 
-// @injectable()
-// export class HaulerMidstreamRole extends HaulerRole {
+@injectable()
+export class HaulerMidstreamRole extends HaulerRole {
 
-//     phase = {
-//         start: 1,
-//         end: 2
-//     };
+    phase = {
+        start: 1,
+        end: 2
+    };
 
-//     constructor(log: Logger, pathing: Pathing,
-//         provider: ProviderTaskRepo, supply: DemandTaskRepo) {
-//         super(log, pathing, provider, supply)
-//     }
+    constructor(log: Logger, pathing: Pathing,
+        provider: SupplyTaskRepo, demands: DemandTaskRepo) {
+        super(log, pathing, provider, demands)
+    }
 
-//     public run(creep: Creep): void {
-//         this.log.debug(creep.room, `Running hauler midstream`);
-//         super.run(creep);
-//     }
-// }
+    public run(creep: Creep): void {
+        this.log.debug(creep.room, `Running hauler midstream`);
+        super.run(creep);
+    }
+
+    protected consume(creep: Creep): void {
+        this.consumeFromRepo(creep, this.providers, 'consume');
+    }
+
+    protected supply(creep: Creep) {
+        // will use found supply task
+        this.supplyToRepo(creep, this.demands, 'supply');
+    }
+
+}
+
+profiler.registerClass(HaulerMidstreamRole, 'HaulerMidstreamRole');
 
 @injectable()
 export class HaulerStorageRole extends HaulerRole {
 
     phase = {
-        start: 1,
+        start: 3,
         end: 9
     };
 
@@ -60,13 +72,10 @@ export class HaulerStorageRole extends HaulerRole {
                 const supply = creep.memory.tasks['supply'];
                 if (supply && Game.time - supply.tick > 5) {
                     // TODO rework persistency/task and pass through combined repo
-                    if (supply.repo === this.leftDemands.key) {
-                        this.leftDemands.unlinkTask(creep, 'supply');
-                        this.leftDemands.clearReference(creep.id);
-                    } else {
-                        this.rightDemands.unlinkTask(creep, 'supply');
-                        this.rightDemands.clearReference(creep.id);
-                    }
+                    this.leftDemands.unlinkTask(creep, 'supply');
+                    this.leftDemands.clearReference(creep.id);
+                    this.rightDemands.unlinkTask(creep, 'supply');
+                    this.rightDemands.clearReference(creep.id);
                     this.setState(creep, CreepState.idle);
                     return;
                 }
