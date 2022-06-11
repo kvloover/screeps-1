@@ -15,6 +15,9 @@ export abstract class TransferRole {
         this.runState(creep);
     }
 
+    // TODO: avoid deadlock on supplying storage but nothing to consume from
+    // => drop supply for storage and try to find a new supply task after not being able to find a consume task for x ticks
+
     protected determineState(creep: Creep): void {
         if (!this.continueSupply(creep)) {
             // No ongoing supply = go to idle unless we can find a new task
@@ -57,6 +60,7 @@ export abstract class TransferRole {
     }
 
     protected setState(creep: Creep, state: CreepState): void {
+        creep.memory.started = Game.time;
         creep.memory.state = state;
     }
 
