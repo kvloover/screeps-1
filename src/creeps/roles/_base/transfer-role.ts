@@ -72,10 +72,12 @@ export abstract class TransferRole {
     }
 
     protected storeLast(creep: Creep, task: Task) {
+        this.log.debug(creep.room, `set lastId for ${creep.name}: ${task.requester}`);
         creep.memory.lastId = task.requester;
     }
 
     protected clearLast(creep: Creep) {
+        this.log.debug(creep.room, `cleared lastId for ${creep.name}`);
         creep.memory.lastId = undefined;
     }
 
@@ -84,10 +86,13 @@ export abstract class TransferRole {
         if (!this.skipLast) return blacklist;
 
         const lastId = creep.memory.lastId;
-        if (isDefined(lastId))
-            return (blacklist ?? []).concat([lastId]);
-        else
-            return blacklist;
+        const retVal = isDefined(lastId)
+            ? (blacklist ?? []).concat([lastId])
+            : blacklist;
+
+        this.log.debug(creep.room, `blacklist for ${creep.name} on ${key}: ${JSON.stringify(retVal)}`);
+
+        return retVal;
     }
 
     protected consumeFromRepo(creep: Creep, repo: TaskRepo<Task>, key: string, room?: string, rangeLimit?: number) {
@@ -115,15 +120,9 @@ export abstract class TransferRole {
                 this.finishTask(creep, memTask, repo, key);
                 console.log(`${creep.name}: could not consume for ${key} task: ${memTask.id}`);
             } else if (transferred) {
+                this.storeLast(creep, memTask);
                 this.finishTask(creep, memTask, repo, key);
                 this.log.debug(creep.room, `${creep.name}: consume ${key} task removed for ${memTask.id}`);
-            }
-
-            if (creep.store.getFreeCapacity(RESOURCE_ENERGY) == 0) {
-                this.storeLast(creep, memTask);
-            }
-            else {
-                this.clearLast(creep);
             }
         }
     }
