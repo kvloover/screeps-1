@@ -256,7 +256,7 @@
         "order": 5,
         "energy": 1200,
         "controller": 4,
-        "creeps": 5,
+        "creeps": 4,
         "template": {
             "work": 6,
             "move": 6,
@@ -378,6 +378,123 @@
                 "priority": 9,
                 "count": 3,
                 "condition": "upgrading"
+            }
+        ]
+    },
+    "stage-6": {
+        "order": 6,
+        "energy": 1800,
+        "controller": 5,
+        "creeps": 4,
+        "roles": [
+            {
+                "role": "claimer",
+                "priority": 1,
+                "condition": "claim",
+                "reset_condition": true,
+                "count": 1,
+                "template": {
+                    "claim": 1,
+                    "move": 1
+                }
+            },
+            {
+                "role": "melee",
+                "priority": 1,
+                "emergency": true,
+                "count": 3,
+                "template": {
+                    "attack": 10,
+                    "move": 9
+                }
+            },
+            {
+                "role": "remote-attacker",
+                "priority": 1,
+                "count": 2,
+                "condition": "defend_remote",
+                "template": {
+                    "attack": 8,
+                    "move": 4
+                }
+            },
+            {
+                "role": "harvester",
+                "priority": 2,
+                "count": 1,
+                "template": {
+                    "work": 5,
+                    "carry": 1,
+                    "move": 3
+                }
+            },
+            {
+                "role": "filler",
+                "priority": 3,
+                "count": 1,
+                "template": {
+                    "carry": 20,
+                    "move": 4
+                }
+            },
+            {
+                "role": "hauler",
+                "priority": 4,
+                "count": 1,
+                "template": {
+                    "carry": 20,
+                    "move": 10
+                }
+            },
+            {
+                "role": "harvester",
+                "priority": 5,
+                "count": 2,
+                "template": {
+                    "work": 5,
+                    "carry": 1,
+                    "move": 3
+                }
+            },
+            {
+                "role": "hauler",
+                "priority": 6,
+                "count": 2,
+                "template": {
+                    "carry": 20,
+                    "move": 10
+                }
+            },
+            {
+                "role": "upgrader",
+                "priority": 7,
+                "count": 1,
+                "template": {
+                    "work": 8,
+                    "carry": 10,
+                    "move": 10
+                }
+            },
+            {
+                "role": "builder",
+                "priority": 8,
+                "count": 1,
+                "template": {
+                    "carry": 6,
+                    "work": 6,
+                    "move": 12
+                }
+            },
+            {
+                "role": "upgrader",
+                "priority": 9,
+                "count": 2,
+                "condition": "upgrading",
+                "template": {
+                    "work": 8,
+                    "carry": 10,
+                    "move": 10
+                }
             }
         ]
     }
