@@ -4,7 +4,6 @@ import { Pathing } from "creeps/pathing";
 import { Role } from "../role-registry";
 import { TransferRole } from "../_base/transfer-role";
 
-import { CreepState } from "utils/creep-state";
 import { CreepUtils } from "creeps/creep-utils";
 
 // TODO rework for tasks for build/repair
@@ -32,8 +31,6 @@ export abstract class BuilderRole extends TransferRole implements Role {
         })
         if (emergency.length > 0) {
             // emergency repairs
-            creep.memory.state = CreepState.repair;
-
             if (!CreepUtils.tryFor(emergency, loc => creep.repair(loc))) {
                 const loc = this.pathing.findClosestOf(creep, emergency);
                 if (loc != undefined) {
@@ -50,8 +47,6 @@ export abstract class BuilderRole extends TransferRole implements Role {
             }
             if (constructions.length > 0) {
                 // construct
-                creep.memory.state = CreepState.build;
-
                 let target: ConstructionSite<BuildableStructureConstant> | undefined;
                 if (creep.memory.targetId
                     && (target = constructions.find(i => i.id === creep.memory.targetId)) != undefined) {
@@ -71,8 +66,6 @@ export abstract class BuilderRole extends TransferRole implements Role {
                 }
             } else {
                 // repair
-                creep.memory.state = CreepState.repair;
-
                 const opts: FilterOptions<FIND_STRUCTURES> = { filter: (struct) => struct.hits < struct.hitsMax };
                 if (!CreepUtils.tryForFind(creep, FIND_STRUCTURES, loc => creep.repair(loc), opts)) {
                     const loc = this.pathing.findClosest(creep, FIND_STRUCTURES, opts);
