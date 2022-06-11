@@ -89,7 +89,7 @@ export abstract class TransferRole {
     private blacklist(creep: Creep, key: string): string[] | undefined {
         const blacklist = creep.memory.tasks_blacklist[key];
 
-        const ignore = creep.memory.lastId;
+        const ignore = this.blacklistFor(creep, key);
         const retVal = isDefined(ignore)
             ? (blacklist ?? []).concat(ignore)
             : blacklist;

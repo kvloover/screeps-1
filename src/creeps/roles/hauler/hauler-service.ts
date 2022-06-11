@@ -80,6 +80,7 @@ export class HaulerStorageRole extends HaulerRole {
     }
 
     protected override findSupply(creep: Creep): boolean {
+        this.log.debug(creep.room, `${creep.name}: searching for supply`);
         // check if we can find anything to supply and register it on the creep for use
         const task = this.findAndRegisterTask(creep, this.demands, 'supply', creep.store.getCapacity(RESOURCE_ENERGY));
         return isDefined(task);
@@ -87,12 +88,14 @@ export class HaulerStorageRole extends HaulerRole {
 
     protected override continueSupply(creep: Creep): boolean {
         const supplyTask = creep.memory.tasks['supply'];
+        this.log.debug(creep.room, `${creep.name}: continuing supply`)
         return isDefined(supplyTask);
     }
 
     protected override blacklistFor(creep: Creep, key: string): string[] | undefined {
         if (key === 'supply') return undefined;
 
+        this.log.debug(creep.room, `${creep.name}: blacklist - checking supply task`)
         // Avoid consuming from the task we are supplying
         const supplyTask = creep.memory.tasks['supply'];
         if (supplyTask && supplyTask.task.requester) {

@@ -6,6 +6,9 @@ import { Task } from "../task";
 
 // TODO split logic to have only clean repo logic
 export interface TaskRepo<T extends Task> {
+
+    key: string;
+
     getById(id: string): T | undefined;
     list(room?: string): T[];
     add(task: T): void;
