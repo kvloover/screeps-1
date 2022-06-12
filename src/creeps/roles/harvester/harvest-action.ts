@@ -19,13 +19,23 @@ export class HarvestAction {
         private pathing: Pathing,
         protected harvests: HarvestTaskRepo) { }
 
-    public Action(creep: Creep, room?: string,) {
+    public Action(creep: Creep, room?: string) {
+
+        if (room && !Game.rooms.hasOwnProperty(room)) {
+            this.pathing.scoutRoom(creep, room);
+        } else {
+            this.harvest(creep, room);
+        }
+
+    }
+
+    private harvest(creep: Creep, room?: string) {
 
         const key = 'harvest';
 
         if (!creep.memory.tasks.hasOwnProperty(key) || !creep.memory.tasks[key]) {
             this.log.debug(creep.room, `${creep.name}: searching closest harvest task`); {
-                const task = this.harvests.closestTask(creep.pos, RESOURCE_ENERGY ,room ?? creep.room.name);
+                const task = this.harvests.closestTask(creep.pos, RESOURCE_ENERGY, room ?? creep.room.name);
                 if (task) {
                     this.log.debug(creep.room, `${creep.name}: found new harvest task`);
                     this.harvests.registerTask(creep, task, key);

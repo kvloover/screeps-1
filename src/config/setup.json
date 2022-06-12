@@ -499,6 +499,28 @@
                     "carry": 10,
                     "move": 10
                 }
+            },
+            {
+                "role": "builder",
+                "priority": 9,
+                "count": 2,
+                "condition": "building",
+                "template": {
+                    "carry": 6,
+                    "work": 6,
+                    "move": 12
+                }
+            },
+            {
+                "role": "remote-harvester",
+                "priority": 9,
+                "count": 2,
+                "condition": "remote_mining",
+                "template": {
+                    "carry": 4,
+                    "work": 2,
+                    "move": 15
+                }
             }
         ]
     }

@@ -25,6 +25,7 @@ export class RemoteHarvesterRole extends TransferRole implements Role {
         protected demands: TaskRepo<Task>,
         protected harvesting: HarvestAction,
     ) { super(log, pathing) }
+
     protected consume(creep: Creep): void {
         // First entry to work: find target room
         if (!creep.memory.targetRoom) {

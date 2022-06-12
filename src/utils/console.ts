@@ -6,20 +6,45 @@ import { isDefined } from "./utils";
 
 export class ExConsole {
     static init() {
-        global.debug = this.debug;
-        global.stopDebug = this.stopDebug;
-        global.reset = this.reset;
+        global.cli = {
+            help: ExConsole.help,
 
-        global.remote = this.remote;
-        global.attack = this.attack;
+            debug: ExConsole.debug,
+            stopDebug: ExConsole.stopDebug,
+            reset: ExConsole.reset,
 
-        global.init_links = this.init_links;
+            remote: ExConsole.remote,
+            attack: ExConsole.attack,
 
-        global.upgrading = (m, v) => this.toggle(m, 'upgrading', v);
-        global.building = (m, v) => this.toggle(m, 'building', v);
-        global.remote_attack = (m, v) => this.toggle(m, 'remote_attack', v);
-        global.remote_mining = (m, v) => this.toggle(m, 'remote_mining', v);
-        global.claim = (m, v) => this.toggle(m, 'claim', v);
+            init_links: ExConsole.init_links,
+
+            upgrading: (m, v) => ExConsole.toggle(m, 'upgrading', v),
+            building: (m, v) => ExConsole.toggle(m, 'building', v),
+            remote_attack: (m, v) => ExConsole.toggle(m, 'remote_attack', v),
+            remote_mining: (m, v) => ExConsole.toggle(m, 'remote_mining', v),
+            claim: (m, v) => ExConsole.toggle(m, 'claim', v)
+        }
+    }
+
+    static help(): string {
+        const lines: string[] = [];
+        lines.push(`------------------------------------------------------------------`);
+        lines.push(`debug(roomName)\t\t\t turn on debugging`);
+        lines.push(`stopDebug(roomName)\t\t turn off debugging`);
+        lines.push(`------------------------------------------------------------------`);
+        lines.push(`reset(roomName)\t\t\t reset all persistency and creeps of the room`);
+        lines.push(`init_links(roomName)\t\t initialize the links and their config`);
+        lines.push(`------------------------------------------------------------------`);
+        lines.push(`remote(roomName, value)\t\t set the remote room`);
+        lines.push(`attack(roomName, value)\t\t set the attack room`);
+        lines.push(`------------------------------------------------------------------`);
+        lines.push(`upgrading(roomName, value)\t set upgrading toggle`);
+        lines.push(`building(roomName, value)\t set building toggle`);
+        lines.push(`remote_attack(roomName, value)\t set remote_attack toggle`);
+        lines.push(`remote_mining(roomName, value)\t set remote_mining toggle`);
+        lines.push(`claim(roomName, value)\t\t set claim toggle`);
+        lines.push(`------------------------------------------------------------------`);
+        return lines.join('\n');
     }
 
     static debug(roomName: string): string {
@@ -109,6 +134,12 @@ export class ExConsole {
 declare global {
     namespace NodeJS {
         interface Global {
+            cli?: ExConsole;
+        }
+
+        interface ExConsole {
+            help: () => string;
+
             debug: (room: string) => string;
             stopDebug: (room: string) => string;
             reset: (room: string) => string;
@@ -127,3 +158,4 @@ declare global {
         }
     }
 }
+
