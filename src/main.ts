@@ -10,20 +10,20 @@ import { GameWorld } from "game-world";
 import "traveller/traveler";
 import "utils/hacks";
 
-import profiler from 'screeps-profiler';
+//import profiler from 'screeps-profiler';
 
-profiler.enable();
+//profiler.enable();
 ExConsole.init();
 
-profiler.registerObject(container, 'container');
+//profiler.registerObject(container, 'container');
 
 export const loop =
   ErrorMapper.wrapLoop(
     wrapMemory(
       () => {
-        profiler.wrap(function () {
+        //profiler.wrap(function () {
           container.resolve(GameWorld).run();
-        });
+        //});
       }
     )
   );
