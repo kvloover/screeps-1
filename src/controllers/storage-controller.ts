@@ -42,13 +42,15 @@ export class StorageController implements Controller {
                 }
 
                 Object.keys(struct.store).forEach(type => {
+                    // console.log(`checking store ${type}`);
                     if (isResourceConstant(type)) {
-                        const stored = struct.store.getUsedCapacity(RESOURCE_ENERGY);
-                        if (stored > 0) {
-                            const current = this.providerRepo.getForRequester(struct.id);
+                        const stored = struct.store.getUsedCapacity(type);
+                        if (stored && stored > 0) {
+                            const current = this.providerRepo.getForRequester(struct.id, type);
                             const amount = current.reduce((p, c) => p + (c.amount ?? 0), 0);
                             if (amount < stored) {
-                                this.providerRepo.add(new SupplyTask(struct.room.name, 2, stored - amount, RESOURCE_ENERGY, struct.id, undefined, struct.pos));
+                                this.providerRepo.add(new SupplyTask(struct.room.name, 2, stored - amount, type, struct.id, undefined, struct.pos));
+                                this.providerRepo.mergeEmpty();
                                 this.log.debug(room, `${struct.pos}: added storage provider task`);
                             }
                         }
