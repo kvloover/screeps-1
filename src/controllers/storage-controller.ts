@@ -36,6 +36,7 @@ export class StorageController implements Controller {
                     const amount = current.reduce((p, c) => p + (c.amount ?? 0), 0);
                     if (amount < free) {
                         this.demandRepo.add(new StorageTask(struct.room.name, 2, free - amount, undefined, struct.id, undefined, struct.pos));
+                        this.demandRepo.mergeEmpty();
                         this.log.debug(room, `${struct.pos}: added storage demand task`);
                     }
                 }

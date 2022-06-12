@@ -69,12 +69,17 @@ export class CombinedRepo implements TaskRepo<Task> {
     }
     finishTask(creep: Creep, task: Task, key: string): void {
         const repo = this.repoForTask(task);
-        if (repo) { repo.finishTask(creep, task, key); }
+        if (repo) {
+            // will also unlink
+            repo.finishTask(creep, task, key);
+        } else {
+            // ghost task
+            this.unlinkTask(creep, key);
+        }
     }
     unlinkTask(creep: Creep, key: string): void {
-        // Only need one, not real task logic...
-        this.leftRepo.unlinkTask(creep, key);
-        this.rightRepo.unlinkTask(creep, key);
+        this.log.debug(creep.room, `unlinking task on ${creep.name}: ${key}`);
+        creep.memory.tasks[key] = undefined;
     }
 
     private repoForTask(task: Task): TaskRepo<Task> | undefined {

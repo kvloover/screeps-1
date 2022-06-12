@@ -32,11 +32,13 @@ export abstract class TransferRole {
             }
         }
 
-        if (this.getState(creep) == CreepState.supply && creep.store[RESOURCE_ENERGY] == 0) {
+        if (this.getState(creep) == CreepState.supply
+        && creep.store.getUsedCapacity(this.getStoreCheckType(creep)) == 0) {
             this.setState(creep, CreepState.consume);
         }
 
-        if (this.getState(creep) == CreepState.consume && creep.store.getFreeCapacity(RESOURCE_ENERGY) == 0) {
+        if (this.getState(creep) == CreepState.consume
+        && creep.store.getFreeCapacity(this.getStoreCheckType(creep)) == 0) {
             this.setState(creep, CreepState.supply);
         }
     }
@@ -72,6 +74,10 @@ export abstract class TransferRole {
     /** look for a new supply */
     protected findSupply(creep: Creep): boolean {
         return true; // default without search
+    }
+
+    protected getStoreCheckType(creep: Creep): ResourceConstant | undefined {
+        return RESOURCE_ENERGY;
     }
 
     /** has an ongoing supply */
@@ -196,7 +202,7 @@ export abstract class TransferRole {
             const types = [];
             if (!task.type) {
                 // supply task can be generic deposit: no type provided
-                types.push(Object.keys(creep.store));
+                Object.keys(creep.store).forEach(t => types.push(t));
             } else {
                 types.push(task.type);
             }

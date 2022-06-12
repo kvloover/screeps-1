@@ -98,15 +98,19 @@ export abstract class BaseRepo<T extends Task> implements TaskRepo<T>{
             // merge empty task on requester > harvest tasks are persistent
             requesters.forEach(req => {
                 const requests = nonExecuters.filter(r => r.requester === req);
-                if (requests.length > 1) {
-                    // remove all, reduce all to one and re-add
-                    this.tasks = _.difference(this.tasks, requests);
-                    const record = requests.reduce((prev: T, curr: T) => {
-                        if (prev.amount) prev.amount += curr.amount ?? 0;
-                        return prev;
-                    })
-                    this.add(record);
-                }
+                const types = _.unique(requests.map(i => i.type));
+                types.forEach(type => {
+                    const typReq = requests.filter(r => r.type === type);
+                    if (typReq.length > 1) {
+                        // remove all, reduce all to one and re-add
+                        this.tasks = _.difference(this.tasks, typReq);
+                        const record = typReq.reduce((prev: T, curr: T) => {
+                            if (prev.amount) prev.amount += curr.amount ?? 0;
+                            return prev;
+                        })
+                        this.add(record);
+                    }
+                });
             })
         }
 

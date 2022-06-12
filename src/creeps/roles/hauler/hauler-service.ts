@@ -64,13 +64,19 @@ export class HaulerStorageRole extends HaulerRole {
 
     protected consume(creep: Creep): void {
         const supplyTask = creep.memory.tasks['supply'];
-        const type = supplyTask?.task.type;
+        if (!supplyTask || !supplyTask.task) {
+            this.log.critical(`${creep.name}: consume exited premature`);
+            return;
+        }
+
+        const type = supplyTask.task.type;
         // will look for a new consume task
         if (!creep.memory.tasks['consume']) {
             const task = this.findAndRegisterTask(creep, this.providers, 'consume', creep.store.getCapacity(type), type);
             if (!task) {
                 const supply = creep.memory.tasks['supply'];
                 if (supply && Game.time - supply.tick > 5) {
+                    this.log.debug(creep.room, `${creep.name} - timeout supply task`)
                     // TODO rework persistency/task and pass through combined repo
                     this.leftDemands.unlinkTask(creep, 'supply');
                     this.leftDemands.clearReference(creep.id);
@@ -93,8 +99,16 @@ export class HaulerStorageRole extends HaulerRole {
     protected override findSupply(creep: Creep): boolean {
         this.log.debug(creep.room, `${creep.name}: searching for supply`);
         // check if we can find anything to supply and register it on the creep for use
-        const task = this.findAndRegisterTask(creep, this.demands, 'supply', creep.store.getCapacity(RESOURCE_ENERGY));
+        const task = this.findAndRegisterTask(creep, this.demands, 'supply', creep.store.getCapacity());
         return isDefined(task);
+    }
+
+    protected override getStoreCheckType(creep: Creep): ResourceConstant | undefined {
+        const supplyTask = creep.memory.tasks['supply'];
+        if (supplyTask && supplyTask.task)
+            return supplyTask.task.type;
+        else
+            return undefined; // shouldn't happen in this flow
     }
 
     protected override continueSupply(creep: Creep): boolean {
