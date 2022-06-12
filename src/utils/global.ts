@@ -47,7 +47,6 @@ declare global {
 
     // namespace NodeJS {
     //     interface Global {
-    //         log: any;
     //     }
     // }
 }

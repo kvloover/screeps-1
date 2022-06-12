@@ -5,7 +5,7 @@ import { CreepUtils } from "creeps/creep-utils";
 
 import { Role } from "../role-registry";
 import profiler from "screeps-profiler";
-import { isController } from "utils/utils";
+import { isController, whoAmI } from "utils/utils";
 
 @injectable()
 export class ClaimerRole implements Role {
@@ -38,7 +38,7 @@ export class ClaimerRole implements Role {
     }
 
     protected findClaim(creep: Creep) {
-        if (creep.room.name == creep.memory.targetRoom && creep.room.controller && !creep.room.controller.my) {
+        if (!creep.memory.targetId && creep.room.name == creep.memory.targetRoom && creep.room.controller && !creep.room.controller.my) {
             creep.memory.targetId = creep.room.controller.id;
             console.log(`${creep.name}: controller found`);
         }
@@ -49,8 +49,13 @@ export class ClaimerRole implements Role {
             const obj = Game.getObjectById(creep.memory.targetId);
             if (isController(obj)) {
                 this.pathing.moveTo(creep, obj.pos);
-                if (!creep.claimController(obj)) { // fix to claim
-                    if (!creep.reserveController(obj)) { // fix to claim
+
+                if (!obj.sign || obj.sign.username !== whoAmI()) {
+                    creep.signController(obj, `swamp`);
+                }
+
+                if (creep.claimController(obj) !== OK) { // fix to claim
+                    if (creep.reserveController(obj) !== OK) { // fix to claim
                         console.log(`${creep.name}: could not reserve or claim controller`);
                     }
                 }

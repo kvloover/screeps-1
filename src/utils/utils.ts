@@ -24,3 +24,9 @@ export const isResourceConstant =
 
 export const isController =
   (item: any): item is StructureController => isDefined((item as StructureController)?.id)
+
+export const isOwnStructure =
+  (item: any): item is OwnedStructure => isDefined((item as OwnedStructure)?.id)
+
+export const whoAmI =
+  () => (Object.values(Game.structures).find(s => isOwnStructure(s)) as OwnedStructure)?.owner?.username ?? 'N/A';
