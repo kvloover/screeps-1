@@ -21,3 +21,6 @@ export const isResource =
 
 export const isResourceConstant =
   (item: any): item is ResourceConstant => isDefined((item as ResourceConstant))
+
+export const isController =
+  (item: any): item is StructureController => isDefined((item as StructureController)?.id)
