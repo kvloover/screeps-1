@@ -292,7 +292,7 @@
                 "role": "remote-attacker",
                 "priority": 1,
                 "count": 2,
-                "condition": "defend_remote",
+                "condition": "remote_attack",
                 "template": {
                     "attack": 8,
                     "move": 4
@@ -416,7 +416,7 @@
                 "role": "remote-attacker",
                 "priority": 1,
                 "count": 2,
-                "condition": "defend_remote",
+                "condition": "remote_attack",
                 "template": {
                     "attack": 8,
                     "move": 4
@@ -555,7 +555,7 @@
                 "role": "remote-attacker",
                 "priority": 1,
                 "count": 2,
-                "condition": "defend_remote",
+                "condition": "remote_attack",
                 "template": {
                     "attack": 8,
                     "move": 4
