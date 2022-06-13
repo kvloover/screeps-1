@@ -11,19 +11,13 @@ export class TowerManager implements Manager {
 
     constructor(private log: Logger) { }
 
-    private defend(room: Room, tower: StructureTower) {
-        const closestHostile = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
-        if (closestHostile && tower.pos.getRangeTo(closestHostile.pos) < room.memory.towerRange) {
-            tower.attack(closestHostile);
-        }
-
-        const closestContainer = tower.pos.findClosestByRange(FIND_STRUCTURES, {
-            filter: (c) =>
-                c.structureType === STRUCTURE_CONTAINER
-                && c.hits < c.hitsMax
-        });
-        if (closestContainer) {
-            tower.repair(closestContainer);
+    private defend(room: Room, tower: TowerMemory, hostiles: Creep[]) {
+        const closestHostile = tower.pos.findClosestByRange(hostiles);
+        if (closestHostile && tower.pos.getRangeTo(closestHostile.pos) < tower.range) {
+            const struct = Game.getObjectById(tower.id) as StructureTower;
+            if (struct) {
+                struct.attack(closestHostile);
+            }
         }
     }
 
@@ -31,27 +25,30 @@ export class TowerManager implements Manager {
         if (!isMyRoom(room))
             return;
 
-        // rewrite
-        const towers = room.find<StructureTower>(FIND_MY_STRUCTURES,
-            { filter: (struct) => struct.structureType == STRUCTURE_TOWER });
-        // this.log.Information(`${towers.length} towers found in room ${room.name}`);
-        if (towers.length > 0) {
+        const towers = room.memory.towers;
 
-            if (!room.memory.towerRange) {
-                const sources = room.find(FIND_SOURCES);
-                room.memory.towerRange = 8 + towers.reduce((p, c) => {
-                    const dist = sources.reduce((m, s) => {
-                        const distSrc = s.pos.getRangeTo(c.pos);
-                        return distSrc > p ? distSrc : p;
-                    }, 0);
-                    return p > dist ? p : dist;
-                }, 0);
+        if (towers && towers.length > 0) {
+            const hostiles = room.find(FIND_HOSTILE_CREEPS);
+            if (hostiles.length > 0) {
+                towers.forEach(t => this.defend(room, t, hostiles));
             }
-
-            towers.forEach(t => this.defend(room, t));
-
         }
 
+    }
+
+    public static init(room: Room): void {
+        room.memory.towers = [];
+
+        const towers = room.find(FIND_MY_STRUCTURES, { filter: (struct) => struct.structureType == STRUCTURE_TOWER });
+        const sources = room.find(FIND_SOURCES);
+
+        towers.forEach(l => {
+            const dist = sources.reduce((m, s) => {
+                const distSrc = s.pos.getRangeTo(l.pos);
+                return distSrc > m ? distSrc : m;
+            }, 0);
+            room.memory.towers.push({ id: l.id, pos: l.pos, range: dist + 5 })
+        });
     }
 }
 

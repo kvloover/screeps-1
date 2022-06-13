@@ -1,5 +1,6 @@
 import { Persistency, Persistent } from "repos/persistent";
-import { LinkManager } from "structures";
+import { RoomManager } from "room";
+import { LinkManager, SpawnManager, TowerManager } from "structures";
 import { container } from "tsyringe";
 import { CreepState } from "./creep-state";
 import { isDefined } from "./utils";
@@ -16,13 +17,15 @@ export class ExConsole {
             remote: ExConsole.remote,
             attack: ExConsole.attack,
 
-            init_links: ExConsole.init_links,
-
             upgrading: (m, v) => ExConsole.toggle(m, 'upgrading', v),
             building: (m, v) => ExConsole.toggle(m, 'building', v),
             remote_attack: (m, v) => ExConsole.toggle(m, 'remote_attack', v),
             remote_mining: (m, v) => ExConsole.toggle(m, 'remote_mining', v),
-            claim: (m, v) => ExConsole.toggle(m, 'claim', v)
+            claim: (m, v) => ExConsole.toggle(m, 'claim', v),
+
+            init_links: ExConsole.init_links,
+            init_towers: ExConsole.init_towers,
+            init_spawns: ExConsole.init_spawns
         }
     }
 
@@ -110,7 +113,9 @@ export class ExConsole {
             // Reset links
             if (Game.rooms.hasOwnProperty(roomName)) {
                 const room = Game.rooms[roomName];
-                LinkManager.init(room)
+                LinkManager.init(room);
+                SpawnManager.init(room);
+                TowerManager.init(room);
             }
 
             return `Reset room ${roomName}.`;
@@ -123,6 +128,24 @@ export class ExConsole {
             const room = Game.rooms[roomName];
             LinkManager.init(room)
             return `room links init for ${roomName}.`;
+        }
+        return `Room not known: ${roomName}`
+    }
+
+    private static init_towers(roomName: string): string {
+        if (Game.rooms.hasOwnProperty(roomName)) {
+            const room = Game.rooms[roomName];
+            TowerManager.init(room)
+            return `room towers init for ${roomName}.`;
+        }
+        return `Room not known: ${roomName}`
+    }
+
+    private static init_spawns(roomName: string): string {
+        if (Game.rooms.hasOwnProperty(roomName)) {
+            const room = Game.rooms[roomName];
+            SpawnManager.init(room)
+            return `room spawns init for ${roomName}.`;
         }
         return `Room not known: ${roomName}`
     }
@@ -150,8 +173,6 @@ declare global {
             stopDebug: (room: string) => string;
             reset: (room: string) => string;
 
-            init_links: (room: string) => string;
-
             remote: (room: string, value: string | undefined) => string;
             attack: (room: string, value: string | undefined) => string;
 
@@ -161,6 +182,11 @@ declare global {
             remote_attack: (roomName: string, value: boolean | undefined) => string;
             remote_mining: (roomName: string, value: boolean | undefined) => string;
             claim: (roomName: string, value: boolean | undefined) => string;
+
+            // Init
+            init_links: (room: string) => string;
+            init_towers: (room: string) => string;
+            init_spawns: (room: string) => string;
         }
     }
 }

@@ -27,9 +27,16 @@ declare global {
         remote_attack: boolean;
         claim: boolean;
 
-        sources: { id: Id<_HasId>, pos: RoomPosition }[];
-        links: { id: Id<_HasId>, pos: RoomPosition, storage: boolean }[];
+        sources: SourceMemory[];
+        links: LinkMemory[];
+        towers: TowerMemory[];
+        spawns: SpawnMemory[];
     }
+
+    interface SourceMemory { id: Id<_HasId>, pos: RoomPosition }
+    interface LinkMemory { id: Id<_HasId>, pos: RoomPosition, storage: boolean }
+    interface TowerMemory { id: Id<_HasId>, pos: RoomPosition, range: number }
+    interface SpawnMemory { id: Id<_HasId>, pos: RoomPosition }
 
 
     interface CreepMemory {

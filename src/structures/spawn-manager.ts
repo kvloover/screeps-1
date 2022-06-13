@@ -36,20 +36,22 @@ export class SpawnManager implements Manager {
                 ))?.length < cfg.count);
     }
 
-    private manageSpawns(room: Room): void {
+    protected manageSpawns(room: Room): void {
 
-        const spawns = room.find(FIND_MY_SPAWNS)
-        if (spawns.length > 0) {
-            const spawn = spawns[0];
-            if (spawn.spawning) {
-                this.reportSpawning(room, spawn);
-            } else {
-                this.trySpawn(room, spawn);
+        const spawns = room.memory.spawns;
+        if (spawns && spawns.length > 0) {
+            const spawn = Game.getObjectById(spawns[0].id) as StructureSpawn;
+            if (spawn) {
+                if (spawn.spawning) {
+                    this.reportSpawning(room, spawn);
+                } else {
+                    this.trySpawn(room, spawn);
+                }
             }
         }
     }
 
-    private trySpawn(room: Room, spawn: StructureSpawn): void {
+    protected trySpawn(room: Room, spawn: StructureSpawn): void {
         const roomCreeps = this.getRoomCreeps(room);
 
         const cfg = Object.assign(new config(), setup);
@@ -113,6 +115,7 @@ export class SpawnManager implements Manager {
             room: spawn.room.name,
             targetRoom: undefined,
             targetId: undefined,
+            target: undefined,
             tasks: {},
             tasks_blacklist: {},
             started: 0
@@ -147,6 +150,16 @@ export class SpawnManager implements Manager {
             return;
 
         this.manageSpawns(room);
+    }
+
+    public static init(room: Room): void {
+        room.memory.spawns = [];
+
+        const spawns = room.find(FIND_MY_SPAWNS);
+
+        spawns.forEach(l => {
+            room.memory.spawns.push({ id: l.id, pos: l.pos })
+        });
     }
 
 }
