@@ -39,18 +39,9 @@ export class Pathing {
     }
 
     public scoutRoom(creep: Creep, room: string) {
-        if (creep.room.name !== room) {
-            // move to room
-            this.moveTo(creep, new RoomPosition(25, 25, room));
-        }
+        creep.travelTo(new RoomPosition(25, 25, room), { range: 24 });
     }
 
-    public gotoRoom(creep: Creep, pos: RoomPosition) {
-        if (creep.room.name !== pos.roomName) {
-            // move to room
-            this.moveTo(creep, pos);
-        }
-    }
 }
 
 profiler.registerClass(Pathing, 'Pathing');

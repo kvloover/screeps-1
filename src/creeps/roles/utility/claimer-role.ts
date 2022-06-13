@@ -27,20 +27,28 @@ export class ClaimerRole implements Role {
             }
         }
 
-        if (!creep.memory.targetId && creep.memory.targetRoom && creep.room.name !== creep.memory.targetRoom) {
-            // move to room
-            this.pathing.moveTo(creep, new RoomPosition(25, 25, creep.memory.targetRoom));
+        if (!creep.memory.targetId) {
+            if (creep.memory.targetRoom) {
+                if (!Game.rooms.hasOwnProperty(creep.memory.targetRoom)) {
+                    // move to room
+                    this.pathing.scoutRoom(creep, creep.memory.targetRoom);
+                } else {
+                    const room = Game.rooms[creep.memory.targetRoom]
+                    if (room.controller && !room.controller.my) {
+                        creep.memory.targetId = room.controller.id;
+                        creep.memory.target = room.controller.pos;
+                    }
+                }
+            } else {
+                if (creep.room.controller && !creep.room.controller.my) {
+                    creep.memory.targetId = creep.room.controller.id;
+                    creep.memory.target = creep.room.controller.pos;
+                }
+            }
+
         } else {
             // Once in room: do logic
-            this.findClaim(creep);
             this.claimOrMove(creep);
-        }
-    }
-
-    protected findClaim(creep: Creep) {
-        if (!creep.memory.targetId && creep.room.name == creep.memory.targetRoom && creep.room.controller && !creep.room.controller.my) {
-            creep.memory.targetId = creep.room.controller.id;
-            console.log(`${creep.name}: controller found`);
         }
     }
 
@@ -50,18 +58,26 @@ export class ClaimerRole implements Role {
             if (isController(obj)) {
                 this.pathing.moveTo(creep, obj.pos);
 
-                if (!obj.sign || obj.sign.username !== whoAmI()) {
-                    creep.signController(obj, `swamp`);
-                }
-
-                if (creep.claimController(obj) !== OK) { // fix to claim
-                    if (creep.reserveController(obj) !== OK) { // fix to claim
-                        console.log(`${creep.name}: could not reserve or claim controller`);
+                if (obj.room.name == creep.room.name && creep.pos.inRangeTo(obj, 1)) {
+                    if (!obj.sign || obj.sign.username !== whoAmI()) {
+                        creep.signController(obj, `swamp`);
                     }
+                    if (creep.claimController(obj) !== OK) { // fix to claim
+                        if (creep.reserveController(obj) !== OK) { // fix to claim
+                            // this.log.debug(`${creep.name}: could not reserve or claim controller`);
+                        }
+                    }
+                }
+            } else {
+                if (creep.memory.target) {
+                    this.pathing.moveTo(creep, creep.memory.target);
+                } else {
+                    creep.memory.targetId = undefined; // clear
                 }
             }
         }
     }
+
 }
 
 profiler.registerClass(ClaimerRole, 'ClaimerRole');

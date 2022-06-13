@@ -40,6 +40,7 @@ declare global {
         started: number;
         targetRoom: undefined | string;
         targetId: undefined | Id<_HasId>;
+        target: undefined | RoomPosition;
 
         tasks: { [key: string]: { repo: string; tick: number, task: Task; } | undefined };
         tasks_blacklist: { [key: string]: string[] }; // ignore specific requesters for the given type
