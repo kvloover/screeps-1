@@ -31,11 +31,9 @@ export abstract class BuilderRole extends TransferRole implements Role {
         })
         if (emergency.length > 0) {
             // emergency repairs
-            if (!CreepUtils.tryFor(emergency, loc => creep.repair(loc))) {
-                const loc = this.pathing.findClosestOf(creep, emergency);
-                if (loc != undefined) {
-                    this.pathing.moveTo(creep, loc.pos);
-                }
+            const closest = creep.pos.findClosestByRange(emergency);
+            if (closest && creep.repair(closest) == ERR_NOT_IN_RANGE) {
+                this.pathing.moveTo(creep, closest.pos);
             }
         } else {
             let constructions = creep.room.find(FIND_CONSTRUCTION_SITES);
@@ -50,27 +48,29 @@ export abstract class BuilderRole extends TransferRole implements Role {
                 let target: ConstructionSite<BuildableStructureConstant> | undefined;
                 if (creep.memory.targetId
                     && (target = constructions.find(i => i.id === creep.memory.targetId)) != undefined) {
-                    if (creep.build(target) === ERR_NOT_IN_RANGE)
+                    if (creep.build(target) === ERR_NOT_IN_RANGE) {
                         this.pathing.moveTo(creep, target.pos);
+                    } else if (!target) {
+                        creep.memory.targetId = undefined;
+                    }
                 } else {
                     creep.memory.targetId = undefined;
-                    if (!CreepUtils.tryFor(constructions, loc => {
-                        if (loc) creep.memory.targetId = loc.id;
-                        return creep.build(loc);
-                    })) {
-                        const loc = this.pathing.findClosestOf(creep, constructions);
-                        if (loc != undefined) {
-                            this.pathing.moveTo(creep, loc.pos);
+                    const closest = creep.pos.findClosestByRange(constructions);
+                    if (closest) {
+                        creep.memory.targetId = closest.id;
+                        if (creep.build(closest) == ERR_NOT_IN_RANGE) {
+                            this.pathing.moveTo(creep, closest.pos);
                         }
                     }
                 }
             } else {
                 // repair
                 const opts: FilterOptions<FIND_STRUCTURES> = { filter: (struct) => struct.hits < struct.hitsMax };
-                if (!CreepUtils.tryForFind(creep, FIND_STRUCTURES, loc => creep.repair(loc), opts)) {
-                    const loc = this.pathing.findClosest(creep, FIND_STRUCTURES, opts);
-                    if (loc != undefined) {
-                        this.pathing.moveTo(creep, loc.pos);
+                const repairs = creep.room.find(FIND_STRUCTURES, opts);
+                const closest = creep.pos.findClosestByRange(repairs);
+                if (closest) {
+                    if (creep.repair(closest) == ERR_NOT_IN_RANGE) {
+                        this.pathing.moveTo(creep, closest.pos);
                     }
                 }
             }
