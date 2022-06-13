@@ -32,9 +32,6 @@ export class CreepsManager implements Manager {
     }
 
     public run(room: Room): void {
-        if (!isMyRoom(room))
-            return; // we manage creeps from the room they spawned
-
         const creeps = _.filter(Game.creeps, crp => crp.room.name === room.name);
         if (creeps.length == 0) return;
         const phase = this.phase(room);
