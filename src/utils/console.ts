@@ -73,7 +73,7 @@ export class ExConsole {
 
     static attack(roomName: string, value: string | undefined): string {
         if (Memory.rooms.hasOwnProperty(roomName)) {
-            Memory.rooms[roomName].remote = value;
+            Memory.rooms[roomName].attack = value;
             return `Attack set for ${roomName}.`;
         }
         return `Room not known: ${roomName}`
