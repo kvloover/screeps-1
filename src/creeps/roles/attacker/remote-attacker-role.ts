@@ -29,13 +29,19 @@ export class RemoteAttackerRole extends RangedAttackerRole implements Role {
             }
         }
 
-        if (creep.memory.targetRoom && creep.room.name !== creep.memory.targetRoom) {
-            // move to room
-            this.pathing.moveTo(creep, new RoomPosition(25, 25, creep.memory.targetRoom));
-        } else {
-            // Once in room: do attack logic (TODO)
-            super.findAttack(creep);
+        if (creep.memory.targetRoom) {
+            if (!Game.rooms.hasOwnProperty(creep.memory.targetRoom)) {
+                // move to room
+                this.pathing.scoutRoom(creep, creep.memory.targetRoom);
+            } else {
+                const room = Game.rooms[creep.memory.targetRoom]
+                super.findAttack(creep, room);;
+            }
         }
+        // else {
+        //     super.findAttack(creep);
+        // }
+
     }
 
     protected override attack(creep: Creep, hostile: Creep | AnyOwnedStructure): CreepActionReturnCode {
