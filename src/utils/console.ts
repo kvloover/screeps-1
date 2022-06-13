@@ -107,6 +107,12 @@ export class ExConsole {
                     m.targetId = undefined;
                 });
 
+            // Reset links
+            if (Game.rooms.hasOwnProperty(roomName)) {
+                const room = Game.rooms[roomName];
+                LinkManager.init(room)
+            }
+
             return `Reset room ${roomName}.`;
         }
         return `Room not known: ${roomName}`

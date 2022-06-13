@@ -44,15 +44,11 @@ export class RemoteHarvesterRole extends TransferRole implements Role {
             this.log.debug(creep.room, `scouting room ${creep.memory.room}`);
             this.pathing.scoutRoom(creep, creep.memory.room);
         } else {
+            const key = 'supply';
             this.log.debug(creep.room, `remote supplying room ${creep.memory.room}`);
-            let task: Task | undefined;
-            let rangeLimit = 0;
-            do {
-                // if lower prio but close = take it for remote harvester
-                rangeLimit += 10;
-                task = this.findAndRegisterTask(creep, this.demands, 'supply', creep.store.getUsedCapacity(RESOURCE_ENERGY), RESOURCE_ENERGY, creep.memory.room, rangeLimit);
-            } while (!task && rangeLimit < 50);
-            this.supplyToRepo(creep, this.demands, 'supply', RESOURCE_ENERGY, creep.memory.room);
+            // if (!creep.memory.tasks[key])
+            //     this.findAndRegisterTask(creep, this.demands, key, creep.store.getUsedCapacity(RESOURCE_ENERGY), RESOURCE_ENERGY, creep.memory.room);
+            this.supplyToRepo(creep, this.demands, key, RESOURCE_ENERGY, creep.memory.room);
         }
     }
 }
