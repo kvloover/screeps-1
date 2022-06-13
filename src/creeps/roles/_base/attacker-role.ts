@@ -11,11 +11,10 @@ export abstract class AttackerRole {
         this.findAttack(creep);
     }
 
-    protected findAttack(creep: Creep) {
-        const hostiles = creep.room.find(FIND_HOSTILE_CREEPS);
+    protected findAttack(creep: Creep, room?: Room) {
+        const hostiles = (room ?? creep.room).find(FIND_HOSTILE_CREEPS);
         if (hostiles.length > 0) {
 
-            if (Game.time % 10 == 0) { creep.say('⚔️ hostiles found'); }
             if (!CreepUtils.tryFor(hostiles, (hostile) => this.attack(creep, hostile))) {
                 const loc = this.pathing.findClosestOf(creep, hostiles);
                 if (loc != undefined) {
@@ -25,10 +24,9 @@ export abstract class AttackerRole {
 
         } else {
 
-            const hostileStruct = creep.room.find(FIND_HOSTILE_STRUCTURES);
+            const hostileStruct = (room ?? creep.room).find(FIND_HOSTILE_STRUCTURES);
             if (hostileStruct.length > 0) {
 
-                if (Game.time % 10 == 0) { creep.say('⚔️ hostiles found'); }
                 if (!CreepUtils.tryFor(hostileStruct, (hostile) => this.attack(creep, hostile))) {
                     const loc = this.pathing.findClosestOf(creep, hostileStruct);
                     if (loc != undefined) {
@@ -38,10 +36,9 @@ export abstract class AttackerRole {
 
             } else {
 
-                const controller = creep.room.controller;
+                const controller = (room ?? creep.room).controller;
                 if (controller && !controller.my) {
 
-                    if (Game.time % 10 == 0) { creep.say('⚔️ hostiles found'); }
                     if (!CreepUtils.tryFor([controller], (hostile) => this.attack(creep, hostile))) {
                         this.pathing.moveTo(creep, controller.pos);
                     }
