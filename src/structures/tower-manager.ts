@@ -2,6 +2,7 @@ import { injectable } from "tsyringe";
 
 import { Manager } from "manager";
 import { Logger } from "logger";
+import { isMyRoom } from "utils/utils";
 
 import profiler from "screeps-profiler";
 
@@ -27,6 +28,8 @@ export class TowerManager implements Manager {
     }
 
     public run(room: Room): void {
+        if (!isMyRoom(room))
+            return;
 
         // rewrite
         const towers = room.find<StructureTower>(FIND_MY_STRUCTURES,

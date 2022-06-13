@@ -3,10 +3,10 @@ import { injectable } from "tsyringe";
 import { Manager } from "manager";
 import { Logger } from "logger";
 import { CreepState } from "utils/creep-state";
+import { isDefined, isMyRoom } from "utils/utils";
 
 import setup from "../config/setup.json";
 import { config, roleConfig, stageConfig } from "../config/config";
-import { isDefined } from "utils/utils";
 
 import profiler from "screeps-profiler";
 
@@ -143,6 +143,9 @@ export class SpawnManager implements Manager {
     }
 
     public run(room: Room): void {
+        if (!isMyRoom(room))
+            return;
+
         this.manageSpawns(room);
     }
 

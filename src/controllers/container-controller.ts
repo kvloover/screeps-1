@@ -6,9 +6,9 @@ import { Logger } from "logger";
 
 import { MidstreamTaskRepo } from "repos/midstream-task-repo";
 import { SupplyTaskRepo } from "repos/supply-task-repo";
+import { isMyRoom, isResourceConstant } from "utils/utils";
 
 import profiler from "screeps-profiler";
-import { isResourceConstant } from "utils/utils";
 
 @injectable()
 export class ContainerController implements Controller {
@@ -19,6 +19,9 @@ export class ContainerController implements Controller {
     }
 
     public monitor(room: Room): void {
+        if (!isMyRoom(room))
+            return;
+
         const items =
             room.find(FIND_STRUCTURES, {
                 filter: struct => struct.structureType === STRUCTURE_CONTAINER

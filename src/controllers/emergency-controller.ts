@@ -2,6 +2,7 @@ import { injectable } from "tsyringe";
 
 import { Logger } from "logger";
 import { Controller } from "./controller";
+import { isMyRoom } from "utils/utils";
 
 import profiler from "screeps-profiler";
 
@@ -13,6 +14,9 @@ export class EmergencyController implements Controller {
     constructor(private log: Logger) { }
 
     public monitor(room: Room): void {
+        if (!isMyRoom(room))
+            return;
+
         const hostiles = room.find(FIND_HOSTILE_CREEPS)
             .map(c => c.body.filter(i => i.type === ATTACK || i.type === RANGED_ATTACK).length)
             .reduce((pv, v) => v + pv, 0);

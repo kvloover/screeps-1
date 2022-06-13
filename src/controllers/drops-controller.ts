@@ -5,9 +5,9 @@ import { Controller } from "./controller";
 import { Logger } from "logger";
 
 import { SupplyTaskRepo } from "repos/supply-task-repo";
+import { isMyRoom, isResourceConstant } from "utils/utils";
 
 import profiler from "screeps-profiler";
-import { isResourceConstant } from "utils/utils";
 
 @injectable()
 export class DropsController implements Controller {
@@ -17,7 +17,8 @@ export class DropsController implements Controller {
     }
 
     public monitor(room: Room): void {
-        if (!room.controller || !room.controller.my) return;
+        if (!isMyRoom(room))
+            return;
 
         const tombs =
             room.find(FIND_TOMBSTONES, {

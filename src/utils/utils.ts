@@ -30,3 +30,6 @@ export const isOwnStructure =
 
 export const whoAmI =
   () => (Object.values(Game.structures).find(s => isOwnStructure(s)) as OwnedStructure)?.owner?.username ?? 'N/A';
+
+export const isMyRoom =
+  (room: Room) => room.controller && room.controller.my; // && room.controller.owner.username == whoAmI();

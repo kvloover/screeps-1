@@ -1,12 +1,12 @@
-import { container, injectable, injectAll } from "tsyringe";
+import { container, injectable } from "tsyringe";
 
 import { Logger } from "logger";
 import { Manager } from "manager";
 
-// import { RoleService } from "./roles/role-service";
 import { Role, Roles } from "./roles/role-registry";
+import { isMyRoom } from "utils/utils";
+
 import profiler from "screeps-profiler";
-// import { RoleServices } from "./roles/role-service-registry";
 
 @injectable()
 export class CreepsManager implements Manager {
@@ -32,6 +32,9 @@ export class CreepsManager implements Manager {
     }
 
     public run(room: Room): void {
+        if (!isMyRoom(room))
+            return; // we manage creeps from the room they spawned
+
         const creeps = _.filter(Game.creeps, crp => crp.room.name === room.name);
         if (creeps.length == 0) return;
         const phase = this.phase(room);

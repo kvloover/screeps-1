@@ -4,9 +4,9 @@ import { DemandTaskRepo } from "repos/demand-task-repo";
 import { Controller } from "./controller";
 import { DemandTask } from "repos/task";
 import { Logger } from "logger";
+import { isMyRoom, isStoreStructure } from "utils/utils";
 
 import profiler from "screeps-profiler";
-import { isStoreStructure } from "utils/utils";
 
 @injectable()
 export class TowerController implements Controller {
@@ -16,6 +16,8 @@ export class TowerController implements Controller {
 
     /// Monitor the spawn supplies: spawn + extensions for required demand
     public monitor(room: Room): void {
+        if (!isMyRoom(room))
+            return;
 
         const opt: FilterOptions<FIND_MY_STRUCTURES> = {
             filter: (structure) =>

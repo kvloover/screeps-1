@@ -4,6 +4,7 @@ import { DemandTaskRepo } from "repos/demand-task-repo";
 import { Controller } from "./controller";
 import { DemandTask } from "repos/task";
 import { Logger } from "logger";
+import { isMyRoom } from "utils/utils";
 
 import profiler from "screeps-profiler";
 
@@ -15,6 +16,8 @@ export class SpawnController implements Controller {
 
     /// Monitor the spawn supplies: spawn + extensions for required demand
     public monitor(room: Room): void {
+        if (!isMyRoom(room))
+            return;
 
         const opt: FilterOptions<FIND_MY_STRUCTURES> = {
             filter: (structure) =>
@@ -31,7 +34,7 @@ export class SpawnController implements Controller {
                 const tasks = this.demands.getForRequester(struct.id, RESOURCE_ENERGY);
                 const amount = tasks.reduce((p, c) => p + (c?.amount ?? 0), 0);
                 if (amount < free) {
-                    this.demands.add(new DemandTask(struct.room.name, 1, free-amount, RESOURCE_ENERGY, struct.id, undefined, struct.pos ));
+                    this.demands.add(new DemandTask(struct.room.name, 1, free - amount, RESOURCE_ENERGY, struct.id, undefined, struct.pos));
                     this.log.debug(struct.room, `${struct.pos}: added supply task`);
                 }
             }

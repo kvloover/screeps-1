@@ -2,9 +2,9 @@ import { injectable } from "tsyringe";
 
 import { Manager } from "manager";
 import { Logger } from "logger";
+import { isLinkStructure, isMyRoom } from "utils/utils";
 
 import profiler from "screeps-profiler";
-import { isLinkStructure } from "utils/utils";
 
 @injectable()
 export class LinkManager implements Manager {
@@ -12,6 +12,8 @@ export class LinkManager implements Manager {
     constructor(private log: Logger) { }
 
     public run(room: Room): void {
+        if (!isMyRoom(room))
+            return;
 
         const links = room.memory.links;
 
@@ -29,7 +31,7 @@ export class LinkManager implements Manager {
                             if (srcLink.store.getUsedCapacity(RESOURCE_ENERGY) > 0.25 * srcLink.store.getCapacity(RESOURCE_ENERGY)
                                 && destLink.store.getFreeCapacity(RESOURCE_ENERGY) > 0.25 * destLink.store.getCapacity(RESOURCE_ENERGY)) {
                                 srcLink.transferEnergy(destLink,
-                                     Math.min(destLink.store.getFreeCapacity(RESOURCE_ENERGY), srcLink.store.getUsedCapacity(RESOURCE_ENERGY)));
+                                    Math.min(destLink.store.getFreeCapacity(RESOURCE_ENERGY), srcLink.store.getUsedCapacity(RESOURCE_ENERGY)));
                             }
                         }
                     });

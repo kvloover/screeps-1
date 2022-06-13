@@ -6,9 +6,9 @@ import { Logger } from "logger";
 
 import { SupplyTaskRepo } from "repos/supply-task-repo";
 import { StorageTaskRepo } from "repos/storage-task-repo";
+import { isMyRoom, isResourceConstant, isStoreStructure } from "utils/utils";
 
 import profiler from "screeps-profiler";
-import { isResourceConstant, isStoreStructure } from "utils/utils";
 
 @injectable()
 export class StorageController implements Controller {
@@ -19,6 +19,9 @@ export class StorageController implements Controller {
     }
 
     public monitor(room: Room): void {
+        if (!isMyRoom(room))
+            return;
+
         const items =
             room.find(FIND_MY_STRUCTURES, {
                 filter: struct => struct.structureType === STRUCTURE_STORAGE

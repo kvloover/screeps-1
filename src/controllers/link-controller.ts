@@ -6,9 +6,9 @@ import { Logger } from "logger";
 
 import { MidstreamTaskRepo } from "repos/midstream-task-repo";
 import { ProviderTaskRepo } from "repos/provider-task-repo";
+import { isLinkStructure, isMyRoom } from "utils/utils";
 
 import profiler from "screeps-profiler";
-import { isLinkStructure } from "utils/utils";
 
 @injectable()
 export class LinkController implements Controller {
@@ -20,6 +20,8 @@ export class LinkController implements Controller {
     }
 
     public monitor(room: Room): void {
+        if (!isMyRoom(room))
+            return;
 
         const links = room.memory.links;
 
