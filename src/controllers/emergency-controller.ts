@@ -17,9 +17,21 @@ export class EmergencyController implements Controller {
         if (!isMyRoom(room))
             return;
 
+        if (Game.time % 5 != 0) return; // not too important to immediately spot
+
+        if (!room.memory.emergency) {
+            room.memory.emergency = {
+                active: false,
+                notified: false,
+            }
+        }
+
         const hostiles = room.find(FIND_HOSTILE_CREEPS)
             .map(c => c.body.filter(i => i.type === ATTACK || i.type === RANGED_ATTACK).length)
             .reduce((pv, v) => v + pv, 0);
+
+        if (hostiles == 0 && !room.memory.emergency.active)
+            return;
 
         const defenders = room.find(FIND_MY_CREEPS)
             .map(c => c.body.filter(i => i.type === ATTACK || i.type === RANGED_ATTACK).length)
@@ -29,13 +41,6 @@ export class EmergencyController implements Controller {
             .length;
 
         const friendly = defenders + 10 * towers;
-
-        if (!room.memory.emergency) {
-            room.memory.emergency = {
-                active: false,
-                notified: false,
-            }
-        }
 
         if (hostiles > (1 + this.leeway) * friendly) {
             room.memory.emergency.active = true;

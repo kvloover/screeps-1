@@ -20,6 +20,8 @@ export class DropsController implements Controller {
         if (!isMyRoom(room))
             return;
 
+        if (Game.time % 5 != 0) return; // not too important to immediately spot
+
         const tombs =
             room.find(FIND_TOMBSTONES, {
                 filter: tomb => tomb.store[RESOURCE_ENERGY] > 0
