@@ -12,8 +12,9 @@ export class TowerManager implements Manager {
     constructor(private log: Logger) { }
 
     private defend(room: Room, tower: TowerMemory, hostiles: Creep[]) {
-        const closestHostile = tower.pos.findClosestByRange(hostiles);
-        if (closestHostile && tower.pos.getRangeTo(closestHostile.pos) < tower.range) {
+        const pos = new RoomPosition(tower.pos.x, tower.pos.y, tower.pos.roomName);
+        const closestHostile = pos.findClosestByRange(hostiles);
+        if (closestHostile && pos.getRangeTo(closestHostile.pos) < tower.range) {
             const struct = Game.getObjectById(tower.id) as StructureTower;
             if (struct) {
                 struct.attack(closestHostile);

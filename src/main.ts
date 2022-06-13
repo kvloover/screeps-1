@@ -4,6 +4,7 @@ import { container } from "tsyringe";
 import { ErrorMapper } from "utils/error-mapper";
 import { wrapMemory } from "utils/memory-hack";
 import { ExConsole } from "utils/console";
+import { exportStats } from "utils/stats";
 
 import { GameWorld } from "game-world";
 
@@ -23,6 +24,7 @@ export const loop =
       () => {
         profiler.wrap(function () {
           container.resolve(GameWorld).run();
+          exportStats();
         });
       }
     )
