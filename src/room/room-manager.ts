@@ -1,11 +1,11 @@
-import { injectable, injectAll } from "tsyringe";
+import { singleton, injectAll } from "tsyringe";
 
 import { Manager } from "manager";
 import { Controller, Controllers } from "../controllers/controller";
 
 import profiler from "screeps-profiler";
 
-@injectable()
+@singleton()
 export class RoomManager implements Manager {
 
     constructor(

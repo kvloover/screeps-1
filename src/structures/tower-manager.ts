@@ -1,4 +1,4 @@
-import { injectable } from "tsyringe";
+import { singleton } from "tsyringe";
 
 import { Manager } from "manager";
 import { Logger } from "logger";
@@ -6,7 +6,7 @@ import { isMyRoom } from "utils/utils";
 
 import profiler from "screeps-profiler";
 
-@injectable()
+@singleton()
 export class TowerManager implements Manager {
 
     constructor(private log: Logger) { }

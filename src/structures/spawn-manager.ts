@@ -1,4 +1,4 @@
-import { injectable } from "tsyringe";
+import { singleton } from "tsyringe";
 
 import { Manager } from "manager";
 import { Logger } from "logger";
@@ -10,7 +10,7 @@ import { config, roleConfig, stageConfig } from "../config/config";
 
 import profiler from "screeps-profiler";
 
-@injectable()
+@singleton()
 export class SpawnManager implements Manager {
 
     constructor(private log: Logger) { }
