@@ -427,8 +427,8 @@
                 "priority": 2,
                 "count": 1,
                 "template": {
-                    "work": 5,
-                    "carry": 1,
+                    "work": 6,
+                    "carry": 4,
                     "move": 3
                 }
             },
@@ -455,8 +455,8 @@
                 "priority": 5,
                 "count": 2,
                 "template": {
-                    "work": 5,
-                    "carry": 1,
+                    "work": 6,
+                    "carry": 4,
                     "move": 3
                 }
             },
