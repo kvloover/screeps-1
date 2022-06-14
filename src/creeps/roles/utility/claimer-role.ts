@@ -1,13 +1,12 @@
-import { injectable } from "tsyringe";
+import { singleton } from "tsyringe";
 
 import { Pathing } from "creeps/pathing";
-import { CreepUtils } from "creeps/creep-utils";
 
 import { Role } from "../role-registry";
 import profiler from "screeps-profiler";
 import { isController, whoAmI } from "utils/utils";
 
-@injectable()
+@singleton()
 export class ClaimerRole implements Role {
 
     name: string = 'claimer';

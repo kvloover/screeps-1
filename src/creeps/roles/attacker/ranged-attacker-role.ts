@@ -1,4 +1,4 @@
-import { injectable } from "tsyringe";
+import { singleton } from "tsyringe";
 
 import { CreepUtils } from "creeps/creep-utils";
 import { Pathing } from "creeps/pathing";
@@ -8,7 +8,7 @@ import { Role } from "../role-registry";
 import { AttackerRole } from "../_base/attacker-role";
 import profiler from "screeps-profiler";
 
-@injectable()
+@singleton()
 export class RangedAttackerRole extends AttackerRole implements Role {
 
     name: string = 'ranger';

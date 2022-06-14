@@ -1,4 +1,4 @@
-import { injectable } from "tsyringe";
+import { singleton } from "tsyringe";
 import { Logger } from "logger";
 import { Pathing } from "../../pathing";
 
@@ -15,7 +15,7 @@ import profiler from "screeps-profiler";
 /**
  * container to demand ~ hauler
  */
-@injectable()
+@singleton()
 export class FillerSupplierRole extends FillerRole {
 
     phase = {
@@ -36,7 +36,7 @@ export class FillerSupplierRole extends FillerRole {
 /**
  * container to storage
  */
-@injectable()
+@singleton()
 export class FillerStorageRole extends FillerRole {
 
     phase = {
@@ -67,7 +67,7 @@ profiler.registerClass(FillerStorageRole, 'FillerStorageRole');
 /**
  * link to storage
  */
-@injectable()
+@singleton()
 export class FillerLinkRole extends FillerRole {
 
     phase = {

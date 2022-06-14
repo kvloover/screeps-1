@@ -1,16 +1,15 @@
-import { injectable } from "tsyringe";
 
 import { Logger } from "logger";
 import { Pathing } from "creeps/pathing";
 
-import { HarvesterRole } from "./harvester-role";
 import { Role } from "../role-registry";
 
 import { Task } from "repos/task";
 import { TaskRepo } from "repos/_base/task-repo";
-import profiler from "screeps-profiler";
-import { HarvestAction } from "./harvest-action";
 import { TransferRole } from "../_base/transfer-role";
+import { HarvestAction } from "./harvest-action";
+
+import profiler from "screeps-profiler";
 
 export class RemoteHarvesterRole extends TransferRole implements Role {
 

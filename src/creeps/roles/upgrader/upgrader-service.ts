@@ -1,4 +1,4 @@
-import { injectable } from "tsyringe";
+import { singleton } from "tsyringe";
 import { Logger } from "logger";
 import { Pathing } from "../../pathing";
 
@@ -8,7 +8,7 @@ import { SupplyTaskRepo } from "repos/supply-task-repo";
 import profiler from "screeps-profiler";
 import { HarvestAction } from "../harvester/harvest-action";
 
-@injectable()
+@singleton()
 export class UpgraderSourceRole extends UpgraderRole {
 
     phase = {
@@ -33,7 +33,7 @@ export class UpgraderSourceRole extends UpgraderRole {
 
 profiler.registerClass(UpgraderSourceRole, 'UpgraderSourceRole');
 
-@injectable()
+@singleton()
 export class UpgraderStorageRole extends UpgraderRole {
 
     phase = {

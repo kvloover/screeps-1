@@ -1,11 +1,11 @@
-import { injectable } from "tsyringe";
+import { injectable, singleton } from "tsyringe";
 
 import { Logger } from "logger";
 import { PathingOptions } from "./pathing-options";
 
 import profiler from "screeps-profiler";
 
-@injectable()
+@singleton()
 export class Pathing {
 
     constructor(private log: Logger, private opt: PathingOptions) { }

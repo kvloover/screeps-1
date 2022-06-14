@@ -1,4 +1,4 @@
-import { injectable } from "tsyringe";
+import { injectable, singleton } from "tsyringe";
 
 import { Logger } from "logger";
 import { CreepUtils } from "creeps/creep-utils";
@@ -10,7 +10,7 @@ import { Task } from "repos/task";
 import { TaskRepo } from "repos/_base/task-repo";
 import { HarvestTaskRepo } from "repos/harvest-task-repo";
 
-@injectable()
+@singleton()
 export class HarvestAction {
 
     // TODO rework to unlink task for non main harvesters or allow more than budgeted on task

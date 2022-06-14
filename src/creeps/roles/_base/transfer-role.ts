@@ -107,7 +107,7 @@ export abstract class TransferRole {
     }
 
     protected findAndRegisterTask(creep: Creep, repo: TaskRepo<Task>, key: string, amount: number, type?: ResourceConstant, room?: string, rangeLimit?: number): Task | undefined {
-        const task = repo.closestTask(creep.pos, type, room ?? creep.room.name, this.blacklist(creep, key), rangeLimit);
+        const task = repo.closestTask(creep.pos, type, room ?? creep.memory.room ?? creep.room.name, this.blacklist(creep, key), rangeLimit);
         if (task) {
             repo.registerTask(creep, task, key);
             if (repo.trySplitTask(task, amount))

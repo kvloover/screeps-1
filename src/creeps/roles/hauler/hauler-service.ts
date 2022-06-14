@@ -1,4 +1,4 @@
-import { injectable } from "tsyringe";
+import { singleton } from "tsyringe";
 import { Logger } from "logger";
 import { Pathing } from "../../pathing";
 
@@ -13,7 +13,7 @@ import { isDefined } from "utils/utils";
 import { CreepState } from "utils/creep-state";
 
 
-@injectable()
+@singleton()
 export class HaulerMidstreamRole extends HaulerRole {
 
     phase = {
@@ -44,7 +44,7 @@ export class HaulerMidstreamRole extends HaulerRole {
 
 profiler.registerClass(HaulerMidstreamRole, 'HaulerMidstreamRole');
 
-@injectable()
+@singleton()
 export class HaulerStorageRole extends HaulerRole {
 
     phase = {
@@ -99,7 +99,9 @@ export class HaulerStorageRole extends HaulerRole {
     protected override findSupply(creep: Creep): boolean {
         this.log.debug(creep.room, `${creep.name}: searching for supply`);
         // check if we can find anything to supply and register it on the creep for use
-        const task = this.findAndRegisterTask(creep, this.demands, 'supply', creep.store.getCapacity());
+        let task = this.findAndRegisterTask(creep, this.demands, 'supply', creep.store.getCapacity());
+        if (!isDefined(task) && creep.room.memory.remote)
+            task = this.findAndRegisterTask(creep, this.demands, 'supply', creep.store.getCapacity(), undefined, creep.room.memory.remote);
         return isDefined(task);
     }
 

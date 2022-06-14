@@ -1,20 +1,18 @@
-import { DependencyContainer, injectable } from "tsyringe";
+import { singleton } from "tsyringe";
 import { Logger } from "logger";
 import { Pathing } from "../../pathing";
 
 // import { RoleService } from "creeps/roles/role-service-registry";
-import { Roles } from "creeps/roles/role-registry";
 import { HarvesterRole } from "./harvester-role";
 
 import { DemandTaskRepo } from "repos/demand-task-repo";
 import { MidstreamTaskRepo } from "repos/midstream-task-repo";
-import { HarvestTaskRepo } from "repos/harvest-task-repo";
 import { RemoteHarvesterRole } from "./remote-harvester-role";
-import profiler from "screeps-profiler";
 import { HarvestAction } from "./harvest-action";
 
+import profiler from "screeps-profiler";
 
-@injectable()
+@singleton()
 export class HarvestSupplierRole extends HarvesterRole {
 
     phase = {
@@ -33,7 +31,7 @@ export class HarvestSupplierRole extends HarvesterRole {
     }
 }
 
-@injectable()
+@singleton()
 export class HarvestMidstreamRole extends HarvesterRole {
 
     phase = {
@@ -54,7 +52,7 @@ export class HarvestMidstreamRole extends HarvesterRole {
 
 profiler.registerClass(HarvestMidstreamRole, 'HarvestMidstreamRole');
 
-@injectable()
+@singleton()
 export class RemoteHarvestMidstreamRole extends RemoteHarvesterRole {
 
     phase = {

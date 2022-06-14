@@ -1,4 +1,4 @@
-import { injectable } from "tsyringe";
+import { singleton } from "tsyringe";
 import { Logger } from "logger";
 import { Pathing } from "../../pathing";
 
@@ -9,7 +9,7 @@ import profiler from "screeps-profiler";
 import { HarvestAction } from "../harvester/harvest-action";
 import { CreepState } from "utils/creep-state";
 
-@injectable()
+@singleton()
 export class BuilderSourceRole extends BuilderRole {
 
     phase = {
@@ -40,7 +40,7 @@ export class BuilderSourceRole extends BuilderRole {
 
 profiler.registerClass(BuilderSourceRole, 'UpgraderSourceRole');
 
-@injectable()
+@singleton()
 export class BuilderStorageRole extends BuilderRole {
 
     phase = {
