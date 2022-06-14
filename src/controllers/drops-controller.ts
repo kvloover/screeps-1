@@ -5,7 +5,7 @@ import { Controller } from "./controller";
 import { Logger } from "logger";
 
 import { SupplyTaskRepo } from "repos/supply-task-repo";
-import { isMyRoom, isResourceConstant } from "utils/utils";
+import { isMyRoom, isRemote, isResourceConstant } from "utils/utils";
 
 import profiler from "screeps-profiler";
 
@@ -17,10 +17,10 @@ export class DropsController implements Controller {
     }
 
     public monitor(room: Room): void {
-        if (!isMyRoom(room))
-            return;
-
         if (Game.time % 5 != 0) return; // not too important to immediately spot
+
+        if (!isMyRoom(room) && !isRemote(room))
+            return;
 
         const tombs =
             room.find(FIND_TOMBSTONES, {

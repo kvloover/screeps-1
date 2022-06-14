@@ -48,7 +48,7 @@ export class TowerManager implements Manager {
                 const distSrc = s.pos.getRangeTo(l.pos);
                 return distSrc > m ? distSrc : m;
             }, 0);
-            room.memory.towers.push({ id: l.id, pos: l.pos, range: dist + 5 })
+            room.memory.towers.push({ id: l.id, pos: l.pos, range: Math.max(dist + 5, 15) })
         });
     }
 }

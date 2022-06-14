@@ -33,3 +33,6 @@ export const whoAmI =
 
 export const isMyRoom =
   (room: Room) => room.controller && room.controller.my; // && room.controller.owner.username == whoAmI();
+
+export const isRemote =
+  (room: Room) => Object.values(Memory.rooms).some(i => i.remote === room.name);
