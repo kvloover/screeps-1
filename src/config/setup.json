@@ -537,8 +537,8 @@
                 "reset_condition": false,
                 "count": 1,
                 "template": {
-                    "claim": 3,
-                    "move": 1
+                    "claim": 2,
+                    "move": 4
                 }
             },
             {
@@ -656,9 +656,9 @@
                 "count": 2,
                 "condition": "remote_mining",
                 "template": {
-                    "carry": 4,
-                    "work": 2,
-                    "move": 15
+                    "carry": 8,
+                    "work": 4,
+                    "move": 20
                 }
             }
         ]
