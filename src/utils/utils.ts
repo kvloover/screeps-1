@@ -36,3 +36,34 @@ export const isMyRoom =
 
 export const isRemote =
   (room: Room) => Object.values(Memory.rooms).some(i => i.remote === room.name);
+
+export const parseRoomName =
+  (roomName: string): { xDir: number, x: number, yDir: number, y: number } => {
+    const coordinateRegex = /(E|W)(\d+)(N|S)(\d+)/g;
+    const match = coordinateRegex.exec(roomName)!;
+
+    // 0-0 is top left corner
+    const xDir = match[1] === 'E' ? 1 : -1;
+    const x = Number(match[2]);
+    const yDir = match[3] === 'S' ? 1 : -1;;
+    const y = Number(match[4]);
+
+    return { xDir: xDir, x: x, yDir: yDir, y: y }
+  }
+
+export const relativeExitTo =
+  (roomName: string, target: string): { xDir: number, yDir: number } => {
+    // Estimation : can be inacurate, quick way to fetch normal axis direction
+    //~ 4 times more efficient than Game.map.findExit
+    const current = parseRoomName(roomName);
+    const dest = parseRoomName(target);
+
+    const x = current.xDir !== dest.xDir
+      ? dest.xDir
+      : dest.x > current.x ? 1 : -1;
+    const y = current.yDir !== dest.yDir
+      ? dest.yDir
+      : dest.y > current.y ? 1 : -1;
+
+      return { xDir: x, yDir: y };
+  }

@@ -1,6 +1,11 @@
 // Call this function at the end of your main loop
 
 export function exportStats() {
+
+  // Tick 3-4 sec, polling every min (rate limit)
+  if (Game.time % 10 !== 0)
+    return;
+
   // Reset stats object
   Memory.stats = {
     time: Game.time,

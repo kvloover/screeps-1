@@ -4,6 +4,7 @@ import { container } from "tsyringe";
 import { ErrorMapper } from "utils/error-mapper";
 import { wrapMemory } from "utils/memory-hack";
 import { ExConsole } from "utils/console";
+import { TestConsole } from "utils/test-console";
 import { exportStats } from "utils/stats";
 
 import { GameWorld } from "game-world";
@@ -15,6 +16,7 @@ import profiler from 'screeps-profiler';
 
 profiler.enable();
 ExConsole.init();
+TestConsole.init();
 
 profiler.registerObject(container, 'container');
 

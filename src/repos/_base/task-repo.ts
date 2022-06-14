@@ -1,5 +1,5 @@
 import { Logger } from "logger";
-import { isDefined } from "utils/utils";
+import { isDefined, parseRoomName, relativeExitTo } from "utils/utils";
 import { Task } from "../task";
 
 // import profiler from 'screeps-profiler';
@@ -69,8 +69,16 @@ export abstract class BaseRepo<T extends Task> implements TaskRepo<T>{
 
     public closestTask(pos: RoomPosition, type?: ResourceConstant, room?: string, blacklist?: string[], limitrange?: number): Task {
         const roomTasks = this.list(room);
+
+        let loc = pos;
+        if (room && room != pos.roomName) {
+            // cross room getRange returns infinity > get estimation of exit and compare based on that
+            const relExit = relativeExitTo(room, pos.roomName); // exit towards our current pos
+            loc = new RoomPosition(25 + (relExit.xDir * 20), 25 + (relExit.yDir * 20), room);
+        }
+
         return _(roomTasks)
-            .map(e => { return { task: e, range: pos.getRangeTo(e.pos?.x ?? 0, e.pos?.y ?? 0) }; })
+            .map(e => { return { task: e, range: loc.getRangeTo(e.pos?.x ?? 0, e.pos?.y ?? 0) }; })
             .filter(e => !e.task.executer
                 && (!type || (e.task.type && e.task.type == type))
                 && (!blacklist || !blacklist.includes(e.task.requester ?? ""))
