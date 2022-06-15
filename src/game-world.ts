@@ -3,6 +3,7 @@ import { container, injectable } from "tsyringe";
 import { Logger } from "logger";
 import { Manager, Managers } from "manager";
 import { Persistency, Persistent } from "repos/persistent";
+import { GarbageCollector } from "utils/garbage-collect";
 // import { RoleService, RoleServices } from "creeps/roles/role-service-registry";
 
 @injectable()
@@ -30,29 +31,24 @@ export class GameWorld {
     }
 
     public run(): void {
-        // this.log.Important(`Current game tick is ${Game.time}`);
         Persistency.Initialize();
 
-        // TODO avoid having to register all and limit by filtering in CreepsManager
-        // const services = container.resolveAll<RoleService>(RoleServices.token);
-        // RoleServices.phases.forEach(phase => {
-        //     const token = RoleServices.tokenPhase(phase)
-        //     if (!container.isRegistered(token)) {
-        //         services.forEach(s => s.register(container, phase, token))
-        //     }
-        // })
-
-        // ? use resolveScope and resolve seperate for rooms ?
         const persistency = container.resolveAll<Persistent>(Persistency.token);
         persistency.forEach(persistent => persistent.restore());
+
+        // Clean old memory | TODO: move to GC ?
         this.cleanMemory(persistency);
 
+        // Main logic
         _.forEach(Game.rooms, room => {
             const managers = container.resolveAll<Manager>(Managers.token);
             managers.forEach(m => m.run(room));
         });
 
+        // Store Id's for cleaning
         this.setIds();
+
+        if (Game.time % 100 == 0) GarbageCollector.gc();
 
         // TODO time constraint ? > limit manager executions to make sure persistency is stored ?
         persistency.forEach(persistent => persistent.save());

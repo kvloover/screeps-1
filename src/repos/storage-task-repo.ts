@@ -27,6 +27,19 @@ export class StorageTaskRepo extends BaseRepo<StorageTask> implements Persistent
         Memory.persistency = Object.assign(Memory.persistency, { storage: this.tasks ?? [] });
     }
 
+    gc(): void {
+        const invalid = this.tasks
+            .filter(r =>
+                (r.requester && !Game.getObjectById(r.requester))
+                || (r.executer && !Game.getObjectById(r.executer))
+            )
+            .map(r => r.id);
+
+        invalid.forEach(id => {
+            this.removeById(id);
+        })
+    }
+
     clearReference(id: Id<_HasId>): void {
         // remove if requester
         const requests = this.tasks

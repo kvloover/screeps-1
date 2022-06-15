@@ -1,14 +1,15 @@
 import { Persistency, Persistent } from "repos/persistent";
-import { RoomManager } from "room";
 import { LinkManager, SpawnManager, TowerManager } from "structures";
 import { container } from "tsyringe";
 import { CreepState } from "./creep-state";
-import { isDefined } from "./utils";
+import { GarbageCollector } from "./garbage-collect";
 
 export class ExConsole {
     static init() {
         global.cli = {
             help: ExConsole.help,
+
+            gc: ExConsole.gc,
 
             debug: ExConsole.debug,
             stopDebug: ExConsole.stopDebug,
@@ -32,15 +33,19 @@ export class ExConsole {
 
     static help(): string {
         const lines: string[] = [];
+        lines.push(`gc(roomName)\t\t\t remove reference to dead artifacts`);
         lines.push(`------------------------------------------------------------------`);
         lines.push(`debug(roomName)\t\t\t turn on debugging`);
         lines.push(`stopDebug(roomName)\t\t turn off debugging`);
         lines.push(`------------------------------------------------------------------`);
         lines.push(`reset(roomName)\t\t\t reset all persistency and creeps of the room`);
         lines.push(`init_links(roomName)\t\t initialize the links and their config`);
+        lines.push(`init_towers(roomName)\t\t initialize the towers and their config`);
+        lines.push(`init_spawns(roomName)\t\t initialize the spawns and their config`);
         lines.push(`------------------------------------------------------------------`);
         lines.push(`remote(roomName, value)\t\t set the remote room`);
         lines.push(`attack(roomName, value)\t\t set the attack room`);
+        lines.push(`attack(roomName, value)\t\t set the conquer room`);
         lines.push(`------------------------------------------------------------------`);
         lines.push(`upgrading(roomName, value)\t set upgrading toggle`);
         lines.push(`building(roomName, value)\t set building toggle`);
@@ -49,6 +54,11 @@ export class ExConsole {
         lines.push(`claim(roomName, value)\t\t set claim toggle`);
         lines.push(`------------------------------------------------------------------`);
         return lines.join('\n');
+    }
+
+    static gc(): string {
+        GarbageCollector.gc();
+        return `Garbage collected`
     }
 
     static debug(roomName: string): string {
@@ -177,6 +187,8 @@ declare global {
 
         interface ExConsole {
             help: () => string;
+
+            gc: () => string;
 
             debug: (room: string) => string;
             stopDebug: (room: string) => string;

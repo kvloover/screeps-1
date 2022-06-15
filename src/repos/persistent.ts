@@ -10,6 +10,7 @@ import { StorageTaskRepo } from "./storage-task-repo";
 export interface Persistent {
     restore(): void;
     save(): void;
+    gc(): void;
     clearReference(id: Id<_HasId>): void;
     clearRoomRef(roomName: string): void;
 }

@@ -22,6 +22,11 @@ export abstract class BuilderRole extends TransferRole implements Role {
     // Override consume on implementing class
 
     protected supply(creep: Creep): void {
+        // clear targetRoom:
+        if (creep.memory.targetRoom && creep.memory.targetRoom == creep.room.name) {
+            creep.memory.targetRoom = undefined;
+        }
+
         // priority repairs > construction > repairs
         const emergency = creep.room.find(FIND_STRUCTURES, {
             filter: (struct) => struct.hits < 1500 && struct.hits < struct.hitsMax
@@ -37,12 +42,6 @@ export abstract class BuilderRole extends TransferRole implements Role {
             }
         } else {
             let constructions = creep.room.find(FIND_CONSTRUCTION_SITES);
-            if (constructions.length == 0 && creep.room.memory.remote) {
-                // check remote
-                const room = Game.rooms[creep.room.memory.remote];
-                if (room)
-                    constructions = room.find(FIND_CONSTRUCTION_SITES);
-            }
             if (constructions.length > 0) {
                 // construct
                 let target: ConstructionSite<BuildableStructureConstant> | undefined;
@@ -64,13 +63,27 @@ export abstract class BuilderRole extends TransferRole implements Role {
                     }
                 }
             } else {
-                // repair
-                const opts: FilterOptions<FIND_STRUCTURES> = { filter: (struct) => struct.hits < struct.hitsMax };
-                const repairs = creep.room.find(FIND_STRUCTURES, opts);
-                const closest = creep.pos.findClosestByRange(repairs);
-                if (closest) {
-                    if (creep.repair(closest) == ERR_NOT_IN_RANGE) {
-                        this.pathing.moveTo(creep, closest.pos);
+                if (creep.memory.targetRoom || (constructions.length == 0 && creep.room.memory.remote)) {
+                    // check remote
+                    if (!creep.memory.targetRoom && creep.room.memory.remote) {
+                        const room = Game.rooms[creep.room.memory.remote];
+                        if (room) {
+                            constructions = room.find(FIND_CONSTRUCTION_SITES);
+                            if (constructions.length > 0)
+                                creep.memory.targetRoom = creep.room.memory.remote;
+                        }
+                    } if (creep.memory.targetRoom) {
+                        this.pathing.scoutRoom(creep, creep.memory.targetRoom);
+                    }
+                } else {
+                    // repair if no nothing else
+                    const opts: FilterOptions<FIND_STRUCTURES> = { filter: (struct) => struct.hits < struct.hitsMax };
+                    const repairs = creep.room.find(FIND_STRUCTURES, opts);
+                    const closest = creep.pos.findClosestByRange(repairs);
+                    if (closest) {
+                        if (creep.repair(closest) == ERR_NOT_IN_RANGE) {
+                            this.pathing.moveTo(creep, closest.pos);
+                        }
                     }
                 }
             }
