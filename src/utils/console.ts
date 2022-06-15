@@ -16,6 +16,7 @@ export class ExConsole {
 
             remote: ExConsole.remote,
             attack: ExConsole.attack,
+            conquer: ExConsole.conquer,
 
             upgrading: (m, v) => ExConsole.toggle(m, 'upgrading', v),
             building: (m, v) => ExConsole.toggle(m, 'building', v),
@@ -78,6 +79,14 @@ export class ExConsole {
         if (Memory.rooms.hasOwnProperty(roomName)) {
             Memory.rooms[roomName].attack = value;
             return `Attack set for ${roomName}.`;
+        }
+        return `Room not known: ${roomName}`
+    }
+
+    static conquer(roomName: string, value: string | undefined): string {
+        if (Memory.rooms.hasOwnProperty(roomName)) {
+            Memory.rooms[roomName].conquer = value;
+            return `Conquer set for ${roomName}.`;
         }
         return `Room not known: ${roomName}`
     }
@@ -175,6 +184,7 @@ declare global {
 
             remote: (room: string, value: string | undefined) => string;
             attack: (room: string, value: string | undefined) => string;
+            conquer: (room: string, value: string | undefined) => string;
 
             // Toggles
             building: (roomName: string, value: boolean | undefined) => string;

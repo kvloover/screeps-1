@@ -4,10 +4,9 @@ import { CreepState } from "./creep-state";
 export { };
 
 declare global {
-    // interface Memory {
-    //     // uuid: number;
-    //     // log: any;
-    // }
+    interface Memory {
+        avoid: string[];
+    }
 
     interface FlagMemory {
         objectId: Id<_HasId>; // For Game.GetObject
@@ -17,8 +16,9 @@ declare global {
 
     interface RoomMemory {
         stage: number;
-        remote: string | undefined
-        attack: string | undefined
+        remote: string | undefined;
+        attack: string | undefined;
+        conquer: string | undefined;
 
         debug: boolean;
         upgrading: boolean;
@@ -43,6 +43,7 @@ declare global {
         id: undefined | Id<_HasId>;
         role: string;
         room: string;
+
         state: CreepState;
         started: number;
         targetRoom: undefined | string;

@@ -5,6 +5,7 @@ import { Pathing } from "creeps/pathing";
 import { Role } from "../role-registry";
 import profiler from "screeps-profiler";
 import { isController, whoAmI } from "utils/utils";
+import { CreepState } from "utils/creep-state";
 
 @singleton()
 export class ClaimerRole implements Role {
@@ -20,9 +21,10 @@ export class ClaimerRole implements Role {
     public run(creep: Creep): void {
         if (!creep.memory.targetRoom) {
             // get setting on room:
-            if (Memory.rooms[creep.memory.room]) {
-                const target = Memory.rooms[creep.memory.room].remote;
-                creep.memory.targetRoom = target;
+            const roomMem = Memory.rooms[creep.memory.room];
+            if (roomMem) {
+                creep.memory.targetRoom = roomMem.conquer ?? roomMem.remote;
+                creep.memory.state = roomMem.conquer ? CreepState.claim : CreepState.reserve;
             }
         }
 
@@ -58,12 +60,16 @@ export class ClaimerRole implements Role {
                 this.pathing.moveTo(creep, obj.pos);
 
                 if (obj.room.name == creep.room.name && creep.pos.inRangeTo(obj, 1)) {
-                    if (!obj.sign || obj.sign.username !== whoAmI()) {
-                        creep.signController(obj, `swamp`);
-                    }
-                    if (creep.claimController(obj) !== OK) { // fix to claim
-                        if (creep.reserveController(obj) !== OK) { // fix to claim
-                            // this.log.debug(`${creep.name}: could not reserve or claim controller`);
+                    // if (!obj.sign || obj.sign.username !== whoAmI()) {
+                    //     creep.signController(obj, `swamp`);
+                    // }
+                    if (creep.memory.state === CreepState.claim) {
+                        if (!obj.my) {
+                            creep.claimController(obj);
+                        }
+                    } else if (creep.memory.state === CreepState.reserve) {
+                        if (!obj.my) {
+                            creep.reserveController(obj);
                         }
                     }
                 }

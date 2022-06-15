@@ -4,5 +4,7 @@ export enum CreepState {
     consume = 3,
     build = 4,
     repair = 5,
-    attack = 6
+    attack = 6,
+    claim = 7,
+    reserve = 8
 }
