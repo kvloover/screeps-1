@@ -1,8 +1,8 @@
 import { Persistency, Persistent } from "repos/persistent";
 import { LinkManager, SpawnManager, TowerManager } from "structures";
 import { container } from "tsyringe";
-import { CreepState } from "./creep-state";
-import { GarbageCollector } from "./garbage-collect";
+import { CreepState } from "../utils/creep-state";
+import { GarbageCollector } from "../utils/garbage-collect";
 
 export class ExConsole {
     static init() {
@@ -119,7 +119,7 @@ export class ExConsole {
             });
 
             // Trigger harvest tasks (only made on initial)
-            room.sources = [];
+            if (room.objects) room.objects.source = [];
 
             // Trigger work
             _.filter(Memory.creeps, c => c.room === roomName)

@@ -1,4 +1,5 @@
 import { registry } from "tsyringe";
+import { ConstructionController } from "./construction-controller";
 import { ContainerController } from "./container-controller";
 import { DropsController } from "./drops-controller";
 
@@ -7,6 +8,7 @@ import { LinkController } from "./link-controller";
 import { SourceController } from "./source-controller";
 import { SpawnController } from "./spawn-controller";
 import { StorageController } from "./storage-controller";
+import { StructuresController } from "./structure-controller";
 import { TowerController } from "./tower-controller";
 
 export interface Controller {
@@ -22,6 +24,8 @@ export interface Controller {
     { token: Controllers.token, useToken: LinkController },
     { token: Controllers.token, useToken: StorageController },
     { token: Controllers.token, useToken: TowerController },
+    { token: Controllers.token, useToken: ConstructionController },
+    { token: Controllers.token, useToken: StructuresController },
 ])
 export abstract class Controllers {
     static readonly token = Symbol('Controller');

@@ -19,7 +19,7 @@ export class SpawnController implements Controller {
         if (!isMyRoom(room))
             return;
 
-        const spawnIds = room.memory.spawns;
+        const spawnIds = room.memory.objects?.spawn;
         if (!spawnIds || spawnIds.length == 0) return;
 
         const spawns = spawnIds.map(s => Game.getObjectById(s.id) as StructureSpawn).filter(isDefined);

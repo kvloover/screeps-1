@@ -1,9 +1,10 @@
 import { Task } from "repos/task";
-import { CreepState } from "./creep-state";
+import { CreepState } from "./utils/creep-state";
 
 export { };
 
 declare global {
+
     interface Memory {
         avoid: string[];
     }
@@ -26,17 +27,7 @@ declare global {
         remote_mining: boolean;
         remote_attack: boolean;
         claim: boolean;
-
-        sources: SourceMemory[];
-        links: LinkMemory[];
-        towers: TowerMemory[];
-        spawns: SpawnMemory[];
     }
-
-    interface SourceMemory { id: Id<_HasId>, pos: RoomPosition }
-    interface LinkMemory { id: Id<_HasId>, pos: RoomPosition, storage: boolean }
-    interface TowerMemory { id: Id<_HasId>, pos: RoomPosition, range: number }
-    interface SpawnMemory { id: Id<_HasId>, pos: RoomPosition }
 
 
     interface CreepMemory {

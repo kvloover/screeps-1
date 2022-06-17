@@ -5,6 +5,7 @@ import { Logger } from "logger";
 import { isMyRoom } from "utils/utils";
 
 import profiler from "screeps-profiler";
+import { initObjectMemory } from "utils/structure-memory";
 
 @singleton()
 export class TowerManager implements Manager {
@@ -26,19 +27,20 @@ export class TowerManager implements Manager {
         if (!isMyRoom(room))
             return;
 
-        const towers = room.memory.towers;
+        const towers = room.memory.objects?.tower;
 
         if (towers && towers.length > 0) {
             const hostiles = room.find(FIND_HOSTILE_CREEPS);
             if (hostiles.length > 0) {
-                towers.forEach(t => this.defend(room, t, hostiles));
+                towers.forEach(t => this.defend(room, t as TowerMemory, hostiles));
             }
         }
 
     }
 
     public static init(room: Room): void {
-        room.memory.towers = [];
+        initObjectMemory(room.memory, STRUCTURE_TOWER);
+        if (room.memory.objects) room.memory.objects[STRUCTURE_TOWER] = [];  // reset if already present
 
         const towers = room.find(FIND_MY_STRUCTURES, { filter: (struct) => struct.structureType == STRUCTURE_TOWER });
         const sources = room.find(FIND_SOURCES);
@@ -48,7 +50,9 @@ export class TowerManager implements Manager {
                 const distSrc = s.pos.getRangeTo(l.pos);
                 return distSrc > m ? distSrc : m;
             }, 0);
-            room.memory.towers.push({ id: l.id, pos: l.pos, range: Math.max(dist + 5, 15) })
+
+            room.memory.objects?.tower?.push(
+                <TowerMemory>{ id: l.id, pos: l.pos, range: Math.max(dist + 5, 15), type: STRUCTURE_TOWER });
         });
     }
 }
