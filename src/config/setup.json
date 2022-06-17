@@ -160,7 +160,7 @@
                 "role": "upgrader",
                 "priority": 8,
                 "condition": "upgrading",
-                "count": 4
+                "count": 6
             }
         ]
     },
