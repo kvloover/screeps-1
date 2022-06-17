@@ -155,6 +155,12 @@
                 "role": "builder",
                 "priority": 7,
                 "count": 2
+            },
+            {
+                "role": "upgrader",
+                "priority": 8,
+                "condition": "upgrading",
+                "count": 4
             }
         ]
     },
@@ -241,7 +247,7 @@
             {
                 "role": "upgrader",
                 "priority": 8,
-                "count": 4
+                "count": 2
             },
             {
                 "role": "remote-harvester",
@@ -253,6 +259,12 @@
                     "carry": 6,
                     "work": 2
                 }
+            },
+            {
+                "role": "upgrader",
+                "priority": 10,
+                "condition": "upgrading",
+                "count": 4
             }
         ]
     },
