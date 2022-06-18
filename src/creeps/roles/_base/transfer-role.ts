@@ -134,7 +134,7 @@ export abstract class TransferRole {
             const [succes, transferred] = this.tryConsumeForTask(creep, memTask);
             if (!succes) {
                 repo.finishTask(creep, memTask, key);
-                console.log(`${creep.name}: could not consume for ${key} task: ${memTask.id} on ${repo.key}`);
+                this.log.debug(creep.room, `${creep.name}: could not consume for ${key} task: ${memTask.id} on ${repo.key}`);
             } else if (transferred) {
                 repo.finishTask(creep, memTask, key);
                 this.log.debug(creep.room, `${creep.name}: consume ${key} task removed for ${memTask.id} on ${repo.key}`);
