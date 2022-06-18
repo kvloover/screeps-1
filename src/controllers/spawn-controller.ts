@@ -26,7 +26,7 @@ export class SpawnController implements Controller {
 
         // Force update every x ticks or when spawning
         // Tasks will be updated by creeps finishing or unlinking
-        if (Game.time % 100 != 0 && (spawns.length == 0 || !spawns.some(i => i.spawning))) return;
+        if (!room.memory.reset && Game.time % 100 != 0 && (spawns.length == 0 || !spawns.some(i => i.spawning))) return;
 
         const opt: FilterOptions<FIND_MY_STRUCTURES> = {
             filter: (structure) =>
@@ -49,6 +49,7 @@ export class SpawnController implements Controller {
         });
 
     }
+
 }
 
 profiler.registerClass(SpawnController, 'SpawnController');

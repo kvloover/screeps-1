@@ -126,7 +126,7 @@ export abstract class BaseRepo<T extends Task> implements TaskRepo<T>{
 
     public registerTask(creep: Creep, task: Task, key: string): void {
         this.log.debug(creep.room, `registering task on ${creep.name}: ${key} - ${task.id}`);
-        creep.memory.tasks[key] = { repo: key, tick: Game.time, task: task };
+        creep.memory.tasks[key] = { repo: this.key, key: key, tick: Game.time, task: task, amount: task.amount };
         task.executer = creep.id;
     }
 

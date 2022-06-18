@@ -138,6 +138,8 @@ export class ExConsole {
                 TowerManager.init(room);
             }
 
+            room.reset = true;
+
             return `Reset room ${roomName}.`;
         }
         return `Room not known: ${roomName}`

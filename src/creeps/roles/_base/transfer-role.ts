@@ -4,7 +4,7 @@ import { CreepState } from 'utils/creep-state';
 
 import { TaskRepo } from "repos/_base/task-repo";
 import { Task } from "repos/task";
-import { isStoreStructure, isTombStone, isRuin, isResource, isDefined, isResourceConstant } from "utils/utils";
+import { isStoreStructure, isTombStone, isRuin, isResource, isDefined, isResourceConstant, isConstruction, isOwnStructure, isHasPos } from "utils/utils";
 import { each, forEach } from "lodash";
 
 export abstract class TransferRole {
@@ -33,12 +33,12 @@ export abstract class TransferRole {
         }
 
         if (this.getState(creep) == CreepState.supply
-        && creep.store.getUsedCapacity(this.getStoreCheckType(creep)) == 0) {
+            && creep.store.getUsedCapacity(this.getStoreCheckType(creep)) == 0) {
             this.setState(creep, CreepState.consume);
         }
 
         if (this.getState(creep) == CreepState.consume
-        && creep.store.getFreeCapacity(this.getStoreCheckType(creep)) == 0) {
+            && creep.store.getFreeCapacity(this.getStoreCheckType(creep)) == 0) {
             this.setState(creep, CreepState.supply);
         }
     }
@@ -128,44 +128,15 @@ export abstract class TransferRole {
             }
         }
 
-        const memTask = creep.memory.tasks[key]?.task;
+        const stored = creep.memory.tasks[key];
+        const memTask = stored?.task;
         if (memTask) {
-            this.log.debug(creep.room, `${creep.name}: consuming for ${key} task ${memTask.id} on ${repo.key}`);
-            const [succes, transferred] = this.tryConsumeForTask(creep, memTask);
-            if (!succes) {
+            this.log.debug(creep.room, `${creep.name}: consuming for ${key} task ${memTask.id}`);
+            const res = this.tryConsumeForTask(stored.repo, creep, memTask);
+            if (res.error || (res.executed && this.completed(repo.key, key, creep, stored, res.type))) {
                 repo.finishTask(creep, memTask, key);
-                this.log.debug(creep.room, `${creep.name}: could not consume for ${key} task: ${memTask.id} on ${repo.key}`);
-            } else if (transferred) {
-                repo.finishTask(creep, memTask, key);
-                this.log.debug(creep.room, `${creep.name}: consume ${key} task removed for ${memTask.id} on ${repo.key}`);
+                this.log.debug(creep.room, `${creep.name}: consume ${key} task removed for ${memTask.id}`);
             }
-        }
-    }
-
-    protected tryConsumeForTask(creep: Creep, task: Task): [succes: boolean, transferred: boolean] {
-        const dest = Game.getObjectById(task.requester as Id<_HasId>)
-
-        if (dest) {
-            const type = task.type ?? RESOURCE_ENERGY; // Only supply should be undefined type -> fetch from dest using store
-            let ret: number = -999;
-            if (
-                ((isStoreStructure(dest) || isTombStone(dest) || isRuin(dest))
-                    && (dest.store.getUsedCapacity(type) ?? 0) > 0
-                    && (ret = creep.withdraw(dest, type)) === ERR_NOT_IN_RANGE)
-                || (isResource(dest)
-                    && (ret = creep.pickup(dest)) === ERR_NOT_IN_RANGE)
-            ) {
-                this.log.debug(creep.room, `${creep.name}: consume returned ${ret}`);
-                this.pathing.moveTo(creep, dest.pos);
-                return [true, false]
-            } else {
-                // transferred or empty:
-                this.log.debug(creep.room, `${creep.name}: consume returned ${ret}`);
-                return [true, true];
-            }
-        } else {
-            // invalid location
-            return [false, false];
         }
     }
 
@@ -179,26 +150,43 @@ export abstract class TransferRole {
             }
         }
 
-        const memTask = creep.memory.tasks[key]?.task;
+        const stored = creep.memory.tasks[key];
+        const memTask = stored?.task;
         if (memTask) {
             this.log.debug(creep.room, `${creep.name}: supplying for ${key} task ${memTask.id}`);
-            const [succes, transferred] = this.trySupplyForTask(creep, memTask);
-            if (!succes) {
-                repo.finishTask(creep, memTask, key);
-                console.log(`${creep.name}: could not supply for ${key} task: ${memTask.id}`);
-            } else if (transferred) {
+            const res = this.trySupplyForTask(stored.repo, creep, memTask);
+            if (res.error || (res.executed && this.completed(repo.key, key, creep, stored, res.type))) {
                 repo.finishTask(creep, memTask, key);
                 this.log.debug(creep.room, `${creep.name}: supply ${key} task removed for ${memTask.id}`);
             }
         }
     }
 
-    protected trySupplyForTask(creep: Creep, task: Task): [succes: boolean, transferred: boolean] {
+    protected tryConsumeForTask(repo: string, creep: Creep, task: Task): { executed: boolean, error: boolean, type?: ResourceConstant } {
+        const dest = Game.getObjectById(task.requester as Id<_HasId>)
+
+        if (dest) {
+            const type = task.type ?? RESOURCE_ENERGY; // Only supply should be undefined type -> fetch from dest using store
+
+            const pos = isHasPos(dest) ? dest.pos : task.pos;
+            if (pos && !creep.pos.inRangeTo(pos, this.rangeTo(repo))) {
+                this.pathing.moveTo(creep, pos);
+            }
+            if (this.consumeAction(repo, creep, dest, type, task.amount) === OK) {
+                return { executed: true, error: false, type: type };
+            }
+        } else {
+            // invalid location
+            return { executed: false, error: true, type: undefined };
+        }
+
+        return { executed: false, error: false, type: undefined };
+    }
+
+    protected trySupplyForTask(repo: string, creep: Creep, task: Task): { executed: boolean, error: boolean, type?: ResourceConstant } {
         const dest = Game.getObjectById(task.requester as Id<_HasId>);
 
-        if (dest &&
-            (isStoreStructure(dest))
-        ) {
+        if (dest) {
             const types = [];
             if (!task.type) {
                 // supply task can be generic deposit: no type provided
@@ -207,27 +195,83 @@ export abstract class TransferRole {
                 types.push(task.type);
             }
 
-            let ret: number = -999;
             for (let type of types) {
                 if (isResourceConstant(type)) {
-                    if (dest.store.getFreeCapacity(type) ?? 0) {
-                        if ((ret = creep.transfer(dest, type)) === ERR_NOT_IN_RANGE) {
-                            this.log.debug(creep.room, `${creep.name}: supply returned ${ret}`);
-                            this.pathing.moveTo(creep, dest.pos);
-                            return [true, false]
-                        } else {
-                            this.log.debug(creep.room, `${creep.name}: supply returned ${ret}`);
-                            return [true, true]
-                        }
-                    } else {
-                        // no transfer possible
-                        return [true, true]
+                    const pos = isHasPos(dest) ? dest.pos : task.pos;
+                    if (pos && !creep.pos.inRangeTo(pos, this.rangeTo(repo))) {
+                        this.pathing.moveTo(creep, pos);
+                    }
+                    // todo if transfering multiple types and accepting multipe = transfer all at once
+                    if (this.supplyAction(repo, creep, dest, type, task.amount) === OK) {
+                        return { executed: true, error: false, type: type };
                     }
                 }
             }
+        } else {
+            return { executed: false, error: true, type: undefined };
         }
 
         // invalid location
-        return [false, false];
+        return { executed: false, error: false, type: undefined };
     }
+
+    private completed(repoKey: string, taskKey: string, creep: Creep, creepTask: CreepTask, type?: ResourceConstant): boolean {
+        const transfering = this.transferingAmount(repoKey, taskKey, creep, creepTask.task, type);
+        if (!creepTask.amount || transfering >= creepTask.amount) {
+            if (repoKey === 'construction') console.log(`current: ${creepTask.amount} - transfering: ${transfering}`)
+            if (creepTask.amount) creepTask.amount -= transfering
+            if (repoKey === 'construction') console.log(`corrected: ${creepTask.amount}`)
+            console.log(`${creep.name} finished`);
+            return true;
+        } else {
+            if (repoKey === 'construction') console.log(`current: ${creepTask.amount} - transfering: ${transfering}`)
+            if (creepTask.amount) creepTask.amount -= transfering
+            if (repoKey === 'construction') console.log(`corrected: ${creepTask.amount}`)
+            console.log(`${creep.name} continueing`);
+            return false;
+        }
+    }
+
+    private consumeAction(repoKey: string, creep: Creep, dest: _HasId, type: ResourceConstant, qty: number | undefined): ScreepsReturnCode {
+        switch (repoKey) {
+            default: return (isStoreStructure(dest) || isTombStone(dest) || isRuin(dest))
+                && (dest.store.getUsedCapacity(type) ?? 0) > 0
+                ? creep.withdraw(dest, type, qty)
+                : isResource(dest)
+                    ? creep.pickup(dest)
+                    : ERR_INVALID_TARGET;
+        }
+    }
+
+    // TODO move repoKey based logic outside, tied to repo or couple repo with an action and use these instead of repo directly
+
+    private supplyAction(repoKey: string, creep: Creep, dest: _HasId, type: ResourceConstant, qty: number | undefined): ScreepsReturnCode {
+        switch (repoKey) {
+            case 'construction': return isConstruction(dest) && dest.my
+                ? creep.build(dest) : ERR_INVALID_TARGET;
+            case 'repair': return isOwnStructure(dest) && dest.my
+                ? creep.repair(dest) : ERR_INVALID_TARGET;
+            default: return isStoreStructure(dest) && (dest.store.getFreeCapacity(type) ?? 0) > 0
+                ? creep.transfer(dest, type, qty) : ERR_INVALID_TARGET;
+        }
+    }
+
+    private rangeTo(repoKey: string): number {
+        switch (repoKey) {
+            case 'construction': return 3;
+            case 'repair': return 3;
+            default: return 1;
+        }
+    }
+
+    private transferingAmount(repoKey: string, taskKey: string, creep: Creep, task: Task, type?: ResourceConstant): number {
+        switch (repoKey) {
+            case 'construction': return creep.getActiveBodyparts(WORK);
+            case 'repair': return creep.getActiveBodyparts(WORK);
+            default: return taskKey === 'consume'
+                ? task.amount ? Math.min(creep.store.getFreeCapacity(type), task.amount) : creep.store.getFreeCapacity(type) ?? 0
+                : task.amount ? Math.min(creep.store.getUsedCapacity(type), task.amount) : creep.store.getUsedCapacity(type) ?? 0;
+        }
+    }
+
 }

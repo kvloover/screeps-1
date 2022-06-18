@@ -27,6 +27,8 @@ declare global {
         remote_mining: boolean;
         remote_attack: boolean;
         claim: boolean;
+
+        reset?: boolean;
     }
 
 
@@ -41,13 +43,21 @@ declare global {
         targetId: undefined | Id<_HasId>;
         target: undefined | RoomPosition;
 
-        tasks: { [key: string]: { repo: string; tick: number, task: Task; } | undefined };
+        tasks: { [key: string]: CreepTask | undefined };
         tasks_blacklist: { [key: string]: string[] }; // ignore specific requesters for the given type
     }
 
-    // namespace NodeJS {
-    //     interface Global {
-    //     }
-    // }
+    interface CreepTask {
+        repo: string;
+        key: string,
+        tick: number;
+        amount?: number;
+        task: Task;
+    }
+
+    namespace NodeJS {
+        interface Global {
+        }
+    }
 }
 

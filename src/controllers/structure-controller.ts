@@ -36,6 +36,7 @@ export class StructuresController implements Controller {
         [STRUCTURE_CONTAINER, { check: 10000, target: 1.00, emergency: 0.20, max: 1.00 }],
         [STRUCTURE_RAMPART, { check: 10000, target: 0.20, emergency: 0.02, max: 1.00 }],
         // Other loss: (TODO during emergency)
+        [STRUCTURE_TOWER, { check: 50000, target: 1.00, emergency: 0.10, max: 1.00 }],
         [STRUCTURE_EXTENSION, { check: 50000, target: 1.00, emergency: 0.10, max: 1.00 }],
         [STRUCTURE_SPAWN, { check: 50000, target: 1.00, emergency: 0.10, max: 1.00 }],
         [STRUCTURE_STORAGE, { check: 50000, target: 1.00, emergency: 0.10, max: 1.00 }],
@@ -82,7 +83,6 @@ export class StructuresController implements Controller {
                 if (cfg) {
                     vals.forEach(obj => {
                         if (obj.visited <= Game.time - cfg.check) {
-                            console.log('checking');
                             const struct = Game.getObjectById(obj.id) as Structure;
                             if (struct) {
                                 if (struct.hits < cfg.emergency * struct.hitsMax) {
@@ -97,7 +97,7 @@ export class StructuresController implements Controller {
                                 } else if (struct.hits < 0.8 * (cfg.target * struct.hitsMax)) {
                                     this.repair.add(
                                         new RepairTask(room.name,
-                                            20,
+                                            50,
                                             (cfg.target * struct.hitsMax) - struct.hits,
                                             RESOURCE_ENERGY,
                                             struct.id,
@@ -106,7 +106,7 @@ export class StructuresController implements Controller {
                                 } else if (struct.hits < 0.8 * (cfg.max * struct.hitsMax)) {
                                     this.repair.add(
                                         new RepairTask(room.name,
-                                            50,
+                                            80,
                                             (cfg.max * struct.hitsMax) - struct.hits,
                                             RESOURCE_ENERGY,
                                             struct.id,

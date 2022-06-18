@@ -17,6 +17,7 @@ export class RoomManager implements Manager {
         this.controllers.forEach(c => {
             c.monitor(room);
         })
+        if (room.memory.reset) room.memory.reset = false;
     }
 
     private initMemory(room: Room) {

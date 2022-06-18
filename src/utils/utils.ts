@@ -28,6 +28,12 @@ export const isController =
 export const isOwnStructure =
   (item: any): item is OwnedStructure => isDefined((item as OwnedStructure)?.id)
 
+export const isConstruction =
+  (item: any): item is ConstructionSite => isDefined((item as ConstructionSite)?.progress);
+
+export const isHasPos =
+  (item: any): item is HasPos => isDefined((item as HasPos)?.pos);
+
 export const whoAmI =
   () => (Object.values(Game.structures).find(s => isOwnStructure(s)) as OwnedStructure)?.owner?.username ?? 'N/A';
 
