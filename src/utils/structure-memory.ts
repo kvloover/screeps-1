@@ -1,3 +1,5 @@
+import { ObjectConstant, SOURCE } from "./custom-types";
+
 export const initObjectMemory = (room: RoomMemory, key: StructureConstant | ObjectConstant) => {
     if (!room.objects) room.objects = {};
     if (!room.objects.hasOwnProperty(key)) room.objects[key] = [];
@@ -5,6 +7,7 @@ export const initObjectMemory = (room: RoomMemory, key: StructureConstant | Obje
 
 declare global {
 
+    // Persistent
     interface RoomMemory {
         objects?: { [T in StructureConstant | ObjectConstant]?: RoomObjectMemory<T>[] }
     }
@@ -26,4 +29,18 @@ declare global {
     interface SourceMemory extends RoomObjectMemory<SOURCE> { }
     interface SpawnMemory extends RoomObjectMemory<STRUCTURE_SPAWN> { }
 
+}
+
+// Heap
+namespace NodeJS {
+    interface Global {
+        objects?: { [T in StructureConstant | ObjectConstant]?: RoomRef<T>[] }
+    }
+
+    interface RoomRef<T extends StructureConstant | ObjectConstant> {
+        id: Id<_HasId>;
+        pos: RoomPosition;
+        type: T;
+        visited: number;
+    }
 }
