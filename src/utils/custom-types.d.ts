@@ -1,3 +1,3 @@
 type SOURCE = "source";
-type CustomConstant = SOURCE;
-// declare const SOURCE: SOURCE; | compiles(rollup) but error at runtime
+type ObjectConstant = SOURCE;
+// declare const SOURCE: SOURCE; // compiles(rollup) but error at runtime

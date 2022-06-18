@@ -1,4 +1,4 @@
-export const initObjectMemory = (room: RoomMemory, key: StructureConstant | CustomConstant) => {
+export const initObjectMemory = (room: RoomMemory, key: StructureConstant | ObjectConstant) => {
     if (!room.objects) room.objects = {};
     if (!room.objects.hasOwnProperty(key)) room.objects[key] = [];
 }
@@ -6,10 +6,10 @@ export const initObjectMemory = (room: RoomMemory, key: StructureConstant | Cust
 declare global {
 
     interface RoomMemory {
-        objects?: { [T in StructureConstant | CustomConstant]?: RoomObjectMemory<T>[] }
+        objects?: { [T in StructureConstant | ObjectConstant]?: RoomObjectMemory<T>[] }
     }
 
-    interface RoomObjectMemory<T extends StructureConstant | CustomConstant> {
+    interface RoomObjectMemory<T extends StructureConstant | ObjectConstant> {
         id: Id<_HasId>;
         pos: RoomPosition;
         type: T;
