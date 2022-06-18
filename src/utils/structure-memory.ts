@@ -1,5 +1,3 @@
-import { CustomConstant, SOURCE } from "./types";
-
 export const initObjectMemory = (room: RoomMemory, key: StructureConstant | CustomConstant) => {
     if (!room.objects) room.objects = {};
     if (!room.objects.hasOwnProperty(key)) room.objects[key] = [];
@@ -28,10 +26,4 @@ declare global {
     interface SourceMemory extends RoomObjectMemory<SOURCE> { }
     interface SpawnMemory extends RoomObjectMemory<STRUCTURE_SPAWN> { }
 
-}
-
-namespace NodeJS {
-    declare const SOURCE: SOURCE;
-    interface Global {
-    }
 }

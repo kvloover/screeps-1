@@ -5,7 +5,6 @@ import { HarvestTask } from "repos/task";
 import { Controller } from "./controller";
 import { Logger } from "logger";
 
-import { SOURCE } from "utils/types";
 import { initObjectMemory } from "utils/structure-memory";
 
 import profiler from "screeps-profiler";
