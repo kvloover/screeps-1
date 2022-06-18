@@ -5,6 +5,23 @@ export const initObjectMemory = (room: RoomMemory, key: StructureConstant | Obje
     if (!room.objects.hasOwnProperty(key)) room.objects[key] = [];
 }
 
+export const initHeapMemory = (roomName: string, key?: StructureConstant | ObjectConstant) => {
+    if (!global.refs) global.refs = {};
+
+    if (!global.refs.hasOwnProperty(roomName)) {
+        global.refs[roomName] = { name: roomName, objects: {} }
+        return true;
+    } else {
+        if (key) {
+            const roomRef = global.refs[roomName];
+            if (roomRef && roomRef.objects && !roomRef.objects?.hasOwnProperty(key)) {
+                roomRef.objects[key] = [];
+            }
+        }
+        return false;
+    }
+}
+
 declare global {
 
     // Persistent
@@ -29,15 +46,19 @@ declare global {
     interface SourceMemory extends RoomObjectMemory<SOURCE> { }
     interface SpawnMemory extends RoomObjectMemory<STRUCTURE_SPAWN> { }
 
-}
-
-// Heap
-namespace NodeJS {
-    interface Global {
-        objects?: { [T in StructureConstant | ObjectConstant]?: RoomRef<T>[] }
+    // Heap
+    namespace NodeJS {
+        interface Global {
+            refs?: { [key: string]: RoomRef };
+        }
     }
 
-    interface RoomRef<T extends StructureConstant | ObjectConstant> {
+    interface RoomRef {
+        name: string;
+        objects?: { [T in StructureConstant | ObjectConstant]?: ObjectRef<T>[] };
+    }
+
+    interface ObjectRef<T extends StructureConstant | ObjectConstant> {
         id: Id<_HasId>;
         pos: RoomPosition;
         type: T;
