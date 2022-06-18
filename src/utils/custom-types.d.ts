@@ -1,3 +1,3 @@
 type SOURCE = "source";
 type CustomConstant = SOURCE;
-declare var SOURCE: SOURCE; // = "source";
+declare const SOURCE: SOURCE; // = "source";
