@@ -92,7 +92,7 @@ export abstract class BaseRepo<T extends Task> implements TaskRepo<T>{
         if (task.amount && task.amount > amount) {
             const newTask = new Task(task.room, task.prio, task.amount - amount, task.type, task.requester, undefined, task.pos);
             this.add(opt ? opt(newTask) : newTask as T);
-            task.amount = amount;
+            this.tasks.filter(i => i.id == task.id).forEach(i => i.amount = amount);
             return true;
         }
         return false;
@@ -127,7 +127,8 @@ export abstract class BaseRepo<T extends Task> implements TaskRepo<T>{
     public registerTask(creep: Creep, task: Task, key: string): void {
         this.log.debug(creep.room, `registering task on ${creep.name}: ${key} - ${task.id}`);
         creep.memory.tasks[key] = { repo: this.key, key: key, tick: Game.time, task: task, amount: task.amount };
-        task.executer = creep.id;
+        this.tasks.filter(i => i.id == task.id).forEach(i => i.executer = creep.id);
+        // task.executer = creep.id;
     }
 
     public finishTask(creep: Creep, task: Task, key: string): void {
