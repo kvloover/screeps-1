@@ -112,10 +112,8 @@ export abstract class TransferRole {
             repo.registerTask(creep, task, key);
             if (repo.trySplitTask(task, amount)) {
                 const creepTask = creep.memory.tasks[key];
-                console.log(`pre ${task.amount} - ${creepTask?.amount}`);
                 if (creepTask) { creepTask.amount = amount; }
                 task.amount = amount;
-                console.log(`post ${task.amount} - ${creepTask?.amount}`);
                 this.log.debug(creep.room, `${creep.name}: ${key} task split for remaining amount on ${repo.key} : ${creepTask?.amount}`);
             }
 
@@ -235,19 +233,13 @@ export abstract class TransferRole {
 
         if (taskOnCreep.amount <= transferred) {
             // finished fully
-            console.log(`current: ${taskOnCreep.id} - completed`)
             return true;
         } else {
             const repoTask = repo.getById(taskOnCreep.id);
-            console.log(`current: ${creepTask.amount} (${repoTask?.amount})- transferred: ${transferred}`)
-
             if (repoTask && repoTask.amount) {
                 repoTask.amount -= transferred;
                 taskOnCreep.amount = repoTask?.amount; // to avoid link broken due to serialization
             }
-
-            console.log(`corrected: creep ${taskOnCreep.amount} & repo ${repoTask?.amount}`)
-
             return false;
         }
     }
