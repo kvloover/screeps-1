@@ -1,6 +1,6 @@
 import { injectable } from "tsyringe";
 
-import { initConstructionMemory, initObjectMemory } from "utils/structure-memory";
+import { initConstructionMemory, initHeapMemory, initObjectMemory } from "utils/structure-memory";
 import { ConstructionTask } from "repos/task";
 import { ConstructionTaskRepo } from "repos/construction-task-repo";
 import { Controller } from "./controller";
@@ -71,7 +71,7 @@ export class ConstructionController implements Controller {
 
         const constructionIds = items.map(i => i.id);
 
-        if (room.memory.constructions){
+        if (room.memory.constructions) {
             Object.entries(room.memory.constructions)
                 .forEach(kv => {
                     const key = <BuildableStructureConstant>kv[0];
@@ -84,10 +84,13 @@ export class ConstructionController implements Controller {
                                     .find(i => i.structure && i.structure.structureType == key);
                                 if (res && res.structure) {
                                     // Add to structures
-                                    initObjectMemory(room.memory, key);
+                                    initHeapMemory(room.name, key);
                                     const item = this.createObjectRef(res.structure) as any; // TODO fix
-                                    if (room.memory.objects && room.memory.objects[key] && item) {
-                                        room.memory.objects[key]?.push(item);
+                                    if (item && global.refs && global.refs[room.name]) {
+                                        const objs = global.refs[room.name].objects;
+                                        if (objs && objs[key]) {
+                                            objs[key]?.push(item);
+                                        }
                                     }
                                 }
                                 // remove from construtions
