@@ -5,6 +5,11 @@ export const initObjectMemory = (room: RoomMemory, key: StructureConstant | Obje
     if (!room.objects.hasOwnProperty(key)) room.objects[key] = [];
 }
 
+export const initConstructionMemory = (room: RoomMemory, key: BuildableStructureConstant) => {
+    if (!room.constructions) room.constructions = {};
+    if (!room.constructions.hasOwnProperty(key)) room.constructions[key] = [];
+}
+
 export const initHeapMemory = (roomName: string, key?: StructureConstant | ObjectConstant) => {
     if (!global.refs) global.refs = {};
 
@@ -27,6 +32,7 @@ declare global {
     // Persistent
     interface RoomMemory {
         objects?: { [T in StructureConstant | ObjectConstant]?: RoomObjectMemory<T>[] }
+        constructions?: { [T in BuildableStructureConstant]?: RoomObjectMemory<T>[] }
     }
 
     interface RoomObjectMemory<T extends StructureConstant | ObjectConstant> {

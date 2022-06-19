@@ -4,8 +4,7 @@ import { CreepState } from 'utils/creep-state';
 
 import { TaskRepo } from "repos/_base/task-repo";
 import { Task } from "repos/task";
-import { isStoreStructure, isTombStone, isRuin, isResource, isDefined, isResourceConstant, isConstruction, isOwnStructure, isHasPos } from "utils/utils";
-import { each, forEach } from "lodash";
+import { isStoreStructure, isTombStone, isRuin, isResource, isDefined, isResourceConstant, isConstruction, isHasPos, isStructure } from "utils/utils";
 
 export abstract class TransferRole {
 
@@ -261,7 +260,7 @@ export abstract class TransferRole {
         switch (repoKey) {
             case 'construction': return isConstruction(dest) && dest.my
                 ? creep.build(dest) : ERR_INVALID_TARGET;
-            case 'repair': return isOwnStructure(dest) && dest.my
+            case 'repair': return isStructure(dest)
                 ? creep.repair(dest) : ERR_INVALID_TARGET;
             default: return isStoreStructure(dest) && (dest.store.getFreeCapacity(type) ?? 0) > 0
                 ? creep.transfer(dest, type, qty && creep.store.getUsedCapacity(type) ? Math.min(creep.store.getUsedCapacity(type), qty) : undefined) : ERR_INVALID_TARGET;
