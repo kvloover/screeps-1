@@ -58,7 +58,7 @@ export class BuilderStorageRole extends BuilderRole {
     constructor(log: Logger, pathing: Pathing,
         protected provider: SupplyTaskRepo,
         protected prioBuild: RepairTaskRepo, protected midBuild: ConstructionTaskRepo) {
-        super(log, pathing, new CombinedRepo(prioBuild, midBuild, 10, 'combined', log))
+        super(log, pathing, new CombinedRepo(prioBuild, midBuild, 15, 'combined', log))
     }
 
     protected consume(creep: Creep): void {

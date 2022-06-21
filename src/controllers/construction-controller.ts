@@ -17,15 +17,16 @@ export class ConstructionController implements Controller {
         // Defense
         [STRUCTURE_TOWER, 1],
         [STRUCTURE_RAMPART, 2],
+        [STRUCTURE_WALL, 3],
         // Spawn
-        [STRUCTURE_SPAWN, 3],
-        [STRUCTURE_EXTENSION, 4],
+        [STRUCTURE_SPAWN, 4],
+        [STRUCTURE_EXTENSION, 5],
         // Logistics
-        [STRUCTURE_STORAGE, 5],
-        [STRUCTURE_LINK, 6],
+        [STRUCTURE_STORAGE, 6],
+        [STRUCTURE_LINK, 7],
         // Utility
-        [STRUCTURE_CONTAINER, 7],
-        [STRUCTURE_ROAD, 8],
+        [STRUCTURE_CONTAINER, 8],
+        [STRUCTURE_ROAD, 9],
         // Factory
         [STRUCTURE_TERMINAL, 11],
         [STRUCTURE_EXTRACTOR, 12],
