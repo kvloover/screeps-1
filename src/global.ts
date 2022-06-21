@@ -1,4 +1,4 @@
-import { Task } from "repos/task";
+import { RepairTask, Task } from "repos/task";
 import { CreepState } from "./utils/creep-state";
 
 export { };
@@ -57,6 +57,7 @@ declare global {
 
     namespace NodeJS {
         interface Global {
+            repair?: RepairTask[];
         }
     }
 }
