@@ -43,21 +43,25 @@ export class StructuresController implements Controller {
     private NON_PRIO_UNDER_EMERGENCY = 50000;
 
     private _config = new Map<StructureConstant | ObjectConstant, RepairConfig>([
+        // Main
+        [STRUCTURE_SPAWN, { prio: 1, check: this.NONPRIO, under_emergency: this.NON_PRIO_UNDER_EMERGENCY, target: 1.00, emergency: 0.50, max: 1.00 }],
         // Decay & Defense:
         [STRUCTURE_TOWER, { prio: 2, check: this.NONPRIO, under_emergency: 20, target: 1.00, emergency: 0.10, max: 1.00 }],
         [STRUCTURE_RAMPART, { prio: 3, check: 10000, under_emergency: 5, target: 0.05, emergency: 0.01, max: 1.00 }],
+        [STRUCTURE_STORAGE, { prio: 3, check: this.NONPRIO, under_emergency: this.NON_PRIO_UNDER_EMERGENCY, target: 1.00, emergency: 0.50, max: 1.00 }],
         [STRUCTURE_CONTAINER, { prio: 4, check: 5000, under_emergency: 10000, target: 0.80, emergency: 0.20, max: 1.00 }],
+        [STRUCTURE_EXTENSION, { prio: 4, check: this.NONPRIO, under_emergency: this.NON_PRIO_UNDER_EMERGENCY, target: 1.00, emergency: 0.0, max: 1.00 }],
         [STRUCTURE_ROAD, { prio: 5, check: 10000, under_emergency: 10000, target: 0.80, emergency: 0.20, max: 1.00 }],
         [STRUCTURE_WALL, { prio: 6, check: 10000, under_emergency: 10000, target: 0.0004, emergency: 0.0002, max: 1.00 }],
         // Other loss: (TODO during emergency)
-        [STRUCTURE_SPAWN, { prio: 1, check: this.NONPRIO, under_emergency: this.NON_PRIO_UNDER_EMERGENCY, target: 1.00, emergency: 0.50, max: 1.00 }],
-        [STRUCTURE_STORAGE, { prio: 3, check: this.NONPRIO, under_emergency: this.NON_PRIO_UNDER_EMERGENCY, target: 1.00, emergency: 0.50, max: 1.00 }],
-        [STRUCTURE_EXTENSION, { prio: 4, check: this.NONPRIO, under_emergency: this.NON_PRIO_UNDER_EMERGENCY, target: 1.00, emergency: 0.0, max: 1.00 }],
         [STRUCTURE_LINK, { prio: 6, check: this.NONPRIO, under_emergency: this.NON_PRIO_UNDER_EMERGENCY, target: 1.00, emergency: 0.0, max: 1.00 }],
         [STRUCTURE_TERMINAL, { prio: 7, check: this.NONPRIO, under_emergency: this.NON_PRIO_UNDER_EMERGENCY, target: 1.00, emergency: 0.50, max: 1.00 }],
         [STRUCTURE_LAB, { prio: 8, check: this.NONPRIO, under_emergency: this.NON_PRIO_UNDER_EMERGENCY, target: 1.00, emergency: 0.50, max: 1.00 }],
         [STRUCTURE_FACTORY, { prio: 8, check: this.NONPRIO, under_emergency: this.NON_PRIO_UNDER_EMERGENCY, target: 1.00, emergency: 0.50, max: 1.00 }],
         [STRUCTURE_EXTRACTOR, { prio: 9, check: this.NONPRIO, under_emergency: this.NON_PRIO_UNDER_EMERGENCY, target: 1.00, emergency: 0.0, max: 1.00 }],
+        [STRUCTURE_NUKER, { prio: 9, check: this.NONPRIO, under_emergency: this.NON_PRIO_UNDER_EMERGENCY, target: 1.00, emergency: 0.0, max: 1.00 }],
+        [STRUCTURE_OBSERVER, { prio: 9, check: this.NONPRIO, under_emergency: this.NON_PRIO_UNDER_EMERGENCY, target: 1.00, emergency: 0.0, max: 1.00 }],
+        [STRUCTURE_POWER_SPAWN, { prio: 9, check: this.NONPRIO, under_emergency: this.NON_PRIO_UNDER_EMERGENCY, target: 1.00, emergency: 0.0, max: 1.00 }],
     ]);
 
     constructor(private log: Logger,
@@ -96,6 +100,7 @@ export class StructuresController implements Controller {
 
                 const cfg = this._config.get(key);
                 if (cfg) {
+                    const cleanUp: Id<_HasId>[] = [];
                     vals.forEach(obj => {
                         if (obj.visited <= Game.time - (emergency ? cfg.under_emergency : cfg.check)) {
                             const struct = Game.getObjectById(obj.id) as Structure;
@@ -121,13 +126,16 @@ export class StructuresController implements Controller {
                                             struct.pos));
                                 }
                                 obj.visited = Game.time;
+                            } else {
+                                if (Game.rooms[obj.pos.roomName] != undefined)
+                                    cleanUp.push(obj.id);
                             }
                         }
-                    })
+                    });
+                    objects[key] = (vals as any[]).filter(i => !cleanUp.some(id => i.id == id)); // Typesafe ?
                 }
             });
         }
-
     }
 
     private createObjectRef<T extends StructureConstant>(s: Structure<T>): ObjectRef<T> {

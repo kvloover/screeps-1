@@ -32,6 +32,10 @@ export class ConstructionController implements Controller {
         [STRUCTURE_EXTRACTOR, 12],
         [STRUCTURE_LAB, 13],
         [STRUCTURE_FACTORY, 14],
+        // Late game
+        [STRUCTURE_POWER_SPAWN, 15],
+        [STRUCTURE_OBSERVER, 16],
+        [STRUCTURE_NUKER, 17],
     ]);
 
     constructor(private log: Logger,
@@ -110,11 +114,12 @@ export class ConstructionController implements Controller {
         };
     }
 
-    private createObjectRef<T extends StructureConstant>(s: Structure<T>): RoomObjectMemory<T> {
+    private createObjectRef<T extends StructureConstant>(s: Structure<T>): ObjectRef<T> {
         return {
             id: s.id,
             pos: s.pos,
             type: s.structureType,
+            visited: -1
         };
     }
 }
