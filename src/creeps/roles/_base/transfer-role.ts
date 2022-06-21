@@ -278,7 +278,7 @@ export abstract class TransferRole {
     private transferingAmount(repoKey: string, taskKey: string, creep: Creep, task: Task, type?: ResourceConstant): number {
         switch (repoKey) {
             case 'construction': return creep.getActiveBodyparts(WORK) * 5;
-            case 'repair': return creep.getActiveBodyparts(WORK) * 5;
+            case 'repair': return creep.getActiveBodyparts(WORK) * 100;
             default: return taskKey === 'consume'
                 ? task.amount ? Math.min(creep.store.getFreeCapacity(type), task.amount) : creep.store.getFreeCapacity(type) ?? 0
                 : task.amount ? Math.min(creep.store.getUsedCapacity(type), task.amount) : creep.store.getUsedCapacity(type) ?? 0;
