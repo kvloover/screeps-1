@@ -19,12 +19,12 @@ export class RepairTaskRepo extends BaseRepo<RepairTask> implements Persistent {
     // Persistency
     restore(): void {
         if (Memory.persistency?.hasOwnProperty(this.key))
-            this.tasks = Memory.persistency.repair;
+            this.tasks = global.repair ?? []; //Memory.persistency.repair;
     }
 
     save(): void {
         this.mergeEmpty();
-        Memory.persistency = Object.assign(Memory.persistency, { repair: this.tasks ?? [] });
+        global.repair = Object.assign(global.repair ?? [], this.tasks);
     }
 
     gc(): void {
