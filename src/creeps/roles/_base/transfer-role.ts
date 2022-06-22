@@ -105,15 +105,18 @@ export abstract class TransferRole {
         return retVal;
     }
 
-    protected findAndRegisterTask(creep: Creep, repo: TaskRepo<Task>, key: string, amount: number, type?: ResourceConstant, room?: string, rangeLimit?: number): Task | undefined {
+    protected findAndRegisterTask(creep: Creep, repo: TaskRepo<Task>, key: string, capacity: number, type?: ResourceConstant, room?: string, rangeLimit?: number): Task | undefined {
         const task = repo.closestTask(creep.pos, type, room ?? creep.memory.room ?? creep.room.name, this.blacklist(creep, key), rangeLimit);
         if (task) {
             repo.registerTask(creep, task, key);
-            if (repo.trySplitTask(task, amount)) {
-                const creepTask = creep.memory.tasks[key];
-                if (creepTask) { creepTask.amount = amount; }
-                task.amount = amount;
-                this.log.debug(creep.room, `${creep.name}: ${key} task split for remaining amount on ${repo.key} : ${creepTask?.amount}`);
+            const creepTask = creep.memory.tasks[key];
+            if (creepTask) {
+                const maxAmount = this.amountPerEnergy(creepTask.repo) * capacity;
+                if (creepTask.amount && maxAmount < creepTask.amount && repo.trySplitTask(task, maxAmount)) {
+                    if (creepTask) { creepTask.amount = maxAmount; }
+                    task.amount = maxAmount; // for return
+                    this.log.debug(creep.room, `${creep.name}: ${key} task split for remaining amount on ${repo.key} : ${creepTask?.amount}`);
+                }
             }
 
         } else {
@@ -173,7 +176,7 @@ export abstract class TransferRole {
             const type = task.type ?? RESOURCE_ENERGY; // Only supply should be undefined type -> fetch from dest using store
 
             const pos = isHasPos(dest) ? dest.pos : task.pos;
-            const transfering = this.transferingAmount(repo, key, creep, task, type)
+            const transfering = this.energyPerTick(repo, key, creep, task, type) * this.amountPerEnergy(repo);
 
             if (pos && !creep.pos.inRangeTo(pos, this.rangeTo(repo))) {
                 this.pathing.moveTo(creep, pos);
@@ -204,7 +207,7 @@ export abstract class TransferRole {
             for (let type of types) {
                 if (isResourceConstant(type)) {
                     const pos = isHasPos(dest) ? dest.pos : task.pos;
-                    const transfering = this.transferingAmount(repo, key, creep, task, type)
+                    const transfering = this.energyPerTick(repo, key, creep, task, type) * this.amountPerEnergy(repo);
 
                     if (pos && !creep.pos.inRangeTo(pos, this.rangeTo(repo))) {
                         this.log.debug(creep.room, `${creep.name} not in range, moving`);
@@ -275,10 +278,18 @@ export abstract class TransferRole {
         }
     }
 
-    private transferingAmount(repoKey: string, taskKey: string, creep: Creep, task: Task, type?: ResourceConstant): number {
+    private amountPerEnergy(repoKey: string): number {
         switch (repoKey) {
-            case 'construction': return creep.getActiveBodyparts(WORK) * 5;
-            case 'repair': return creep.getActiveBodyparts(WORK) * 100;
+            case 'construction': return 5
+            case 'repair': return 100
+            default: return 1; // full amount - see amount per part
+        }
+    }
+
+    private energyPerTick(repoKey: string, taskKey: string, creep: Creep, task: Task, type?: ResourceConstant): number {
+        switch (repoKey) {
+            case 'construction': return creep.getActiveBodyparts(WORK);
+            case 'repair': return creep.getActiveBodyparts(WORK);
             default: return taskKey === 'consume'
                 ? task.amount ? Math.min(creep.store.getFreeCapacity(type), task.amount) : creep.store.getFreeCapacity(type) ?? 0
                 : task.amount ? Math.min(creep.store.getUsedCapacity(type), task.amount) : creep.store.getUsedCapacity(type) ?? 0;

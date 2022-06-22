@@ -5,6 +5,8 @@ import { Persistent } from "./persistent";
 import { RepairTask } from "./task";
 import { BaseRepo } from "./_base/task-repo";
 
+let visuals: { [room: string]: RoomVisual };
+
 /**
 * Construction sites
 **/
@@ -13,13 +15,27 @@ export class RepairTaskRepo extends BaseRepo<RepairTask> implements Persistent {
 
     constructor(log: Logger) { super('repair', log); }
 
+    private visual(room: string): RoomVisual {
+        if (!visuals) visuals = {};
+        return visuals[room] ?? (visuals[room] = new RoomVisual(room));
+    }
+
     // Repository
     // Cf. base class TaskRepo
+
+    public override add(task: RepairTask): void {
+        if (task.pos) this.visual(task.room).circle(task.pos.x, task.pos.y, { stroke: "#CC0000" });
+        super.add(task);
+    }
 
     // Persistency
     restore(): void {
         if (Memory.persistency?.hasOwnProperty(this.key))
             this.tasks = global.repair ?? []; //Memory.persistency.repair;
+
+        this.tasks.forEach(t => {
+            if (t.pos) { this.visual(t.room).circle(t.pos.x, t.pos.y, { stroke: "#00CC00" }); }
+        })
     }
 
     save(): void {

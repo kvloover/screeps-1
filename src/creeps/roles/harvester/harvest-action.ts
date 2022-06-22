@@ -32,7 +32,11 @@ export class HarvestAction {
             this.log.debug(creep.room, `${creep.name}: searching closest harvest task`); {
                 const tasks = this.harvests.list(room ?? creep.room.name)
                     .filter(i => !i.executer)
-                    .sort((a, b) => a.amount && b.amount ? b.amount - a.amount : -1);
+                    .sort((a, b) => a.amount && b.amount
+                        ? b.amount == a.amount && a.pos && b.pos
+                            ? creep.pos.getRangeTo(a.pos) - creep.pos.getRangeTo(b.pos)
+                            : b.amount - a.amount
+                        : -1);
                 const task = tasks.length > 0 ? tasks[0] : undefined;
                 if (task) {
                     this.log.debug(creep.room, `${creep.name}: found new harvest task`);
