@@ -1,13 +1,8 @@
-import { injectable, singleton } from "tsyringe";
+import { singleton } from "tsyringe";
 
 import { Logger } from "logger";
-import { CreepUtils } from "creeps/creep-utils";
 import { Pathing } from "creeps/pathing";
-import { CreepState } from "utils/creep-state";
 import { isDefined } from "utils/utils";
-
-import { Task } from "repos/task";
-import { TaskRepo } from "repos/_base/task-repo";
 import { HarvestTaskRepo } from "repos/harvest-task-repo";
 
 @singleton()
