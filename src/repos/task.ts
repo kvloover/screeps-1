@@ -14,9 +14,10 @@ export class Task {
 }
 
 export class AttackTask extends Task {}
-export class BuildTask extends Task {}
 export class ClaimTask extends Task {}
 // RangedAttack, RangedHeal, RangedMassAttack, Pull,
+
+export class ConstructionTask extends Task {}
 export class RepairTask extends Task {}
 
 export class HarvestTask extends Task {}

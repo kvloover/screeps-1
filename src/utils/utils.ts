@@ -4,12 +4,6 @@
 export const isDefined =
   <T>(value: T | undefined | null): value is T => value !== undefined && value !== null;
 
-export const isStoreStructure =
-  (item: any): item is AnyStoreStructure => isDefined((item as AnyStoreStructure)?.store);
-
-export const isLinkStructure =
-  (item: any): item is StructureLink => isDefined((item as StructureLink)?.store);
-
 export const isTombStone =
   (item: any): item is Tombstone => isDefined((item as Tombstone)?.store)
 
@@ -25,8 +19,23 @@ export const isResourceConstant =
 export const isController =
   (item: any): item is StructureController => isDefined((item as StructureController)?.id)
 
+export const isStructure =
+  (item: any): item is Structure => isDefined((item as Structure)?.id)
+
 export const isOwnStructure =
   (item: any): item is OwnedStructure => isDefined((item as OwnedStructure)?.id)
+
+export const isStoreStructure =
+  (item: any): item is AnyStoreStructure => isDefined((item as AnyStoreStructure)?.store);
+
+export const isLinkStructure =
+  (item: any): item is StructureLink => isDefined((item as StructureLink)?.store);
+
+export const isConstruction =
+  (item: any): item is ConstructionSite => isDefined((item as ConstructionSite)?.progress);
+
+export const isHasPos =
+  (item: any): item is HasPos => isDefined((item as HasPos)?.pos);
 
 export const whoAmI =
   () => (Object.values(Game.structures).find(s => isOwnStructure(s)) as OwnedStructure)?.owner?.username ?? 'N/A';
@@ -65,5 +74,5 @@ export const relativeExitTo =
       ? dest.yDir
       : dest.y > current.y ? 1 : -1;
 
-      return { xDir: x, yDir: y };
+    return { xDir: x, yDir: y };
   }

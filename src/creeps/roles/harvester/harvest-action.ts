@@ -1,13 +1,8 @@
-import { injectable, singleton } from "tsyringe";
+import { singleton } from "tsyringe";
 
 import { Logger } from "logger";
-import { CreepUtils } from "creeps/creep-utils";
 import { Pathing } from "creeps/pathing";
-import { CreepState } from "utils/creep-state";
 import { isDefined } from "utils/utils";
-
-import { Task } from "repos/task";
-import { TaskRepo } from "repos/_base/task-repo";
 import { HarvestTaskRepo } from "repos/harvest-task-repo";
 
 @singleton()
@@ -35,7 +30,14 @@ export class HarvestAction {
 
         if (!creep.memory.tasks.hasOwnProperty(key) || !creep.memory.tasks[key]) {
             this.log.debug(creep.room, `${creep.name}: searching closest harvest task`); {
-                const task = this.harvests.closestTask(creep.pos, RESOURCE_ENERGY, room ?? creep.room.name);
+                const tasks = this.harvests.list(room ?? creep.room.name)
+                    .filter(i => !i.executer)
+                    .sort((a, b) => a.amount && b.amount
+                        ? b.amount == a.amount && a.pos && b.pos
+                            ? creep.pos.getRangeTo(a.pos) - creep.pos.getRangeTo(b.pos)
+                            : b.amount - a.amount
+                        : -1);
+                const task = tasks.length > 0 ? tasks[0] : undefined;
                 if (task) {
                     this.log.debug(creep.room, `${creep.name}: found new harvest task`);
                     this.harvests.registerTask(creep, task, key);
@@ -64,10 +66,10 @@ export class HarvestAction {
             const src = Game.getObjectById(creep.memory.targetId as Id<Source>);
             if (src) {
                 this.log.debug(creep.room, `${creep.name}: targetId locked`);
-                const ret = creep.harvest(src);
-                this.log.debug(creep.room, `${creep.name}: targetId returnd ${ret}`);
-                if (ret === ERR_NOT_IN_RANGE) {
+                if (src.pos && !creep.pos.inRangeTo(src.pos, 1)) {
                     this.pathing.moveTo(creep, src.pos);
+                } else {
+                    creep.harvest(src)
                 }
             } else {
                 this.log.debug(creep.room, `${creep.name}: targetId couldn't be locked`);

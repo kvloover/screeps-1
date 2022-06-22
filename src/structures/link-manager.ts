@@ -5,6 +5,7 @@ import { Logger } from "logger";
 import { isLinkStructure, isMyRoom } from "utils/utils";
 
 import profiler from "screeps-profiler";
+import { initObjectMemory } from "utils/structure-memory";
 
 @singleton()
 export class LinkManager implements Manager {
@@ -15,12 +16,12 @@ export class LinkManager implements Manager {
         if (!isMyRoom(room))
             return;
 
-        const links = room.memory.links;
+        const links = room.memory.objects?.link;
 
         if (links && links.length > 0) {
 
-            const dest = links.filter(i => i.storage);
-            const srces = links.filter(i => !i.storage);
+            const dest = links.filter(i => (i as LinkMemory)?.storage ?? false);
+            const srces = links.filter(i => !(i as LinkMemory)?.storage ?? false);
 
             if (dest.length > 0) {
                 const destLink = Game.getObjectById(dest[0].id);
@@ -42,7 +43,8 @@ export class LinkManager implements Manager {
     }
 
     public static init(room: Room): void {
-        room.memory.links = [];
+        initObjectMemory(room.memory, STRUCTURE_LINK);
+        if (room.memory.objects) room.memory.objects[STRUCTURE_LINK] = [];  // reset if already present
 
         const storages = room.find(FIND_MY_STRUCTURES, { filter: (struct) => struct.structureType == STRUCTURE_STORAGE })
         const storage = storages.length > 0 ? storages[0] : undefined;
@@ -50,7 +52,7 @@ export class LinkManager implements Manager {
         room.find(FIND_MY_STRUCTURES, { filter: (struct) => struct.structureType == STRUCTURE_LINK })
             .forEach(l => {
                 const nearStorage = storage ? storage.pos.getRangeTo(l.pos) < 5 : false;
-                room.memory.links.push({ id: l.id, pos: l.pos, storage: nearStorage })
+                room.memory.objects?.link?.push(<LinkMemory>{ id: l.id, pos: l.pos, storage: nearStorage, type: STRUCTURE_LINK })
             });
     }
 }

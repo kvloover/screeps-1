@@ -1,9 +1,10 @@
-import { Task } from "repos/task";
-import { CreepState } from "./creep-state";
+import { RepairTask, Task } from "repos/task";
+import { CreepState } from "./utils/creep-state";
 
 export { };
 
 declare global {
+
     interface Memory {
         avoid: string[];
     }
@@ -27,16 +28,8 @@ declare global {
         remote_attack: boolean;
         claim: boolean;
 
-        sources: SourceMemory[];
-        links: LinkMemory[];
-        towers: TowerMemory[];
-        spawns: SpawnMemory[];
+        reset?: boolean;
     }
-
-    interface SourceMemory { id: Id<_HasId>, pos: RoomPosition }
-    interface LinkMemory { id: Id<_HasId>, pos: RoomPosition, storage: boolean }
-    interface TowerMemory { id: Id<_HasId>, pos: RoomPosition, range: number }
-    interface SpawnMemory { id: Id<_HasId>, pos: RoomPosition }
 
 
     interface CreepMemory {
@@ -50,13 +43,22 @@ declare global {
         targetId: undefined | Id<_HasId>;
         target: undefined | RoomPosition;
 
-        tasks: { [key: string]: { repo: string; tick: number, task: Task; } | undefined };
+        tasks: { [key: string]: CreepTask | undefined };
         tasks_blacklist: { [key: string]: string[] }; // ignore specific requesters for the given type
     }
 
-    // namespace NodeJS {
-    //     interface Global {
-    //     }
-    // }
+    interface CreepTask {
+        repo: string;
+        key: string,
+        tick: number;
+        amount?: number;
+        task: Task;
+    }
+
+    namespace NodeJS {
+        interface Global {
+            repair?: RepairTask[];
+        }
+    }
 }
 

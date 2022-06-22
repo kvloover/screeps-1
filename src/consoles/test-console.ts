@@ -1,6 +1,6 @@
 import { Role, Roles } from "creeps/roles/role-registry";
 import { container } from "tsyringe";
-import { relativeExitTo } from "./utils";
+import { relativeExitTo } from "../utils/utils";
 
 export class TestConsole {
 

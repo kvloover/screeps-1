@@ -5,6 +5,9 @@ import { HarvestTask } from "repos/task";
 import { Controller } from "./controller";
 import { Logger } from "logger";
 
+import { initObjectMemory } from "utils/structure-memory";
+import { SOURCE } from "utils/custom-types";
+
 import profiler from "screeps-profiler";
 
 @injectable()
@@ -15,7 +18,8 @@ export class SourceController implements Controller {
 
     public monitor(room: Room): void {
 
-        if (!room.memory.sources || room.memory.sources.length == 0) {
+        // TODO rooms without sources ?
+        if (!room.memory.objects?.source || room.memory.objects.source.length == 0) {
             this.initializeRoom(room);
         }
 
@@ -24,7 +28,7 @@ export class SourceController implements Controller {
     // Set flags on sources and store names in room memory
     private initializeRoom(room: Room): void {
 
-        room.memory.sources = [];
+        initObjectMemory(room.memory, SOURCE);
 
         // Add task for each source to be mined | TODO configurable ammount of harvesters
         room.find(FIND_SOURCES).forEach(src => {
@@ -32,8 +36,7 @@ export class SourceController implements Controller {
             this.harvestRepo.add(new HarvestTask(src.room.name, 1, 10, RESOURCE_ENERGY, src.id, undefined, src.pos)); // all use same prio for now
             this.log.debug(src.room, `${src.pos}: added harvest task`);
 
-            room.memory.sources.push({ id: src.id, pos: src.pos });
-
+            room.memory.objects?.source?.push({ id: src.id, pos: src.pos, type: SOURCE });
         })
     }
 }

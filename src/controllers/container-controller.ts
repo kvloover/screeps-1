@@ -27,8 +27,6 @@ export class ContainerController implements Controller {
                 filter: struct => struct.structureType === STRUCTURE_CONTAINER
             }); // .map((src, ind) => { return { item: src, name: `${room.name}_source${ind}` } });
 
-        this.log.debug(room, `found ${items?.length} containers`);
-
         // Add task for each container to be supplied
         items.forEach(i => {
             const struct = (i as AnyStoreStructure);

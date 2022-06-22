@@ -23,31 +23,32 @@ export class LinkController implements Controller {
         if (!isMyRoom(room))
             return;
 
-        const links = room.memory.links;
+        const links = room.memory.objects?.link;
 
         // Add task for each container to be supplied
         if (links) {
             links.forEach(i => {
                 const struct = Game.getObjectById(i.id);
-                if (isLinkStructure(struct)) {
-                    if (i.storage) {
+                const mem = i as LinkMemory;
+                if (isLinkStructure(struct) && mem) {
+                    if (mem.storage) {
                         const used = struct.store.getUsedCapacity(RESOURCE_ENERGY);
                         if (used > 0) {
-                            const current = this.providerRepo.getForRequester(i.id, RESOURCE_ENERGY);
+                            const current = this.providerRepo.getForRequester(mem.id, RESOURCE_ENERGY);
                             const amount = current.reduce((p, c) => p + (c.amount ?? 0), 0);
                             if (amount < used) {
-                                this.providerRepo.add(new ProviderTask(struct.room.name, 1, used - amount, RESOURCE_ENERGY, i.id, undefined, i.pos));
-                                this.log.debug(room, `${i.pos}: added link provider task`);
+                                this.providerRepo.add(new ProviderTask(struct.room.name, 1, used - amount, RESOURCE_ENERGY, mem.id, undefined, mem.pos));
+                                this.log.debug(room, `${mem.pos}: added link provider task`);
                             }
                         }
                     } else {
                         const free = struct.store.getFreeCapacity(RESOURCE_ENERGY);
                         if (free > 0) {
-                            const current = this.transferRepo.getForRequester(i.id, RESOURCE_ENERGY);
+                            const current = this.transferRepo.getForRequester(mem.id, RESOURCE_ENERGY);
                             const amount = current.reduce((p, c) => p + (c?.amount ?? 0), 0);
                             if (amount < free) {
-                                this.transferRepo.add(new MidstreamTask(struct.room.name, 1, free - amount, RESOURCE_ENERGY, i.id, undefined, i.pos));
-                                this.log.debug(room, `${i.pos}: added link midstream task`);
+                                this.transferRepo.add(new MidstreamTask(struct.room.name, 1, free - amount, RESOURCE_ENERGY, mem.id, undefined, mem.pos));
+                                this.log.debug(room, `${mem.pos}: added link midstream task`);
                             }
                         }
                     }

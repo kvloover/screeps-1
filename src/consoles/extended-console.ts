@@ -1,8 +1,8 @@
 import { Persistency, Persistent } from "repos/persistent";
 import { LinkManager, SpawnManager, TowerManager } from "structures";
 import { container } from "tsyringe";
-import { CreepState } from "./creep-state";
-import { GarbageCollector } from "./garbage-collect";
+import { CreepState } from "../utils/creep-state";
+import { GarbageCollector } from "../utils/garbage-collect";
 
 export class ExConsole {
     static init() {
@@ -27,7 +27,8 @@ export class ExConsole {
 
             init_links: ExConsole.init_links,
             init_towers: ExConsole.init_towers,
-            init_spawns: ExConsole.init_spawns
+            init_spawns: ExConsole.init_spawns,
+            init_sources: ExConsole.init_sources
         }
     }
 
@@ -119,7 +120,7 @@ export class ExConsole {
             });
 
             // Trigger harvest tasks (only made on initial)
-            room.sources = [];
+            if (room.objects) room.objects.source = [];
 
             // Trigger work
             _.filter(Memory.creeps, c => c.room === roomName)
@@ -136,6 +137,8 @@ export class ExConsole {
                 SpawnManager.init(room);
                 TowerManager.init(room);
             }
+
+            room.reset = true;
 
             return `Reset room ${roomName}.`;
         }
@@ -165,6 +168,15 @@ export class ExConsole {
             const room = Game.rooms[roomName];
             SpawnManager.init(room)
             return `room spawns init for ${roomName}.`;
+        }
+        return `Room not known: ${roomName}`
+    }
+
+    private static init_sources(roomName: string): string {
+        if (Game.rooms.hasOwnProperty(roomName)) {
+            const room = Game.rooms[roomName];
+            if (room.memory.objects) room.memory.objects.source = [];
+            return `room sources init for ${roomName}.`;
         }
         return `Room not known: ${roomName}`
     }
@@ -209,6 +221,7 @@ declare global {
             init_links: (room: string) => string;
             init_towers: (room: string) => string;
             init_spawns: (room: string) => string;
+            init_sources: (room: string) => string;
         }
     }
 }
