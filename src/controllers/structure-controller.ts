@@ -116,14 +116,14 @@ export class StructuresController implements Controller {
                                             undefined,
                                             struct.pos));
                                 } else if (struct.hits < 0.8 * (cfg.target * struct.hitsMax)) {
-                                    this.tryAddTaskToRepo(
-                                        new RepairTask(room.name,
-                                            50 + cfg.prio,
-                                            (cfg.max * struct.hitsMax) - struct.hits,
-                                            RESOURCE_ENERGY,
-                                            struct.id,
-                                            undefined,
-                                            struct.pos));
+                                    // this.tryAddTaskToRepo(
+                                    //     new RepairTask(room.name,
+                                    //         50 + cfg.prio,
+                                    //         (cfg.max * struct.hitsMax) - struct.hits,
+                                    //         RESOURCE_ENERGY,
+                                    //         struct.id,
+                                    //         undefined,
+                                    //         struct.pos));
                                 }
                                 obj.visited = Game.time;
                             } else {
