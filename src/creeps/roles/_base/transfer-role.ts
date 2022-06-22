@@ -280,7 +280,7 @@ export abstract class TransferRole {
 
     private amountPerEnergy(repoKey: string): number {
         switch (repoKey) {
-            case 'construction': return 5
+            case 'construction': return 1
             case 'repair': return 100
             default: return 1; // full amount - see amount per part
         }
@@ -288,7 +288,7 @@ export abstract class TransferRole {
 
     private energyPerTick(repoKey: string, taskKey: string, creep: Creep, task: Task, type?: ResourceConstant): number {
         switch (repoKey) {
-            case 'construction': return creep.getActiveBodyparts(WORK);
+            case 'construction': return creep.getActiveBodyparts(WORK) * 5;
             case 'repair': return creep.getActiveBodyparts(WORK);
             default: return taskKey === 'consume'
                 ? task.amount ? Math.min(creep.store.getFreeCapacity(type), task.amount) : creep.store.getFreeCapacity(type) ?? 0
