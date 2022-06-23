@@ -32,9 +32,9 @@ export class HaulerDropsRole extends HaulerRole {
     }
 
     protected override unlinkSupply(creep: Creep): void {
-        this.leftDemands.unlinkTask(creep, 'supply');
+        this.leftDemands.unregisterTask(creep, 'supply');
         this.leftDemands.clearReference(creep.id);
-        this.rightDemands.unlinkTask(creep, 'supply');
+        this.rightDemands.unregisterTask(creep, 'supply');
         this.rightDemands.clearReference(creep.id);
     }
 
@@ -99,9 +99,9 @@ export class HaulerStorageRole extends HaulerRole {
     }
 
     protected override unlinkSupply(creep: Creep): void {
-        this.leftDemands.unlinkTask(creep, 'supply');
+        this.leftDemands.unregisterTask(creep, 'supply');
         this.leftDemands.clearReference(creep.id);
-        this.rightDemands.unlinkTask(creep, 'supply');
+        this.rightDemands.unregisterTask(creep, 'supply');
         this.rightDemands.clearReference(creep.id);
     }
 

@@ -18,9 +18,12 @@ export interface TaskRepo<T extends Task> {
     closestTask(pos: RoomPosition, type?: ResourceConstant, room?: string, blacklist?: string[], limitrange?: number): Task;
     trySplitTask(task: Task, amount: number, opt?: (task: Task) => T): boolean;
     mergeEmpty(): void;
+    linkTask(executer: _HasId, task: Task): void;
+    unlinkTask(task: Task): void;
     registerTask(creep: Creep, task: Task, key: string): void;
+    unregisterTask(creep: Creep, key: string): void;
     finishTask(creep: Creep, task: Task, key: string): void;
-    unlinkTask(creep: Creep, key: string): void;
+    setAmount(id: string, amount: number): void;
 }
 
 export abstract class BaseRepo<T extends Task> implements TaskRepo<T>{
@@ -127,19 +130,31 @@ export abstract class BaseRepo<T extends Task> implements TaskRepo<T>{
     public registerTask(creep: Creep, task: Task, key: string): void {
         this.log.debug(creep.room, `registering task on ${creep.name}: ${key} - ${task.id}`);
         creep.memory.tasks[key] = { repo: this.key, key: key, tick: Game.time, task: task, amount: task.amount };
-        this.tasks.filter(i => i.id == task.id).forEach(i => i.executer = creep.id);
+        this.linkTask(creep, task);
         // task.executer = creep.id;
+    }
+
+    public linkTask(executer: _HasId, task: Task): void {
+        this.tasks.filter(i => i.id == task.id).forEach(i => i.executer = executer.id);
+    }
+
+    public unlinkTask(task: Task): void {
+        this.tasks.filter(i => i.id == task.id).forEach(i => i.executer = undefined);
     }
 
     public finishTask(creep: Creep, task: Task, key: string): void {
         this.log.debug(creep.room, `finished task on ${creep.name}: ${key} - ${task.id}`);
-        this.unlinkTask(creep, key);
+        this.unregisterTask(creep, key);
         this.removeById(task.id);
     }
 
-    public unlinkTask(creep: Creep, key: string): void {
+    public unregisterTask(creep: Creep, key: string): void {
         this.log.debug(creep.room, `unlinking task on ${creep.name}: ${key}`);
         creep.memory.tasks[key] = undefined;
+    }
+
+    public setAmount(id: string, amount: number): void {
+        this.tasks.filter(i => i.id == id).forEach(i => i.amount = amount);
     }
 
 }

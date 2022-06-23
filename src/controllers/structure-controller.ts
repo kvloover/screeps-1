@@ -47,12 +47,12 @@ export class StructuresController implements Controller {
         [STRUCTURE_SPAWN, { prio: 1, check: this.NONPRIO, under_emergency: this.NON_PRIO_UNDER_EMERGENCY, target: 1.00, emergency: 0.50, max: 1.00 }],
         // Decay & Defense:
         [STRUCTURE_TOWER, { prio: 2, check: this.NONPRIO, under_emergency: 20, target: 1.00, emergency: 0.10, max: 1.00 }],
-        [STRUCTURE_RAMPART, { prio: 3, check: 10000, under_emergency: 5, target: 0.05, emergency: 0.01, max: 1.00 }],
+        [STRUCTURE_RAMPART, { prio: 3, check: 5000, under_emergency: 5, target: 0.05, emergency: 0.01, max: 1.00 }],
         [STRUCTURE_STORAGE, { prio: 3, check: this.NONPRIO, under_emergency: this.NON_PRIO_UNDER_EMERGENCY, target: 1.00, emergency: 0.50, max: 1.00 }],
-        [STRUCTURE_CONTAINER, { prio: 4, check: 5000, under_emergency: 10000, target: 0.80, emergency: 0.20, max: 1.00 }],
+        [STRUCTURE_CONTAINER, { prio: 4, check: 2500, under_emergency: 10000, target: 0.80, emergency: 0.20, max: 1.00 }],
         [STRUCTURE_EXTENSION, { prio: 4, check: this.NONPRIO, under_emergency: this.NON_PRIO_UNDER_EMERGENCY, target: 1.00, emergency: 0.0, max: 1.00 }],
-        [STRUCTURE_ROAD, { prio: 5, check: 10000, under_emergency: 10000, target: 0.80, emergency: 0.20, max: 1.00 }],
-        [STRUCTURE_WALL, { prio: 6, check: 10000, under_emergency: 10000, target: 0.0004, emergency: 0.0002, max: 1.00 }],
+        [STRUCTURE_ROAD, { prio: 5, check: 5000, under_emergency: 5000, target: 0.80, emergency: 0.20, max: 1.00 }],
+        [STRUCTURE_WALL, { prio: 6, check: 5000, under_emergency: 5, target: 0.0004, emergency: 0.0002, max: 1.00 }],
         // Other loss: (TODO during emergency)
         [STRUCTURE_LINK, { prio: 6, check: this.NONPRIO, under_emergency: this.NON_PRIO_UNDER_EMERGENCY, target: 1.00, emergency: 0.0, max: 1.00 }],
         [STRUCTURE_TERMINAL, { prio: 7, check: this.NONPRIO, under_emergency: this.NON_PRIO_UNDER_EMERGENCY, target: 1.00, emergency: 0.50, max: 1.00 }],

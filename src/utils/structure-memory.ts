@@ -1,3 +1,4 @@
+import { Task } from "repos/task";
 import { ObjectConstant, SOURCE } from "./custom-types";
 
 export const initObjectMemory = (room: RoomMemory, key: StructureConstant | ObjectConstant) => {
@@ -47,6 +48,18 @@ declare global {
 
     interface TowerMemory extends RoomObjectMemory<STRUCTURE_TOWER> {
         range: number;
+        tasks: { [key: string]: TowerTask | undefined };
+        // tasks_blacklist: { [key: string]: string[] }; // ignore specific requesters for the given type
+    }
+
+    interface TowerTask {
+        repo: string;
+        key: string,
+        tick: number;
+        amount?: number;
+        task: Task;
+        range: number;
+        perAction: number;
     }
 
     interface SourceMemory extends RoomObjectMemory<SOURCE> { }

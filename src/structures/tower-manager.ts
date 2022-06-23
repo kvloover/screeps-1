@@ -2,15 +2,18 @@ import { singleton } from "tsyringe";
 
 import { Manager } from "manager";
 import { Logger } from "logger";
-import { isMyRoom } from "utils/utils";
+import { isMyRoom, isStructure, isTower } from "utils/utils";
 
 import profiler from "screeps-profiler";
 import { initObjectMemory } from "utils/structure-memory";
+import { RepairTaskRepo } from "repos/repair-task-repo";
+import { threadId } from "worker_threads";
+import { Task } from "repos/task";
 
 @singleton()
 export class TowerManager implements Manager {
 
-    constructor(private log: Logger) { }
+    constructor(private log: Logger, private repairs: RepairTaskRepo) { }
 
     private defend(room: Room, tower: TowerMemory, hostiles: Creep[]) {
         const pos = new RoomPosition(tower.pos.x, tower.pos.y, tower.pos.roomName);
@@ -19,7 +22,79 @@ export class TowerManager implements Manager {
             const struct = Game.getObjectById(tower.id) as StructureTower;
             if (struct) {
                 struct.attack(closestHostile);
+                return;
             }
+        }
+    }
+
+    private repair(room: Room, memory: TowerMemory) {
+        if (!memory.tasks) { memory.tasks = {}; }
+        let memTask = memory.tasks['repair'];
+
+        if (!memTask) {
+            const pos = new RoomPosition(memory.pos.x, memory.pos.y, memory.pos.roomName);
+            const closest = this.repairs.closestTask(pos, RESOURCE_ENERGY, room.name);
+            if (closest) { this.registerTask(memory, closest, pos); }
+            memTask = memory.tasks['repair'];
+            // todo split
+        }
+
+        if (memTask && memTask.task.requester && memTask.amount) {
+            const tower = Game.getObjectById(memory.id);
+            const target = Game.getObjectById(memTask.task.requester)
+            // todo clear deleted/destroyed towers
+            if (isTower(tower) && isStructure(target)) {
+                if (tower.store.getUsedCapacity(RESOURCE_ENERGY) > 10) {
+                    const res = tower.repair(target);
+                    if (res == OK) {
+                        memTask.amount -= memTask.perAction;
+                        if (memTask.amount <= 0) {
+                            this.finishTask(memory, memTask);
+                        }
+                    } else {
+                        if (target.hits == target.hitsMax) {
+                            this.finishTask(memory, memTask);
+                        } else (
+                            console.log(`repair returned: ${res}`)
+                        )
+                    }
+                } else {
+                    if (memTask.amount > 0) {
+                        this.repairs.setAmount(memTask.task.id, memTask.amount);
+                        this.repairs.unlinkTask(memTask.task);
+                        this.unRegisterTask(memory);
+                    } else {
+                        this.finishTask(memory, memTask)
+                    }
+                }
+            }
+        } else {
+            if (memTask) {
+                // finish invalid task
+                this.finishTask(memory, memTask);
+            }
+        }
+    }
+
+    private finishTask(memory: TowerMemory, memTask: TowerTask) {
+        this.repairs.removeById(memTask.task.id);
+        this.unRegisterTask(memory);
+    }
+
+    private unRegisterTask(memory: TowerMemory) {
+        memory.tasks['repair'] = undefined;
+    }
+
+    private registerTask(memory: TowerMemory, closest: Task, pos: RoomPosition) {
+        const range = closest.pos ? pos.getRangeTo(closest.pos) : 50;
+        memory.tasks['repair'] = {
+            key: 'repair',
+            repo: 'repair',
+            task: closest,
+            amount: closest.amount,
+            tick: Game.time,
+            range: range,
+            perAction: range <= 5 ? 800 : range >= 20 ? 200 : 1000 - (40 * range) // 800 + 800-200/5-20 * range - 5
         }
     }
 
@@ -34,8 +109,8 @@ export class TowerManager implements Manager {
             if (hostiles.length > 0) {
                 towers.forEach(t => this.defend(room, t as TowerMemory, hostiles));
             }
+            towers.forEach(t => this.repair(room, t as TowerMemory));
         }
-
     }
 
     public static init(room: Room): void {
@@ -52,7 +127,7 @@ export class TowerManager implements Manager {
             }, 0);
 
             room.memory.objects?.tower?.push(
-                <TowerMemory>{ id: l.id, pos: l.pos, range: Math.max(dist + 5, 15), type: STRUCTURE_TOWER });
+                <TowerMemory>{ id: l.id, pos: l.pos, range: Math.max(dist + 5, 15), type: STRUCTURE_TOWER, tasks: {} });
         });
     }
 }

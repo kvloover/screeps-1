@@ -266,7 +266,7 @@ export abstract class TransferRole {
             case 'repair': return isStructure(dest)
                 ? creep.repair(dest) : ERR_INVALID_TARGET;
             default: return isStoreStructure(dest) && (dest.store.getFreeCapacity(type) ?? 0) > 0
-                ? creep.transfer(dest, type, qty && creep.store.getUsedCapacity(type) ? Math.min(creep.store.getUsedCapacity(type), qty) : undefined) : ERR_INVALID_TARGET;
+                ? creep.transfer(dest, type, qty && creep.store.getUsedCapacity(type) ? Math.min(creep.store.getUsedCapacity(type), qty, dest.store.getFreeCapacity(type) ?? 0) : undefined) : ERR_INVALID_TARGET;
         }
     }
 

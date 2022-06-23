@@ -67,6 +67,14 @@ export class CombinedRepo implements TaskRepo<Task> {
         const repo = this.repoForTask(task);
         if (repo) { repo.registerTask(creep, task, key); }
     }
+    linkTask(executer: _HasId, task: Task): void {
+        const repo = this.repoForTask(task);
+        if (repo) { repo.linkTask(executer, task); }
+    }
+    unlinkTask(task: Task): void {
+        const repo = this.repoForTask(task);
+        if (repo) { repo.unlinkTask(task); }
+    }
     finishTask(creep: Creep, task: Task, key: string): void {
         const repo = this.repoForTask(task);
         if (repo) {
@@ -74,12 +82,16 @@ export class CombinedRepo implements TaskRepo<Task> {
             repo.finishTask(creep, task, key);
         } else {
             // ghost task
-            this.unlinkTask(creep, key);
+            this.unregisterTask(creep, key);
         }
     }
-    unlinkTask(creep: Creep, key: string): void {
+    unregisterTask(creep: Creep, key: string): void {
         this.log.debug(creep.room, `unlinking task on ${creep.name}: ${key}`);
         creep.memory.tasks[key] = undefined;
+    }
+    setAmount(id: string, amount:number):void {
+        this.leftRepo.setAmount(id, amount);
+        this.rightRepo.setAmount(id, amount);
     }
 
     private repoForTask(task: Task): TaskRepo<Task> | undefined {

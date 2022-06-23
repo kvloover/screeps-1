@@ -34,6 +34,9 @@ export const isLinkStructure =
 export const isConstruction =
   (item: any): item is ConstructionSite => isDefined((item as ConstructionSite)?.progress);
 
+export const isTower =
+  (item: any): item is StructureTower => isDefined((item as StructureTower)?.my);
+
 export const isHasPos =
   (item: any): item is HasPos => isDefined((item as HasPos)?.pos);
 

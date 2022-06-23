@@ -57,7 +57,7 @@ export class HarvestAction {
                 // Only lock on in room
                 creep.memory.targetId = task.requester;
             } else {
-                this.harvests.unlinkTask(creep, key);
+                this.harvests.unregisterTask(creep, key);
             }
         }
 
