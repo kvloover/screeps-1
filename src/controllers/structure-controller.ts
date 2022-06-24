@@ -11,12 +11,9 @@ import { RepairTaskRepo } from "repos/repair-task-repo";
 
 // let structures: { [room: string]: { id: Id<_HasId>, pos: RoomPosition }[] };
 
-// ! TODO check if already exists
-// limit to one task per structure
-// do not create for target -> max or use max as end for target repair
-// > do similar for other
-// Split up priorities per structure => offset building or 0 offset and mix/match prio's
-// remove amount from tasks
+// TODO check for new structures after reset: global refs
+// TODO check for destroyed/missing structures
+
 
 interface RepairConfig {
     prio: number;

@@ -15,16 +15,25 @@ export class TowerManager implements Manager {
 
     constructor(private log: Logger, private repairs: RepairTaskRepo) { }
 
-    private defend(room: Room, tower: TowerMemory, hostiles: Creep[]) {
+    private defendOrRepair(room: Room, tower: TowerMemory, hostiles: Creep[]) {
+        if (this.defend(room, tower, hostiles)) return;
+        this.repair(room, tower);
+    }
+
+
+    private defend(room: Room, tower: TowerMemory, hostiles: Creep[]): boolean {
+        if (hostiles.length == 0) return false;
+
         const pos = new RoomPosition(tower.pos.x, tower.pos.y, tower.pos.roomName);
         const closestHostile = pos.findClosestByRange(hostiles);
         if (closestHostile && pos.getRangeTo(closestHostile.pos) < tower.range) {
             const struct = Game.getObjectById(tower.id) as StructureTower;
             if (struct) {
                 struct.attack(closestHostile);
-                return;
+                return true;
             }
         }
+        return false;
     }
 
     private repair(room: Room, memory: TowerMemory) {
@@ -43,7 +52,7 @@ export class TowerManager implements Manager {
             const tower = Game.getObjectById(memory.id);
             const target = Game.getObjectById(memTask.task.requester)
             // todo clear deleted/destroyed towers
-            if (isTower(tower) && isStructure(target)) {
+            if (tower && target && isTower(tower) && isStructure(target)) {
                 if (tower.store.getUsedCapacity(RESOURCE_ENERGY) > 10) {
                     const res = tower.repair(target);
                     if (res == OK) {
@@ -67,6 +76,9 @@ export class TowerManager implements Manager {
                         this.finishTask(memory, memTask)
                     }
                 }
+            } else {
+                // finish invalid task
+                this.finishTask(memory, memTask);
             }
         } else {
             if (memTask) {
@@ -106,10 +118,7 @@ export class TowerManager implements Manager {
 
         if (towers && towers.length > 0) {
             const hostiles = room.find(FIND_HOSTILE_CREEPS);
-            if (hostiles.length > 0) {
-                towers.forEach(t => this.defend(room, t as TowerMemory, hostiles));
-            }
-            towers.forEach(t => this.repair(room, t as TowerMemory));
+            towers.forEach(t => this.defendOrRepair(room, t as TowerMemory, hostiles));
         }
     }
 

@@ -44,6 +44,7 @@ declare global {
 
     interface LinkMemory extends RoomObjectMemory<STRUCTURE_LINK> {
         storage: boolean;
+        supply: boolean;
     }
 
     interface TowerMemory extends RoomObjectMemory<STRUCTURE_TOWER> {
