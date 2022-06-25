@@ -6,8 +6,11 @@ import { ConstructionTaskRepo } from "repos/construction-task-repo";
 import { Controller } from "./controller";
 import { Logger } from "logger";
 
-import profiler from "screeps-profiler";
 import { InitialMemory, InitialStructMemory } from "structures/memory/initial-struct-memory";
+import { OnCreate, OnStructureCreate } from "structures/side-effects/on-structure-create";
+
+import profiler from "screeps-profiler";
+
 
 /** To be replaced with automated building -> store tasks for construction */
 @injectable()
@@ -41,7 +44,8 @@ export class ConstructionController implements Controller {
 
     constructor(private log: Logger,
         private conRepo: ConstructionTaskRepo,
-        @injectAll(InitialStructMemory.token) private initalizers: InitialMemory<StructureConstant>[]) {
+        @injectAll(InitialStructMemory.token) private initalizers: InitialMemory<StructureConstant>[],
+        @injectAll(OnStructureCreate.token) private onCreates: OnCreate<StructureConstant>[]) {
     }
 
     public monitor(room: Room): void {
@@ -89,8 +93,9 @@ export class ConstructionController implements Controller {
                             .forEach(v => {
                                 const res = room.lookAt(v.pos)
                                     .find(i => i.structure && i.structure.structureType == key);
+
                                 if (res && res.structure) {
-                                    // Add to structures
+                                    // Add to structures heap
                                     initHeapMemory(room.name, key);
                                     const item = this.createObjectRef(res.structure) as any; // TODO fix
                                     if (item && global.refs && global.refs[room.name]) {
@@ -100,13 +105,19 @@ export class ConstructionController implements Controller {
                                         }
                                     }
 
+                                    // Set initial memory in Memory.room
                                     const initial = this.initalizers.find(i => i.type == key);
                                     if (initial) {
                                         initObjectMemory(room.memory, key);
                                         const mem = initial.create(room, res.structure);
                                         if (mem && room.memory.objects) { room.memory.objects[key]?.push(mem as any); }
                                     }
+
+                                    // Side effects
+                                    const onCreate = this.onCreates.filter(i => i.type == key);
+                                    onCreate.forEach(effect => res.structure ? effect.onCreate(room, res.structure) : {});
                                 }
+
                                 // remove from construtions
                                 _.remove(vals, i => i.id == v.id);
                             })

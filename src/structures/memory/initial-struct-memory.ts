@@ -15,5 +15,5 @@ export abstract class InitialStructMemory {
 
 export interface InitialMemory<T extends StructureConstant> {
     type: T;
-    create(room: Room, structure: Structure<T>): RoomObjectMemory<T>
+    create(room: Room, structure: Structure<T>): RoomObjectMemory<T>;
 }
