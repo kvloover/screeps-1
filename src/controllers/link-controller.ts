@@ -1,6 +1,6 @@
 import { injectable } from "tsyringe";
 
-import { MidstreamTask, ProviderTask, SupplyTask } from "repos/task";
+import { MidstreamTask, ProviderTask, UtilityTask } from "repos/task";
 import { Controller } from "./controller";
 import { Logger } from "logger";
 
@@ -9,7 +9,7 @@ import { ProviderTaskRepo } from "repos/provider-task-repo";
 import { isLinkStructure, isMyRoom } from "utils/utils";
 
 import profiler from "screeps-profiler";
-import { SupplyTaskRepo } from "repos/supply-task-repo";
+import { UtilityTaskRepo } from "repos/utility-task-repo";
 
 @injectable()
 export class LinkController implements Controller {
@@ -17,7 +17,7 @@ export class LinkController implements Controller {
     constructor(private log: Logger,
         private transferRepo: MidstreamTaskRepo,
         private providerRepo: ProviderTaskRepo,
-        private supplyRepo: SupplyTaskRepo
+        private utilityRepo: UtilityTaskRepo,
     ) {
     }
 
@@ -46,11 +46,11 @@ export class LinkController implements Controller {
                     } else if (mem.supply) {
                         const used = struct.store.getUsedCapacity(RESOURCE_ENERGY);
                         if (used > 0) {
-                            const current = this.supplyRepo.getForRequester(mem.id, RESOURCE_ENERGY);
+                            const current = this.utilityRepo.getForRequester(mem.id, RESOURCE_ENERGY);
                             const amount = current.reduce((p, c) => p + (c.amount ?? 0), 0);
                             if (amount < used) {
-                                this.supplyRepo.add(new SupplyTask(struct.room.name, 1, used - amount, RESOURCE_ENERGY, mem.id, undefined, mem.pos));
-                                this.log.debug(room, `${mem.pos}: added link supply task`);
+                                this.utilityRepo.add(new UtilityTask(struct.room.name, 1, used - amount, RESOURCE_ENERGY, mem.id, undefined, mem.pos));
+                                this.log.debug(room, `${mem.pos}: added link utility task`);
                             }
                         }
                     } else {

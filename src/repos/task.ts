@@ -26,3 +26,5 @@ export class MidstreamTask extends Task {}
 export class ProviderTask extends Task {}
 export class StorageTask extends Task {}
 export class SupplyTask extends Task {}
+export class UtilityTask extends Task {}
+

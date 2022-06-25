@@ -8,6 +8,7 @@ import { SupplyTaskRepo } from "./supply-task-repo";
 import { StorageTaskRepo } from "./storage-task-repo";
 import { ConstructionTaskRepo } from "./construction-task-repo";
 import { RepairTaskRepo } from "./repair-task-repo";
+import { UtilityTaskRepo } from "./utility-task-repo";
 
 export interface Persistent {
     restore(): void;
@@ -33,6 +34,7 @@ export interface Persistent {
     { token: Persistency.token, useToken: StorageTaskRepo },
     { token: Persistency.token, useToken: ConstructionTaskRepo },
     { token: Persistency.token, useToken: RepairTaskRepo },
+    { token: Persistency.token, useToken: UtilityTaskRepo },
 ])
 export abstract class Persistency {
     public static Initialize(): void {

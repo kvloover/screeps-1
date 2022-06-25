@@ -7,6 +7,10 @@ import { UpgraderRole } from "./upgrader-role";
 import { SupplyTaskRepo } from "repos/supply-task-repo";
 import profiler from "screeps-profiler";
 import { HarvestAction } from "../harvester/harvest-action";
+import { UtilityTaskRepo } from "repos/utility-task-repo";
+import { TaskRepo } from "repos/_base/task-repo";
+import { Task } from "repos/task";
+import { CombinedRepo } from "repos/_base/combined-repo";
 
 @singleton()
 export class UpgraderSourceRole extends UpgraderRole {
@@ -17,7 +21,7 @@ export class UpgraderSourceRole extends UpgraderRole {
     };
 
     constructor(log: Logger, pathing: Pathing,
-        protected provider: SupplyTaskRepo, protected harvesting: HarvestAction) {
+        protected harvesting: HarvestAction) {
         super(log, pathing)
     }
 
@@ -36,18 +40,21 @@ profiler.registerClass(UpgraderSourceRole, 'UpgraderSourceRole');
 @singleton()
 export class UpgraderStorageRole extends UpgraderRole {
 
+    private combined: TaskRepo<Task>;
+
     phase = {
         start: 2,
         end: 9
     };
 
     constructor(log: Logger, pathing: Pathing,
-        protected provider: SupplyTaskRepo) {
+        supply: SupplyTaskRepo, utility: UtilityTaskRepo) {
         super(log, pathing)
+        this.combined = new CombinedRepo(utility, supply, 10, 'combined-utility', log);
     }
 
     protected consume(creep: Creep): void {
-        this.consumeFromRepo(creep, this.provider, 'consume', RESOURCE_ENERGY);
+        this.consumeFromRepo(creep, this.combined, 'consume', RESOURCE_ENERGY);
     }
 
     public run(creep: Creep): void {
