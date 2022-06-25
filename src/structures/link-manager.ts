@@ -5,7 +5,7 @@ import { Logger } from "logger";
 import { isLinkStructure, isMyRoom } from "utils/utils";
 
 import profiler from "screeps-profiler";
-import { initObjectMemory } from "utils/structure-memory";
+import { initObjectMemory } from "structures/memory/structure-memory";
 
 @singleton()
 export class LinkManager implements Manager {

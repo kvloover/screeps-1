@@ -1,5 +1,5 @@
 import { Task } from "repos/task";
-import { ObjectConstant, SOURCE } from "./custom-types";
+import { ObjectConstant, SOURCE } from "../../utils/custom-types";
 
 export const initObjectMemory = (room: RoomMemory, key: StructureConstant | ObjectConstant) => {
     if (!room.objects) room.objects = {};

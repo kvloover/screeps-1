@@ -8,7 +8,8 @@ export class TestConsole {
         global.testing = {
             exit: TestConsole.exit,
             exitEst: TestConsole.exitEst,
-            injection: TestConsole.injection
+            injection: TestConsole.injection,
+            memory: TestConsole.memory,
         }
     }
 
@@ -32,6 +33,33 @@ export class TestConsole {
         });
         return `injection used: ${cost}`;
     }
+
+    static memory(roomName: string): string {
+        if (Memory.rooms.hasOwnProperty(roomName) && Game.rooms.hasOwnProperty(roomName)) {
+            const mem = Memory.rooms[roomName];
+            const room = Game.rooms[roomName];
+            const visual = room.visual;
+
+            if (mem.objects) {
+                Object.entries(mem.objects).forEach(([key, val]) => {
+                    val.forEach(obj => {
+                        visual.rect(obj.pos.x, obj.pos.y, 0.5, 0.5, { stroke: "#ff00ff"});
+                    });
+                });
+            }
+            const refs = global.refs ? global.refs[roomName] : undefined;
+            if (refs && refs.objects){
+                Object.entries(refs.objects).forEach(([key, val]) => {
+                    val.forEach(obj => {
+                        visual.circle(obj.pos.x, obj.pos.y, { stroke: "#0000ff"});
+                    });
+                });
+            }
+
+            return `Visualised ${roomName}.`;
+        }
+        return `Room not known: ${roomName}`
+    }
 }
 
 const countCpu = (fn: () => void): number => {
@@ -51,6 +79,7 @@ declare global {
             exit: (room: string, target: string) => string;
             exitEst: (room: string, target: string) => string;
             injection: () => string;
+            memory: (room: string) => string;
         }
     }
 }

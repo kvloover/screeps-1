@@ -5,7 +5,7 @@ import { Controller } from "./controller";
 import { Logger } from "logger";
 
 import profiler from "screeps-profiler";
-import { initHeapMemory } from "utils/structure-memory";
+import { initHeapMemory } from "structures/memory/structure-memory";
 import { ObjectConstant } from "utils/custom-types";
 import { RepairTaskRepo } from "repos/repair-task-repo";
 

@@ -9,7 +9,7 @@ import setup from "../config/setup.json";
 import { config, roleConfig, stageConfig } from "../config/config";
 
 import profiler from "screeps-profiler";
-import { initObjectMemory } from "utils/structure-memory";
+import { initObjectMemory } from "structures/memory/structure-memory";
 
 @singleton()
 export class SpawnManager implements Manager {

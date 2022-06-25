@@ -1,12 +1,13 @@
-import { injectable } from "tsyringe";
+import { injectable, injectAll } from "tsyringe";
 
-import { initConstructionMemory, initHeapMemory, initObjectMemory } from "utils/structure-memory";
+import { initConstructionMemory, initHeapMemory, initObjectMemory } from "structures/memory/structure-memory";
 import { ConstructionTask } from "repos/task";
 import { ConstructionTaskRepo } from "repos/construction-task-repo";
 import { Controller } from "./controller";
 import { Logger } from "logger";
 
 import profiler from "screeps-profiler";
+import { InitialMemory, InitialStructMemory } from "structures/memory/initial-struct-memory";
 
 /** To be replaced with automated building -> store tasks for construction */
 @injectable()
@@ -39,7 +40,8 @@ export class ConstructionController implements Controller {
     ]);
 
     constructor(private log: Logger,
-        private conRepo: ConstructionTaskRepo) {
+        private conRepo: ConstructionTaskRepo,
+        @injectAll(InitialStructMemory.token) private initalizers: InitialMemory<StructureConstant>[]) {
     }
 
     public monitor(room: Room): void {
@@ -96,6 +98,13 @@ export class ConstructionController implements Controller {
                                         if (objs && objs[key]) {
                                             objs[key]?.push(item);
                                         }
+                                    }
+
+                                    const initial = this.initalizers.find(i => i.type == key);
+                                    if (initial) {
+                                        initObjectMemory(room.memory, key);
+                                        const mem = initial.create(room, res.structure);
+                                        if (mem && room.memory.objects) { room.memory.objects[key]?.push(mem as any); }
                                     }
                                 }
                                 // remove from construtions
