@@ -28,3 +28,6 @@ export class StorageTask extends Task {}
 export class SupplyTask extends Task {}
 export class UtilityTask extends Task {}
 
+export class ExchangeTask extends Task {}
+export class RequestTask extends Task {}
+
