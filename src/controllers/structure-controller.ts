@@ -107,7 +107,7 @@ export class StructuresController implements Controller {
                                     this.tryAddTaskToRepo(
                                         new RepairTask(room.name,
                                             cfg.prio,
-                                            (cfg.target * struct.hitsMax) - struct.hits,
+                                            (Math.min(cfg.target, 2 * cfg.emergency) * struct.hitsMax) - struct.hits,
                                             RESOURCE_ENERGY,
                                             struct.id,
                                             undefined,
