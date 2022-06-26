@@ -37,6 +37,9 @@ export const isConstruction =
 export const isTower =
   (item: any): item is StructureTower => isDefined((item as StructureTower)?.my);
 
+export const isTerminal =
+  (item: any): item is StructureTerminal => isDefined((item as StructureTerminal)?.my);
+
 export const isHasPos =
   (item: any): item is HasPos => isDefined((item as HasPos)?.pos);
 

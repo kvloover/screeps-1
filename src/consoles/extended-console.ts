@@ -28,7 +28,9 @@ export class ExConsole {
             init_links: ExConsole.init_links,
             init_towers: ExConsole.init_towers,
             init_spawns: ExConsole.init_spawns,
-            init_sources: ExConsole.init_sources
+            init_sources: ExConsole.init_sources,
+
+            print: ExConsole.print
         }
     }
 
@@ -189,6 +191,11 @@ export class ExConsole {
         }
         return `Room not known: ${roomName}`
     }
+
+    private static print(str: any): string {
+        return JSON.stringify(str, null, "\t");
+    }
+
 }
 
 declare global {
@@ -222,6 +229,8 @@ declare global {
             init_towers: (room: string) => string;
             init_spawns: (room: string) => string;
             init_sources: (room: string) => string;
+
+            print: (str: any) => string;
         }
     }
 }

@@ -18,7 +18,7 @@ export interface TaskRepo<T extends Task> {
     closestTask(pos: RoomPosition, type?: ResourceConstant, room?: string, blacklist?: string[], limitrange?: number): Task;
     trySplitTask(task: Task, amount: number, opt?: (task: Task) => T): boolean;
     mergeEmpty(): void;
-    linkTask(executer: _HasId, task: Task): void;
+    linkTask(executer: Id<_HasId>, task: Task): void;
     unlinkTask(task: Task): void;
     registerTask(creep: Creep, task: Task, key: string): void;
     unregisterTask(creep: Creep, key: string): void;
@@ -130,12 +130,12 @@ export abstract class BaseRepo<T extends Task> implements TaskRepo<T>{
     public registerTask(creep: Creep, task: Task, key: string): void {
         this.log.debug(creep.room, `registering task on ${creep.name}: ${key} - ${task.id}`);
         creep.memory.tasks[key] = { repo: this.key, key: key, tick: Game.time, task: task, amount: task.amount };
-        this.linkTask(creep, task);
+        this.linkTask(creep.id, task);
         // task.executer = creep.id;
     }
 
-    public linkTask(executer: _HasId, task: Task): void {
-        this.tasks.filter(i => i.id == task.id).forEach(i => i.executer = executer.id);
+    public linkTask(executer: Id<_HasId>, task: Task): void {
+        this.tasks.filter(i => i.id == task.id).forEach(i => i.executer = executer);
     }
 
     public unlinkTask(task: Task): void {

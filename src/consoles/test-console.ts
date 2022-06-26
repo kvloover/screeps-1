@@ -1,4 +1,6 @@
 import { Role, Roles } from "creeps/roles/role-registry";
+import { Persistency, Persistent } from "repos/persistent";
+import { SupplyTaskRepo } from "repos/supply-task-repo";
 import { container } from "tsyringe";
 import { relativeExitTo } from "../utils/utils";
 
@@ -10,6 +12,7 @@ export class TestConsole {
             exitEst: TestConsole.exitEst,
             injection: TestConsole.injection,
             memory: TestConsole.memory,
+            remove: TestConsole.remove
         }
     }
 
@@ -60,6 +63,13 @@ export class TestConsole {
         }
         return `Room not known: ${roomName}`
     }
+
+    static remove(id: string): string {
+        const repo = container.resolveAll<Persistent>(Persistency.token);
+        repo.forEach(r => r.clearReference(id as Id<_HasId>));
+
+        return 'removed'
+    }
 }
 
 const countCpu = (fn: () => void): number => {
@@ -80,6 +90,8 @@ declare global {
             exitEst: (room: string, target: string) => string;
             injection: () => string;
             memory: (room: string) => string;
+
+            remove: (id: string) => string;
         }
     }
 }

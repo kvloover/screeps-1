@@ -28,6 +28,9 @@ declare global {
         remote_attack: boolean;
         claim: boolean;
 
+        supply: boolean;
+        request: boolean;
+
         reset?: boolean;
     }
 

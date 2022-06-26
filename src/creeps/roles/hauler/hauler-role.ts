@@ -93,11 +93,19 @@ export abstract class HaulerRole extends TransferRole implements Role {
         const supplyTask = creep.memory.tasks['supply'];
         if (supplyTask && supplyTask.task.requester) {
             this.log.debug(creep.room, `${creep.name}: blacklisting supply request`)
+
+            const refs = global.refs ? global.refs[creep.room.name]?.objects : undefined;
+
+            if (refs && refs.storage?.some(i => i.id == supplyTask.task.requester)) {
+                if (refs.terminal && refs.terminal.length > 0) {
+                    return [supplyTask.task.requester, refs.terminal[0].id] // avoid emptying terminal just to fill storage
+                }
+            }
             return [supplyTask.task.requester]
-        } else {
+        }
+        else {
             return undefined;
         }
     }
 
 }
-

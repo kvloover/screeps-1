@@ -17,7 +17,10 @@ export class RemoteAttackerRole extends RangedAttackerRole implements Role {
         end: 9
     };
 
-    constructor(pathing: Pathing) { super(pathing); }
+    constructor(pathing: Pathing) {
+        super(pathing);
+        console.log(`construtor ${this.name}`);
+    }
 
     public override run(creep: Creep): void {
         // First entry to work: find target room

@@ -67,7 +67,7 @@ export class CombinedRepo implements TaskRepo<Task> {
         const repo = this.repoForTask(task);
         if (repo) { repo.registerTask(creep, task, key); }
     }
-    linkTask(executer: _HasId, task: Task): void {
+    linkTask(executer: Id<_HasId>, task: Task): void {
         const repo = this.repoForTask(task);
         if (repo) { repo.linkTask(executer, task); }
     }

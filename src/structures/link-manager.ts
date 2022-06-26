@@ -70,7 +70,7 @@ export class LinkManager implements Manager {
                             const energy = Math.min(fifo.energy, src.energy);
                             src.link.transferEnergy(fifo.link, energy);
                             if (energy == fifo.energy) { iDest++; } else { fifo.energy -= energy; }
-                            if (energy == src.energy) { jSrc++; } else { src.energy -= energy; }
+                            jSrc++; // can only transfer once per source
                         }
 
                         if (jSrc >= srcLinks.length) break;
