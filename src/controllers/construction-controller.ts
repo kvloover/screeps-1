@@ -116,10 +116,10 @@ export class ConstructionController implements Controller {
                                     // Side effects
                                     const onCreate = this.onCreates.filter(i => i.type == key);
                                     onCreate.forEach(effect => res.structure ? effect.onCreate(room, res.structure) : {});
-                                }
 
-                                // remove from construtions
-                                _.remove(vals, i => i.id == v.id);
+                                    // remove from construtions
+                                    _.remove(vals, i => i.id == v.id);
+                                }
                             })
                 });
         }

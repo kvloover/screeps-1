@@ -533,6 +533,17 @@
                     "work": 2,
                     "move": 15
                 }
+            },
+            {
+                "role": "remote-builder",
+                "priority": 9,
+                "count": 1,
+                "condition": "conquer",
+                "template": {
+                    "carry": 10,
+                    "work": 6,
+                    "move": 8
+                }
             }
         ]
     },
@@ -671,6 +682,17 @@
                     "carry": 8,
                     "work": 4,
                     "move": 20
+                }
+            },
+            {
+                "role": "remote-builder",
+                "priority": 9,
+                "count": 1,
+                "condition": "conquer",
+                "template": {
+                    "carry": 10,
+                    "work": 6,
+                    "move": 8
                 }
             }
         ]

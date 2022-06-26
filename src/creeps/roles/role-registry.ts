@@ -9,7 +9,7 @@ import {
 
 import { HarvestMidstreamRole, HarvestSupplierRole, RemoteHarvestMidstreamRole } from "./harvester/harvester-service";
 import { UpgraderSourceRole, UpgraderStorageRole } from "./upgrader/upgrader-service";
-import { BuilderSourceRole, BuilderStorageRole } from "./builder/builder-service";
+import { BuilderSourceRole, BuilderStorageRole, RemoteBuilderSourceRole, RemoteBuilderStorageRole } from "./builder/builder-service";
 import { HaulerDropsRole, HaulerMidstreamRole, HaulerStorageRole } from "./hauler/hauler-service";
 import { FillerLinkRole, FillerStorageRole, FillerSupplierRole } from "./filler/filler-service";
 
@@ -29,6 +29,8 @@ export interface Role {
     { token: Roles.token, useToken: ClaimerRole },
     { token: Roles.token, useToken: BuilderSourceRole },
     { token: Roles.token, useToken: BuilderStorageRole },
+    { token: Roles.token, useToken: RemoteBuilderSourceRole },
+    { token: Roles.token, useToken: RemoteBuilderStorageRole },
     { token: Roles.token, useToken: UpgraderSourceRole },
     { token: Roles.token, useToken: UpgraderStorageRole },
     { token: Roles.token, useToken: HarvestSupplierRole },

@@ -24,11 +24,6 @@ export abstract class BuilderRole extends TransferRole implements Role {
     // Override consume on implementing class
 
     protected supply(creep: Creep): void {
-        // clear targetRoom:
-        if (creep.memory.targetRoom && creep.memory.targetRoom == creep.room.name) {
-            creep.memory.targetRoom = undefined;
-        }
-
         this.supplyToRepo(creep, this.repo, 'supply', RESOURCE_ENERGY, creep.memory.targetRoom);
     }
 
