@@ -99,7 +99,8 @@ export class StructuresController implements Controller {
                 if (cfg) {
                     const cleanUp: Id<_HasId>[] = [];
                     vals.forEach(obj => {
-                        if (obj.visited <= Game.time - (emergency ? cfg.under_emergency : cfg.check)) {
+                        const next = obj.visited + (emergency ? cfg.under_emergency : cfg.check);
+                        if (Game.time >= next) {
                             const struct = Game.getObjectById(obj.id) as Structure;
                             if (struct) {
                                 // make tasks to next check level

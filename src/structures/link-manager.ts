@@ -40,14 +40,14 @@ export class LinkManager implements Manager {
 
                 destSupply.forEach(supply => {
                     const link = Game.getObjectById(supply.id);
-                    if (isLinkStructure(link) && link.store.getUsedCapacity(RESOURCE_ENERGY) < 800) {
+                    if (isLinkStructure(link) && link.store.getFreeCapacity(RESOURCE_ENERGY) > 100) {
                         fifoLinks.push({ link: link, energy: 800 - link.store.getUsedCapacity(RESOURCE_ENERGY) })
                     }
                 });
 
                 destStorage.forEach(supply => {
                     const link = Game.getObjectById(supply.id);
-                    if (isLinkStructure(link) && link.store.getFreeCapacity(RESOURCE_ENERGY) > 0) {
+                    if (isLinkStructure(link) && link.store.getFreeCapacity(RESOURCE_ENERGY) > 100) {
                         fifoLinks.push({ link: link, energy: link.store.getFreeCapacity(RESOURCE_ENERGY) })
                     }
                 });
