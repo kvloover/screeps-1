@@ -7,6 +7,8 @@ export class OnStorageCreate implements OnCreate<STRUCTURE_STORAGE> {
     public type = STRUCTURE_STORAGE;
 
     public onCreate(room: Room, structure: Structure<STRUCTURE_STORAGE>): void {
+        console.log(`on storage create ${room.name}`)
+
         const refs = global.refs && global.refs[room.name] ? global.refs[room.name].objects : undefined;
         const links = refs?.link;
 
