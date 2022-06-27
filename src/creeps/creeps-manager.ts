@@ -46,6 +46,7 @@ export class CreepsManager implements Manager {
         if (room.memory.stage && room.memory.stage >= 3 && struct.length > 0) phase = 2;
         if (room.memory.stage && room.memory.stage >= 5 && storage.length > 0) phase = 3;
         if (phase === 3 && (room.memory.objects?.link?.length ?? 0) > 0) phase = 4;
+        if (phase === 4 && (room.memory.objects?.link?.find(i => (i as LinkMemory)?.supply) != undefined)) phase = 5;
 
         return phase;
     }

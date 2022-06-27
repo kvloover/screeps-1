@@ -44,7 +44,7 @@ export class UpgraderStorageRole extends UpgraderRole {
 
     phase = {
         start: 2,
-        end: 9
+        end: 4
     };
 
     constructor(log: Logger, pathing: Pathing,
@@ -65,3 +65,34 @@ export class UpgraderStorageRole extends UpgraderRole {
 }
 
 profiler.registerClass(UpgraderStorageRole, 'UpgraderStorageRole');
+
+@singleton()
+export class UpgraderSupplyRole extends UpgraderRole {
+
+    private combined: TaskRepo<Task>;
+
+    phase = {
+        start: 5,
+        end: 9
+    };
+
+    constructor(log: Logger, pathing: Pathing,
+        supply: SupplyTaskRepo, utility: UtilityTaskRepo) {
+        super(log, pathing)
+        this.combined = new CombinedRepo(utility, supply, 10, 'combined-utility', log);
+    }
+
+    protected consume(creep: Creep): void {
+        // Force to stick around controller
+        const range = creep.room.controller ? Math.min(10, 2 * creep.pos.getRangeTo(creep.room.controller)) : 15;
+        this.consumeFromRepo(creep, this.combined, 'consume', RESOURCE_ENERGY, undefined, range);
+    }
+
+    public run(creep: Creep): void {
+        this.log.debug(creep.room, `Running upgrader storage`);
+        super.run(creep);
+    }
+
+}
+
+profiler.registerClass(UpgraderSupplyRole, 'UpgraderSupplyRole');
