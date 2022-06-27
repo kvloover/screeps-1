@@ -88,42 +88,56 @@ export class ConstructionController implements Controller {
                     const key = <BuildableStructureConstant>kv[0];
                     const vals: RoomObjectMemory<BuildableStructureConstant>[] = kv[1];
 
-                    if (vals)
-                        vals.filter(v => !constructionIds.some(i => i == v.id))
-                            .forEach(v => {
-                                const res = room.lookAt(v.pos)
-                                    .find(i => i.structure && i.structure.structureType == key);
+                    if (vals) {
+                        this.checkConstructions(room, key, vals, constructionIds);
+                    }
 
-                                if (res && res.structure) {
-                                    // Add to structures heap
-                                    initHeapMemory(room.name, key);
-                                    const item = this.createObjectRef(res.structure) as any; // TODO fix
-                                    if (item && global.refs && global.refs[room.name]) {
-                                        const objs = global.refs[room.name].objects;
-                                        if (objs && objs[key]) {
-                                            objs[key]?.push(item);
-                                        }
-                                    }
-
-                                    // Set initial memory in Memory.room
-                                    const initial = this.initalizers.find(i => i.type == key);
-                                    if (initial) {
-                                        initObjectMemory(room.memory, key);
-                                        const mem = initial.create(room, res.structure);
-                                        if (mem && room.memory.objects) { room.memory.objects[key]?.push(mem as any); }
-                                    }
-
-                                    // Side effects
-                                    const onCreate = this.onCreates.filter(i => i.type == key);
-                                    onCreate.forEach(effect => res.structure ? effect.onCreate(room, res.structure) : {});
-
-                                    // remove from construtions
-                                    _.remove(vals, i => i.id == v.id);
-                                }
-                            })
                 });
         }
 
+    }
+
+    private checkConstructions(
+        room: Room,
+        key: BuildableStructureConstant,
+        vals: RoomObjectMemory<BuildableStructureConstant>[],
+        knownInConstruction: Id<ConstructionSite<BuildableStructureConstant>>[]
+    ) {
+        vals.filter(v => !knownInConstruction.some(i => i == v.id))
+            .forEach(v => {
+
+                const lookAt = room.lookAt(v.pos.x, v.pos.y);
+                const res = lookAt.find(i => i.structure && i.structure.structureType == key);
+
+                if (res && res.structure) {
+                    // Add to structures heap
+                    initHeapMemory(room.name, key);
+                    const item = this.createObjectRef(res.structure) as any; // TODO fix
+                    if (item && global.refs && global.refs[room.name]) {
+                        const objs = global.refs[room.name].objects;
+                        if (objs && objs[key]) {
+                            objs[key]?.push(item);
+                        }
+                    }
+
+                    // Set initial memory in Memory.room
+                    console.log(`constructed ${key}`)
+                    const initial = this.initalizers.find(i => i.type == key);
+                    if (initial) {
+                        console.log(`initializing ${key}`)
+                        initObjectMemory(room.memory, key);
+                        const mem = initial.create(room, res.structure);
+                        if (mem && room.memory.objects) { room.memory.objects[key]?.push(mem as any); }
+                    }
+
+                    // Side effects
+                    const onCreate = this.onCreates.filter(i => i.type == key);
+                    onCreate.forEach(effect => res.structure ? effect.onCreate(room, res.structure) : {});
+
+                    // remove from construtions
+                    _.remove(vals, i => i.id == v.id);
+                }
+            })
     }
 
     private createConstructionRef<T extends BuildableStructureConstant>(s: ConstructionSite<T>): RoomObjectMemory<T> {
