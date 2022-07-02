@@ -41,7 +41,8 @@ export class TerminalManager implements Manager {
 
         if (isTerminal(terminal) && terminal.cooldown == 0 && order.amount) {
             // estimation => over estimate cost slightly so free will be added automaticly
-            const cost = 1.05 * Game.market.calcTransactionCost(order.amount, terminal.room.name, order.room);
+            const roomRelCost = Math.log(0.1 * Game.map.getRoomLinearDistance(terminal.room.name, order.room) + 0.9) + 0.1
+            const cost = 1.01 * Math.ceil(order.amount * roomRelCost);
 
             // Assign free amount
             const avail = this.exchange.getForRequester(terminal.id, RESOURCE_ENERGY).filter(r => !r.executer);
@@ -56,6 +57,7 @@ export class TerminalManager implements Manager {
             for (const free of avail) {
                 if (free.amount) {
                     this.exchange.linkTask(terminal.id, free);
+                    linkedTasks.push(free);
                     if (free.amount < remainder) {
                         remainder -= free.amount;
                         useable += free.amount;
@@ -66,13 +68,14 @@ export class TerminalManager implements Manager {
                         remainder = 0;
                         break;
                     }
-                    linkedTasks.push(free);
                 }
             }
 
             const sending = remainder > 0
-                ? Math.floor(0.95 * useable / (1 + (Math.log(0.1 * Game.map.getRoomLinearDistance(terminal.room.name, order.room) + 0.9) + 0.1)))
+                ? Math.floor(0.99 * useable / (1 + roomRelCost))
                 : order.amount;
+
+            console.log(`useable ${useable} - remainder ${remainder} - sending ${sending} - relCost ${roomRelCost}`);
 
             // const sending = order.amount - remainder;
             if (sending > 0) {
@@ -85,7 +88,7 @@ export class TerminalManager implements Manager {
                     linkedTasks.forEach(tsk => this.exchange.removeById(tsk.id));
                     this.request.removeById(order.id);
 
-                    console.log(`sending ${sending}`);
+                    console.log(`sent ${sending}`);
                     return;
                 }
 

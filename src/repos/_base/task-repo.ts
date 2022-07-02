@@ -110,17 +110,20 @@ export abstract class BaseRepo<T extends Task> implements TaskRepo<T>{
             requesters.forEach(req => {
                 const requests = nonExecuters.filter(r => r.requester === req);
                 const types = _.unique(requests.map(i => i.type));
+                const prios = _.unique(requests.map(i => i.prio));
                 types.forEach(type => {
-                    const typReq = requests.filter(r => r.type === type);
-                    if (typReq.length > 1) {
-                        // remove all, reduce all to one and re-add
-                        this.tasks = _.difference(this.tasks, typReq);
-                        const record = typReq.reduce((prev: T, curr: T) => {
-                            if (prev.amount) prev.amount += curr.amount ?? 0;
-                            return prev;
-                        })
-                        this.add(record);
-                    }
+                    prios.forEach(prio => {
+                        const typReq = requests.filter(r => r.type === type && r.prio == prio);
+                        if (typReq.length > 1) {
+                            // remove all, reduce all to one and re-add
+                            this.tasks = _.difference(this.tasks, typReq);
+                            const record = typReq.reduce((prev: T, curr: T) => {
+                                if (prev.amount) prev.amount += curr.amount ?? 0;
+                                return prev;
+                            })
+                            this.add(record);
+                        }
+                    });
                 });
             })
         }

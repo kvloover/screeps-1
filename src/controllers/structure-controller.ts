@@ -48,7 +48,7 @@ export class StructuresController implements Controller {
         [STRUCTURE_STORAGE, { prio: 3, check: this.NONPRIO, under_emergency: this.NON_PRIO_UNDER_EMERGENCY, target: 1.00, emergency: 0.50, max: 1.00 }],
         [STRUCTURE_CONTAINER, { prio: 4, check: 2500, under_emergency: 10000, target: 0.80, emergency: 0.20, max: 1.00 }],
         [STRUCTURE_EXTENSION, { prio: 4, check: this.NONPRIO, under_emergency: this.NON_PRIO_UNDER_EMERGENCY, target: 1.00, emergency: 0.0, max: 1.00 }],
-        [STRUCTURE_ROAD, { prio: 5, check: 5000, under_emergency: 5000, target: 0.80, emergency: 0.20, max: 1.00 }],
+        [STRUCTURE_ROAD, { prio: 5, check: 1000, under_emergency: 1000, target: 0.80, emergency: 0.20, max: 1.00 }],
         [STRUCTURE_WALL, { prio: 6, check: 5000, under_emergency: 5, target: 0.0004, emergency: 0.0002, max: 1.00 }],
         // Other loss: (TODO during emergency)
         [STRUCTURE_LINK, { prio: 6, check: this.NONPRIO, under_emergency: this.NON_PRIO_UNDER_EMERGENCY, target: 1.00, emergency: 0.0, max: 1.00 }],
