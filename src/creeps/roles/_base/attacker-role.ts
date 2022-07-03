@@ -18,14 +18,14 @@ export abstract class AttackerRole {
             if (creep.memory.targetId && hostiles.some(i => i.id == creep.memory.targetId)) {
                 const hostile = Game.getObjectById(creep.memory.targetId) as Creep;
                 if (this.attack(creep, hostile) == ERR_NOT_IN_RANGE) {
-                    this.pathing.moveTo(creep, hostile.pos);
+                    this.pathing.moveTo(creep, hostile.pos, true);
                 }
             } else {
                 const hostile = this.pathing.findClosestOf(creep, hostiles);
                 if (hostile) {
                     creep.memory.targetId = hostile.id;
                     if (this.attack(creep, hostile) == ERR_NOT_IN_RANGE) {
-                        this.pathing.moveTo(creep, hostile.pos);
+                        this.pathing.moveTo(creep, hostile.pos, true);
                     }
                 }
             }
@@ -38,14 +38,14 @@ export abstract class AttackerRole {
                 if (creep.memory.targetId && hostileStruct.some(i => i.id == creep.memory.targetId)) {
                     const hostile = Game.getObjectById(creep.memory.targetId) as AnyOwnedStructure;
                     if (this.attack(creep, hostile) == ERR_NOT_IN_RANGE) {
-                        this.pathing.moveTo(creep, hostile.pos);
+                        this.pathing.moveTo(creep, hostile.pos, true);
                     }
                 } else {
                     const hostile = this.pathing.findClosestOf(creep, hostileStruct);
                     if (hostile) {
                         creep.memory.targetId = hostile.id;
                         if (this.attack(creep, hostile) == ERR_NOT_IN_RANGE) {
-                            this.pathing.moveTo(creep, hostile.pos);
+                            this.pathing.moveTo(creep, hostile.pos, true);
                         }
                     }
                 }
@@ -57,18 +57,18 @@ export abstract class AttackerRole {
 
                     creep.memory.targetId = controller.id;
                     if (this.attack(creep, controller) == ERR_NOT_IN_RANGE) {
-                        this.pathing.moveTo(creep, controller.pos);
+                        this.pathing.moveTo(creep, controller.pos, true);
                     }
 
                 } else {
 
                     if (creep.memory.target) {
-                        this.pathing.moveTo(creep, creep.memory.target);
+                        this.pathing.moveTo(creep, creep.memory.target, true);
                     } else {
                         const flag = creep.room.find(FIND_FLAGS, { filter: (fl) => fl.name.startsWith('Guardian') });
                         if (flag && flag.length > 0) {
                             creep.memory.target = flag[0].pos;
-                            this.pathing.moveTo(creep, flag[0].pos);
+                            this.pathing.moveTo(creep, flag[0].pos, true);
                         }
                     }
 
