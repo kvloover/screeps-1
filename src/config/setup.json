@@ -442,8 +442,8 @@
                 "count": 4,
                 "condition": "drain",
                 "template": {
-                    "tough": 40,
-                    "move": 10
+                    "tough": 33,
+                    "move": 17
                 }
             },
             {
@@ -616,8 +616,8 @@
                 "count": 2,
                 "condition": "drain",
                 "template": {
-                    "tough": 40,
-                    "move": 10
+                    "tough": 33,
+                    "move": 17
                 }
             },
             {
@@ -772,6 +772,16 @@
                     "move": 9,
                     "ranged_attack": 8,
                     "heal": 15
+                }
+            },
+            {
+                "role": "drain",
+                "priority": 1,
+                "count": 2,
+                "condition": "drain",
+                "template": {
+                    "tough": 33,
+                    "move": 17
                 }
             },
             {

@@ -53,7 +53,7 @@ export class DrainRole implements Role {
 
     public drain(creep: Creep): void {
         if (creep.memory.targetRoom) {
-            creep.travelTo(new RoomPosition(25, 25, creep.memory.targetRoom), { range: 22, allowHostile: true });
+            creep.travelTo(new RoomPosition(25, 25, creep.memory.targetRoom), { range: 23, allowHostile: true });
         }
     }
 
