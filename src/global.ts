@@ -27,6 +27,7 @@ declare global {
         remote_mining: boolean;
         remote_attack: boolean;
         claim: boolean;
+        drain: boolean;
 
         supply: boolean;
         request: boolean;

@@ -24,6 +24,7 @@ export class ExConsole {
             remote_attack: (m, v) => ExConsole.toggle(m, 'remote_attack', v),
             remote_mining: (m, v) => ExConsole.toggle(m, 'remote_mining', v),
             claim: (m, v) => ExConsole.toggle(m, 'claim', v),
+            drain: (m, v) => ExConsole.toggle(m, 'drain', v),
 
             init_links: ExConsole.init_links,
             init_towers: ExConsole.init_towers,
@@ -223,6 +224,7 @@ declare global {
             remote_attack: (roomName: string, value: boolean | undefined) => string;
             remote_mining: (roomName: string, value: boolean | undefined) => string;
             claim: (roomName: string, value: boolean | undefined) => string;
+            drain: (roomName: string, value: boolean | undefined) => string;
 
             // Init
             init_links: (room: string) => string;
