@@ -6,22 +6,14 @@ import { Role } from "../role-registry";
 import profiler from "screeps-profiler";
 
 @singleton()
-export class DrainRole implements Role {
+export class HealerRole implements Role {
 
-    name = 'drain';
+    name = 'healer';
     phase = { start: 1, end: 9 };
 
     constructor(private pathing: Pathing) { }
 
     public run(creep: Creep): void {
-
-        if (!creep.memory.targetRoom) {
-            // get setting on room:
-            if (Memory.rooms[creep.memory.room]) {
-                const target = Memory.rooms[creep.memory.room].attack;
-                creep.memory.targetRoom = target;
-            }
-        }
 
         if (!creep.memory.staging) {
             // get setting on room:
@@ -31,14 +23,18 @@ export class DrainRole implements Role {
             }
         }
 
-        if (creep.hits > 0.5 * creep.hitsMax) {
-            if (creep.memory.targetRoom) {
-                creep.travelTo(new RoomPosition(25, 25, creep.memory.targetRoom), { range: 22, allowHostile: true });
-            }
-        } else {
-            if (creep.memory.staging) {
-                if (creep.room.name != creep.memory.staging) {
-                    this.pathing.scoutRoom(creep, creep.memory.staging, true);
+        if (creep.memory.staging) {
+            if (creep.room.name != creep.memory.staging) {
+                this.pathing.scoutRoom(creep, creep.memory.staging, true);
+            } else {
+                // find heal target
+
+                const hurt = creep.room.find(FIND_MY_CREEPS, { filter: c => c.hits < c.hitsMax });
+                if (hurt.length > 0) {
+                    const closest = hurt.sort((a, b) => a.pos.getRangeTo(creep) - b.pos.getRangeTo(creep))[0];
+                    if (creep.heal(closest) == ERR_NOT_IN_RANGE) {
+                        this.pathing.moveTo(creep, closest.pos, true);
+                    }
                 } else {
                     if (creep.memory.target) {
                         this.pathing.moveTo(creep, creep.memory.target, true);
@@ -52,8 +48,7 @@ export class DrainRole implements Role {
                 }
             }
         }
-
     }
 }
 
-profiler.registerClass(DrainRole, 'DrainRole');
+profiler.registerClass(HealerRole, 'HealerRole');

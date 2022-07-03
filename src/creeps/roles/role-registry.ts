@@ -13,6 +13,7 @@ import { BuilderSourceRole, BuilderStorageRole, RemoteBuilderSourceRole, RemoteB
 import { HaulerDropsRole, HaulerMidstreamRole, HaulerStorageRole } from "./hauler/hauler-service";
 import { FillerLinkRole, FillerStorageRole, FillerSupplierRole } from "./filler/filler-service";
 import { DrainRole } from "./attacker/drain-role";
+import { HealerRole } from "./attacker/healer-role";
 
 export interface Role {
     name: string;
@@ -45,6 +46,7 @@ export interface Role {
     { token: Roles.token, useToken: FillerStorageRole },
     { token: Roles.token, useToken: FillerLinkRole },
     { token: Roles.token, useToken: DrainRole },
+    { token: Roles.token, useToken: HealerRole },
 ])
 export abstract class Roles {
     static readonly token = Symbol('Role');

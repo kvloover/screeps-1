@@ -427,6 +427,16 @@
                 }
             },
             {
+                "role": "healer",
+                "priority": 1,
+                "count": 2,
+                "condition": "healer",
+                "template": {
+                    "heal": 8,
+                    "move": 2
+                }
+            },
+            {
                 "role": "drain",
                 "priority": 1,
                 "count": 4,
@@ -591,9 +601,19 @@
                 }
             },
             {
+                "role": "healer",
+                "priority": 1,
+                "count": 2,
+                "condition": "healer",
+                "template": {
+                    "heal": 8,
+                    "move": 2
+                }
+            },
+            {
                 "role": "drain",
                 "priority": 1,
-                "count": 4,
+                "count": 2,
                 "condition": "drain",
                 "template": {
                     "tough": 40,

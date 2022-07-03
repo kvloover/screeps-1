@@ -17,8 +17,10 @@ declare global {
 
     interface RoomMemory {
         stage: number;
+
         remote: string | undefined;
         attack: string | undefined;
+        staging: string | undefined;
         conquer: string | undefined;
 
         debug: boolean;
@@ -28,6 +30,7 @@ declare global {
         remote_attack: boolean;
         claim: boolean;
         drain: boolean;
+        healer: boolean;
 
         supply: boolean;
         request: boolean;
@@ -43,6 +46,7 @@ declare global {
 
         state: CreepState;
         started: number;
+        staging: string | undefined;
         targetRoom: undefined | string;
         targetId: undefined | Id<_HasId>;
         target: undefined | RoomPosition;

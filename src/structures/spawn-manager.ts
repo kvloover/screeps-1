@@ -119,6 +119,7 @@ export class SpawnManager implements Manager {
             state: CreepState.idle,
             room: spawn.room.name,
             targetRoom: undefined,
+            staging: undefined,
             targetId: undefined,
             target: undefined,
             tasks: {},

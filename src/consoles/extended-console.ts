@@ -11,13 +11,14 @@ export class ExConsole {
 
             gc: ExConsole.gc,
 
-            debug: ExConsole.debug,
-            stopDebug: ExConsole.stopDebug,
             reset: ExConsole.reset,
+            debug: (m) => ExConsole.toggle(m, 'debug', true),
+            stopDebug: (m) => ExConsole.toggle(m, 'debug', false),
 
-            remote: ExConsole.remote,
-            attack: ExConsole.attack,
-            conquer: ExConsole.conquer,
+            remote: (m, v) => ExConsole.toggle(m, 'remote', v),
+            attack: (m, v) => ExConsole.toggle(m, 'attack', v),
+            conquer: (m, v) => ExConsole.toggle(m, 'conquer', v),
+            staging: (m, v) => ExConsole.toggle(m, 'staging', v),
 
             upgrading: (m, v) => ExConsole.toggle(m, 'upgrading', v),
             building: (m, v) => ExConsole.toggle(m, 'building', v),
@@ -25,6 +26,7 @@ export class ExConsole {
             remote_mining: (m, v) => ExConsole.toggle(m, 'remote_mining', v),
             claim: (m, v) => ExConsole.toggle(m, 'claim', v),
             drain: (m, v) => ExConsole.toggle(m, 'drain', v),
+            healer: (m, v) => ExConsole.toggle(m, 'healer', v),
 
             init_links: ExConsole.init_links,
             init_towers: ExConsole.init_towers,
@@ -63,46 +65,6 @@ export class ExConsole {
     static gc(): string {
         GarbageCollector.gc();
         return `Garbage collected`
-    }
-
-    static debug(roomName: string): string {
-        if (Memory.rooms.hasOwnProperty(roomName)) {
-            Memory.rooms[roomName].debug = true;
-            return `Enabled debugging for ${roomName}.`;
-        }
-        return `Room not known: ${roomName}`
-    }
-
-    static stopDebug(roomName: string): string {
-        if (Memory.rooms.hasOwnProperty(roomName)) {
-            Memory.rooms[roomName].debug = false;
-            return `Disabled debugging for ${roomName}.`;
-        }
-        return `Room not known: ${roomName}`
-    }
-
-    static remote(roomName: string, value: string | undefined): string {
-        if (Memory.rooms.hasOwnProperty(roomName)) {
-            Memory.rooms[roomName].remote = value;
-            return `Remote set for ${roomName}.`;
-        }
-        return `Room not known: ${roomName}`
-    }
-
-    static attack(roomName: string, value: string | undefined): string {
-        if (Memory.rooms.hasOwnProperty(roomName)) {
-            Memory.rooms[roomName].attack = value;
-            return `Attack set for ${roomName}.`;
-        }
-        return `Room not known: ${roomName}`
-    }
-
-    static conquer(roomName: string, value: string | undefined): string {
-        if (Memory.rooms.hasOwnProperty(roomName)) {
-            Memory.rooms[roomName].conquer = value;
-            return `Conquer set for ${roomName}.`;
-        }
-        return `Room not known: ${roomName}`
     }
 
     // TODO rework
@@ -184,7 +146,7 @@ export class ExConsole {
         return `Room not known: ${roomName}`
     }
 
-    private static toggle(roomName: string, key: keyof RoomMemory, value: boolean | undefined): string {
+    private static toggle(roomName: string, key: keyof RoomMemory, value: any): string {
         if (Memory.rooms.hasOwnProperty(roomName)) {
             const room = Memory.rooms[roomName];
             (room as any)[key] = value;
@@ -217,6 +179,7 @@ declare global {
             remote: (room: string, value: string | undefined) => string;
             attack: (room: string, value: string | undefined) => string;
             conquer: (room: string, value: string | undefined) => string;
+            staging: (room: string, value: string | undefined) => string;
 
             // Toggles
             building: (roomName: string, value: boolean | undefined) => string;
@@ -225,6 +188,7 @@ declare global {
             remote_mining: (roomName: string, value: boolean | undefined) => string;
             claim: (roomName: string, value: boolean | undefined) => string;
             drain: (roomName: string, value: boolean | undefined) => string;
+            healer: (roomName: string, value: boolean | undefined) => string;
 
             // Init
             init_links: (room: string) => string;
