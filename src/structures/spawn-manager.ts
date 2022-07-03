@@ -10,6 +10,7 @@ import { config, roleConfig, stageConfig } from "../config/config";
 
 import profiler from "screeps-profiler";
 import { initObjectMemory } from "structures/memory/structure-memory";
+import { forEach } from "lodash";
 
 @singleton()
 export class SpawnManager implements Manager {
@@ -41,13 +42,15 @@ export class SpawnManager implements Manager {
 
         const spawns =  room.memory.objects?.spawn;
         if (spawns && spawns.length > 0) {
-            // TODO multiple spawns
-            const spawn = Game.getObjectById(spawns[0].id) as StructureSpawn;
-            if (spawn) {
-                if (spawn.spawning) {
-                    this.reportSpawning(room, spawn);
-                } else {
-                    this.trySpawn(room, spawn);
+
+            for (let spawnMem of spawns) {
+                const spawn = Game.getObjectById(spawnMem.id) as StructureSpawn;
+                if (spawn) {
+                    if (spawn.spawning) {
+                        this.reportSpawning(room, spawn);
+                    } else {
+                        this.trySpawn(room, spawn);
+                    }
                 }
             }
         }
