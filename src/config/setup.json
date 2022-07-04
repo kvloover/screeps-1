@@ -741,6 +741,16 @@
                     "work": 6,
                     "move": 8
                 }
+            },
+            {
+                "role": "remote-hauler",
+                "priority": 9,
+                "count": 1,
+                "condition": "remote_hauler",
+                "template": {
+                    "carry": 20,
+                    "move": 20
+                }
             }
         ]
     },
