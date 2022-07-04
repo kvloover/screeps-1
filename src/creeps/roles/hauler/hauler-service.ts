@@ -108,7 +108,6 @@ export class HaulerStorageRole extends HaulerRole {
 
 }
 
-
 profiler.registerClass(HaulerStorageRole, 'HaulerStorageRole');
 
 @singleton()
@@ -136,6 +135,17 @@ export class RemoteHaulerStorageRole extends HaulerRole {
 
         this.log.debug(creep.room, `Running remote hauler storage`);
         super.run(creep);
+    }
+
+    protected override consume(creep: Creep): void {
+        if (creep.memory.targetRoom
+            && creep.memory.targetRoom != creep.room.name
+            && !Game.rooms.hasOwnProperty(creep.memory.targetRoom)) {
+            this.log.debug(creep.room, `scouting room ${creep.memory.targetRoom}`);
+            this.pathing.scoutRoom(creep, creep.memory.targetRoom);
+        } else {
+            super.consume(creep);
+        }
     }
 
     protected override findConsume(creep: Creep, type: ResourceConstant | undefined = undefined): boolean {
