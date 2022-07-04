@@ -17,13 +17,13 @@ export const isResourceConstant =
   (item: any): item is ResourceConstant => isDefined((item as ResourceConstant))
 
 export const isController =
-  (item: any): item is StructureController => isDefined((item as StructureController)?.id)
+  (item: any): item is StructureController => isDefined((item as StructureController)?.progress)
 
 export const isStructure =
-  (item: any): item is Structure => isDefined((item as Structure)?.id)
+  (item: any): item is Structure => isDefined((item as Structure)?.structureType)
 
 export const isOwnStructure =
-  (item: any): item is OwnedStructure => isDefined((item as OwnedStructure)?.id)
+  (item: any): item is OwnedStructure => isDefined((item as OwnedStructure)?.my)
 
 export const isStoreStructure =
   (item: any): item is AnyStoreStructure => isDefined((item as AnyStoreStructure)?.store);

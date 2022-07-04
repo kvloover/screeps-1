@@ -37,10 +37,12 @@ export class DrainRole implements Role {
         }
 
         if (creep.hits > 0.9 * creep.hitsMax) {
+            if (creep.memory.state != CreepState.attack) { creep.memory.target = undefined; }
             creep.memory.state = CreepState.attack
         }
 
         if (creep.hits < 0.6 * creep.hitsMax) {
+            if (creep.memory.state != CreepState.heal) { creep.memory.target = undefined; }
             creep.memory.state = CreepState.heal
         }
 
@@ -53,7 +55,19 @@ export class DrainRole implements Role {
 
     public drain(creep: Creep): void {
         if (creep.memory.targetRoom) {
-            creep.travelTo(new RoomPosition(25, 25, creep.memory.targetRoom), { range: 23, allowHostile: true });
+            if (creep.memory.targetRoom !== creep.room.name) {
+                creep.travelTo(new RoomPosition(25, 25, creep.memory.targetRoom), { range: 23, allowHostile: true });
+            } else {
+                if (creep.memory.target) {
+                    this.pathing.moveTo(creep, creep.memory.target, true);
+                } else {
+                    const flag = creep.room.find(FIND_FLAGS, { filter: (fl) => fl.name.startsWith('Drain') });
+                    if (flag && flag.length > 0) {
+                        creep.memory.target = flag[0].pos;
+                        this.pathing.moveTo(creep, flag[0].pos, true);
+                    }
+                }
+            }
         }
     }
 

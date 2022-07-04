@@ -626,10 +626,9 @@
                 "count": 2,
                 "condition": "remote_attack",
                 "template": {
-                    "tough": 6,
-                    "move": 4,
-                    "ranged_attack": 5,
-                    "heal": 5
+                    "move": 11,
+                    "ranged_attack": 10,
+                    "heal": 1
                 }
             },
             {
@@ -790,10 +789,9 @@
                 "count": 2,
                 "condition": "remote_attack",
                 "template": {
-                    "tough": 10,
-                    "move": 9,
-                    "ranged_attack": 8,
-                    "heal": 15
+                    "move": 24,
+                    "ranged_attack": 24,
+                    "heal": 1
                 }
             },
             {
