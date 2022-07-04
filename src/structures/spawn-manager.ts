@@ -34,13 +34,13 @@ export class SpawnManager implements Manager {
             && (!cfg.condition || (room.memory.hasOwnProperty(cfg.condition) && (room.memory as any)[cfg.condition]))
             && (roomCreeps?.filter(c => c.memory.role === cfg.role
                 && (!c.ticksToLive // spawning
-                    || c.ticksToLive > 100
+                    || c.ticksToLive > c.body.length * 3
                 ))?.length < cfg.count);
     }
 
     protected manageSpawns(room: Room): void {
 
-        const spawns =  room.memory.objects?.spawn;
+        const spawns = room.memory.objects?.spawn;
         if (spawns && spawns.length > 0) {
 
             for (let spawnMem of spawns) {
