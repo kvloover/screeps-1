@@ -71,7 +71,7 @@ export abstract class HaulerRole extends TransferRole implements Role {
     }
 
     protected findHaulConsume(creep: Creep, type: ResourceConstant | undefined = undefined, room: string | undefined = undefined): boolean {
-        const task = this.findAndRegisterTask(creep, this.providers, 'consume', creep.store.getCapacity(type), type);
+        const task = this.findAndRegisterTask(creep, this.providers, 'consume', creep.store.getCapacity(type), type, room);
         if (!task) {
             const supply = creep.memory.tasks['supply'];
             if (supply && Game.time - supply.tick > 5) {
