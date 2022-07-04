@@ -59,7 +59,9 @@ export class DrainRole implements Role {
                 creep.travelTo(new RoomPosition(25, 25, creep.memory.targetRoom), { range: 23, allowHostile: true });
             } else {
                 if (creep.memory.target) {
-                    this.pathing.moveTo(creep, creep.memory.target, true);
+                    if (creep.pos.getRangeTo(creep.memory.target) > 2) {
+                        this.pathing.moveTo(creep, creep.memory.target, true);
+                    }
                 } else {
                     const flag = creep.room.find(FIND_FLAGS, { filter: (fl) => fl.name.startsWith('Drain') });
                     if (flag && flag.length > 0) {
@@ -77,7 +79,9 @@ export class DrainRole implements Role {
                 this.pathing.scoutRoom(creep, creep.memory.staging, true);
             } else {
                 if (creep.memory.target) {
-                    this.pathing.moveTo(creep, creep.memory.target, true);
+                    if (creep.pos.getRangeTo(creep.memory.target) > 2) {
+                        this.pathing.moveTo(creep, creep.memory.target, true);
+                    }
                 } else {
                     const flag = creep.room.find(FIND_FLAGS, { filter: (fl) => fl.name.startsWith('Staging') });
                     if (flag && flag.length > 0) {

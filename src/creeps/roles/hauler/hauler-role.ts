@@ -47,15 +47,8 @@ export abstract class HaulerRole extends TransferRole implements Role {
         const type = supplyTask.task.type;
         // will look for a new consume task
         if (!creep.memory.tasks['consume']) {
-            const task = this.findAndRegisterTask(creep, this.providers, 'consume', creep.store.getCapacity(type), type);
-            if (!task) {
-                const supply = creep.memory.tasks['supply'];
-                if (supply && Game.time - supply.tick > 5) {
-                    this.log.debug(creep.room, `${creep.name} - timeout supply task`)
-                    this.unlinkSupply(creep);
-                    this.setState(creep, CreepState.idle);
-                    return;
-                }
+            if (!this.findConsume(creep, type)) {
+                return;
             }
         }
 
@@ -63,12 +56,34 @@ export abstract class HaulerRole extends TransferRole implements Role {
     }
 
     protected override findSupply(creep: Creep): boolean {
+        return this.findHaulSupply(creep);
+    }
+
+    protected findConsume(creep: Creep, type: ResourceConstant | undefined = undefined): boolean {
+        return this.findHaulConsume(creep, type);
+    }
+
+    protected findHaulSupply(creep: Creep, room: string | undefined = undefined): boolean {
         this.log.debug(creep.room, `${creep.name}: searching for supply`);
         // check if we can find anything to supply and register it on the creep for use
-        let task = this.findAndRegisterTask(creep, this.demands, 'supply', creep.store.getCapacity());
-        if (!isDefined(task) && creep.room.memory.remote)
-            task = this.findAndRegisterTask(creep, this.demands, 'supply', creep.store.getCapacity(), undefined, creep.room.memory.remote);
+        let task = this.findAndRegisterTask(creep, this.demands, 'supply', creep.store.getCapacity(), undefined, room);
         return isDefined(task);
+    }
+
+    protected findHaulConsume(creep: Creep, type: ResourceConstant | undefined = undefined, room: string | undefined = undefined): boolean {
+        const task = this.findAndRegisterTask(creep, this.providers, 'consume', creep.store.getCapacity(type), type);
+        if (!task) {
+            const supply = creep.memory.tasks['supply'];
+            if (supply && Game.time - supply.tick > 5) {
+                this.log.debug(creep.room, `${creep.name} - timeout supply task`)
+                this.unlinkSupply(creep);
+                this.setState(creep, CreepState.idle);
+                return false;
+            }
+            return false;
+        } else {
+            return true;
+        }
     }
 
     protected override getStoreCheckType(creep: Creep): ResourceConstant | undefined {

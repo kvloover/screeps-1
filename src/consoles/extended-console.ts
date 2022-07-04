@@ -24,6 +24,7 @@ export class ExConsole {
             building: (m, v) => ExConsole.toggle(m, 'building', v),
             remote_attack: (m, v) => ExConsole.toggle(m, 'remote_attack', v),
             remote_mining: (m, v) => ExConsole.toggle(m, 'remote_mining', v),
+            remote_hauler: (m, v) => ExConsole.toggle(m, 'remote_hauler', v),
             claim: (m, v) => ExConsole.toggle(m, 'claim', v),
             drain: (m, v) => ExConsole.toggle(m, 'drain', v),
             healer: (m, v) => ExConsole.toggle(m, 'healer', v),
@@ -186,6 +187,7 @@ declare global {
             upgrading: (roomName: string, value: boolean | undefined) => string;
             remote_attack: (roomName: string, value: boolean | undefined) => string;
             remote_mining: (roomName: string, value: boolean | undefined) => string;
+            remote_hauler: (roomName: string, value: boolean | undefined) => string;
             claim: (roomName: string, value: boolean | undefined) => string;
             drain: (roomName: string, value: boolean | undefined) => string;
             healer: (roomName: string, value: boolean | undefined) => string;

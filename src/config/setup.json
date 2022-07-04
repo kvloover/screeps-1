@@ -307,8 +307,8 @@
                 "condition": "remote_attack",
                 "template": {
                     "tough": 5,
-                    "move": 3,
                     "ranged_attack": 4,
+                    "move": 3,
                     "heal": 2
                 }
             },
@@ -437,28 +437,6 @@
                 }
             },
             {
-                "role": "drain",
-                "priority": 1,
-                "count": 4,
-                "condition": "drain",
-                "template": {
-                    "tough": 33,
-                    "move": 17
-                }
-            },
-            {
-                "role": "remote-attacker",
-                "priority": 1,
-                "count": 2,
-                "condition": "remote_attack",
-                "template": {
-                    "tough": 5,
-                    "move": 5,
-                    "ranged_attack": 5,
-                    "heal": 3
-                }
-            },
-            {
                 "role": "harvester",
                 "priority": 2,
                 "count": 1,
@@ -479,7 +457,7 @@
             },
             {
                 "role": "hauler",
-                "priority": 4,
+                "priority": 3,
                 "count": 1,
                 "template": {
                     "carry": 20,
@@ -488,12 +466,34 @@
             },
             {
                 "role": "harvester",
-                "priority": 5,
+                "priority": 4,
                 "count": 2,
                 "template": {
                     "work": 6,
                     "carry": 4,
                     "move": 3
+                }
+            },
+            {
+                "role": "drain",
+                "priority": 5,
+                "count": 4,
+                "condition": "drain",
+                "template": {
+                    "tough": 33,
+                    "move": 17
+                }
+            },
+            {
+                "role": "remote-attacker",
+                "priority": 5,
+                "count": 2,
+                "condition": "remote_attack",
+                "template": {
+                    "tough": 5,
+                    "ranged_attack": 5,
+                    "move": 5,
+                    "heal": 3
                 }
             },
             {
@@ -595,40 +595,9 @@
                 "count": 3,
                 "template": {
                     "tough": 10,
-                    "move": 9,
                     "ranged_attack": 8,
+                    "move": 9,
                     "heal": 15
-                }
-            },
-            {
-                "role": "healer",
-                "priority": 1,
-                "count": 2,
-                "condition": "healer",
-                "template": {
-                    "heal": 8,
-                    "move": 2
-                }
-            },
-            {
-                "role": "drain",
-                "priority": 1,
-                "count": 2,
-                "condition": "drain",
-                "template": {
-                    "tough": 33,
-                    "move": 17
-                }
-            },
-            {
-                "role": "remote-attacker",
-                "priority": 1,
-                "count": 2,
-                "condition": "remote_attack",
-                "template": {
-                    "move": 11,
-                    "ranged_attack": 10,
-                    "heal": 1
                 }
             },
             {
@@ -652,7 +621,7 @@
             },
             {
                 "role": "hauler",
-                "priority": 4,
+                "priority": 3,
                 "count": 1,
                 "template": {
                     "carry": 20,
@@ -660,13 +629,44 @@
                 }
             },
             {
+                "role": "healer",
+                "priority": 4,
+                "count": 2,
+                "condition": "healer",
+                "template": {
+                    "heal": 8,
+                    "move": 2
+                }
+            },
+            {
                 "role": "harvester",
-                "priority": 5,
+                "priority": 4,
                 "count": 2,
                 "template": {
                     "work": 6,
                     "carry": 4,
                     "move": 3
+                }
+            },
+            {
+                "role": "drain",
+                "priority": 4,
+                "count": 2,
+                "condition": "drain",
+                "template": {
+                    "tough": 33,
+                    "move": 17
+                }
+            },
+            {
+                "role": "remote-attacker",
+                "priority": 4,
+                "count": 2,
+                "condition": "remote_attack",
+                "template": {
+                    "ranged_attack": 10,
+                    "move": 11,
+                    "heal": 1
                 }
             },
             {
@@ -774,27 +774,6 @@
                 }
             },
             {
-                "role": "drain",
-                "priority": 1,
-                "count": 2,
-                "condition": "drain",
-                "template": {
-                    "tough": 33,
-                    "move": 17
-                }
-            },
-            {
-                "role": "remote-attacker",
-                "priority": 1,
-                "count": 2,
-                "condition": "remote_attack",
-                "template": {
-                    "move": 24,
-                    "ranged_attack": 24,
-                    "heal": 1
-                }
-            },
-            {
                 "role": "harvester",
                 "priority": 2,
                 "count": 1,
@@ -815,7 +794,7 @@
             },
             {
                 "role": "hauler",
-                "priority": 4,
+                "priority": 3,
                 "count": 1,
                 "template": {
                     "carry": 20,
@@ -824,12 +803,33 @@
             },
             {
                 "role": "harvester",
-                "priority": 5,
+                "priority": 4,
                 "count": 2,
                 "template": {
                     "work": 6,
                     "carry": 4,
                     "move": 3
+                }
+            },
+            {
+                "role": "drain",
+                "priority": 5,
+                "count": 2,
+                "condition": "drain",
+                "template": {
+                    "tough": 33,
+                    "move": 17
+                }
+            },
+            {
+                "role": "remote-attacker",
+                "priority": 5,
+                "count": 2,
+                "condition": "remote_attack",
+                "template": {
+                    "ranged_attack": 24,
+                    "move": 24,
+                    "heal": 1
                 }
             },
             {
@@ -903,6 +903,16 @@
                     "carry": 10,
                     "work": 6,
                     "move": 8
+                }
+            },
+            {
+                "role": "remote-hauler",
+                "priority": 9,
+                "count": 1,
+                "condition": "remote_hauler",
+                "template": {
+                    "carry": 20,
+                    "move": 20
                 }
             }
         ]

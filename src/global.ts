@@ -26,11 +26,12 @@ declare global {
         debug: boolean;
         upgrading: boolean;
         building: boolean;
-        remote_mining: boolean;
-        remote_attack: boolean;
         claim: boolean;
         drain: boolean;
         healer: boolean;
+        remote_attack: boolean;
+        remote_mining: boolean;
+        remote_hauler: boolean;
 
         supply: boolean;
         request: boolean;
