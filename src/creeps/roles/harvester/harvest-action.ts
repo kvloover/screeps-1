@@ -10,6 +10,8 @@ export class HarvestAction {
 
     // TODO rework to unlink task for non main harvesters or allow more than budgeted on task
 
+    private key = 'harvest'
+
     constructor(private log: Logger,
         private pathing: Pathing,
         protected harvests: HarvestTaskRepo) { }
@@ -17,7 +19,17 @@ export class HarvestAction {
     public Action(creep: Creep, room?: string) {
 
         if (room && !Game.rooms.hasOwnProperty(room)) {
-            this.pathing.scoutRoom(creep, room);
+            if (creep.memory.tasks.hasOwnProperty(this.key)) {
+                const task = creep.memory.tasks[this.key]?.task;
+                if (isDefined(task) && task.pos) {
+                    this.pathing.moveTo(creep, new RoomPosition(task.pos.x, task.pos.y, task.pos.roomName));
+                } else {
+                    this.harvests.unregisterTask(creep, this.key);
+                    this.pathing.scoutRoom(creep, room);
+                }
+            } else {
+                this.pathing.scoutRoom(creep, room);
+            }
         } else {
             this.harvest(creep, room);
         }
@@ -26,9 +38,7 @@ export class HarvestAction {
 
     private harvest(creep: Creep, room?: string) {
 
-        const key = 'harvest';
-
-        if (!creep.memory.tasks.hasOwnProperty(key) || !creep.memory.tasks[key]) {
+        if (!creep.memory.tasks.hasOwnProperty(this.key) || !creep.memory.tasks[this.key]) {
             this.log.debug(creep.room, `${creep.name}: searching closest harvest task`); {
                 const tasks = this.harvests.list(room ?? creep.room.name)
                     .filter(i => !i.executer)
@@ -40,7 +50,7 @@ export class HarvestAction {
                 const task = tasks.length > 0 ? tasks[0] : undefined;
                 if (task) {
                     this.log.debug(creep.room, `${creep.name}: found new harvest task`);
-                    this.harvests.registerTask(creep, task, key);
+                    this.harvests.registerTask(creep, task, this.key);
                     creep.memory.targetId = task.requester;
                     // Mine 2 per tick per worker part
                     if (this.harvests.trySplitTask(task, 2 * creep.getActiveBodyparts(WORK)))
@@ -50,14 +60,14 @@ export class HarvestAction {
         }
 
         if (!creep.memory.targetId
-            && creep.memory.tasks.hasOwnProperty(key)) {
+            && creep.memory.tasks.hasOwnProperty(this.key)) {
             this.log.debug(creep.room, `${creep.name}: fixing targetId`);
-            const task = creep.memory.tasks[key]?.task;
+            const task = creep.memory.tasks[this.key]?.task;
             if (isDefined(task)) {
                 // Only lock on in room
                 creep.memory.targetId = task.requester;
             } else {
-                this.harvests.unregisterTask(creep, key);
+                this.harvests.unregisterTask(creep, this.key);
             }
         }
 
