@@ -53,7 +53,7 @@ export const isRemote =
   (room: Room) => Object.values(Memory.rooms).some(i => i.remote === room.name);
 
 export const parseRoomName =
-  (roomName: string): { xDir: number, x: number, yDir: number, y: number } => {
+  (roomName: string): { x: number, y: number } => {
     const coordinateRegex = /(E|W)(\d+)(N|S)(\d+)/g;
     const match = coordinateRegex.exec(roomName)!;
 
@@ -63,7 +63,7 @@ export const parseRoomName =
     const yDir = match[3] === 'S' ? 1 : -1;;
     const y = Number(match[4]);
 
-    return { xDir: xDir, x: x, yDir: yDir, y: y }
+    return { x: xDir*x, y: yDir*y }
   }
 
 export const relativeExitTo =
@@ -73,12 +73,8 @@ export const relativeExitTo =
     const current = parseRoomName(roomName);
     const dest = parseRoomName(target);
 
-    const x = current.xDir !== dest.xDir
-      ? dest.xDir
-      : dest.x > current.x ? 1 : -1;
-    const y = current.yDir !== dest.yDir
-      ? dest.yDir
-      : dest.y > current.y ? 1 : -1;
+    const x = dest.x == current.x ? 0 : dest.x > current.x ? 1 : -1;
+    const y = dest.y == current.y ? 0 : dest.y > current.y ? 1 : -1;
 
     return { xDir: x, yDir: y };
   }
