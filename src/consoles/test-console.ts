@@ -1,4 +1,5 @@
 import { Role, Roles } from "creeps/roles/role-registry";
+import { RoomPlanner } from "planner/room-planner";
 import { Persistency, Persistent } from "repos/persistent";
 import { SupplyTaskRepo } from "repos/supply-task-repo";
 import { container } from "tsyringe";
@@ -12,7 +13,8 @@ export class TestConsole {
             exitEst: TestConsole.exitEst,
             injection: TestConsole.injection,
             memory: TestConsole.memory,
-            remove: TestConsole.remove
+            remove: TestConsole.remove,
+            plan: TestConsole.plan,
         }
     }
 
@@ -46,15 +48,15 @@ export class TestConsole {
             if (mem.objects) {
                 Object.entries(mem.objects).forEach(([key, val]) => {
                     val.forEach(obj => {
-                        visual.rect(obj.pos.x, obj.pos.y, 0.5, 0.5, { stroke: "#ff00ff"});
+                        visual.rect(obj.pos.x, obj.pos.y, 0.5, 0.5, { stroke: "#ff00ff" });
                     });
                 });
             }
             const refs = global.refs ? global.refs[roomName] : undefined;
-            if (refs && refs.objects){
+            if (refs && refs.objects) {
                 Object.entries(refs.objects).forEach(([key, val]) => {
                     val.forEach(obj => {
-                        visual.circle(obj.pos.x, obj.pos.y, { stroke: "#0000ff"});
+                        visual.circle(obj.pos.x, obj.pos.y, { stroke: "#0000ff" });
                     });
                 });
             }
@@ -70,6 +72,16 @@ export class TestConsole {
 
         return 'removed'
     }
+
+    static plan(roomName: string): string {
+        if (Game.rooms.hasOwnProperty(roomName)) {
+            const room = Game.rooms[roomName];
+            container.resolve(RoomPlanner).planRoom(room);
+            return `Planned ${roomName}.`;
+        }
+        return `Room not known: ${roomName}`
+    }
+
 }
 
 const countCpu = (fn: () => void): number => {
@@ -92,6 +104,8 @@ declare global {
             memory: (room: string) => string;
 
             remove: (id: string) => string;
+
+            plan: (room: string) => string;
         }
     }
 }
