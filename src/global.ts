@@ -7,6 +7,7 @@ declare global {
 
     interface Memory {
         avoid: string[];
+        roomVisuals: boolean;
     }
 
     interface FlagMemory {
@@ -37,6 +38,8 @@ declare global {
         request: boolean;
 
         reset?: boolean;
+
+        visuals: { [key: string]: string };
     }
 
 

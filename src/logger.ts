@@ -1,4 +1,5 @@
 import { singleton } from "tsyringe";
+import { ErrorMapper } from "utils/error-mapper";
 
 @singleton()
 export class Logger {
@@ -28,7 +29,7 @@ export class Logger {
             console.log(msg ? `${msg}: ${e}` : e);
         } else if (e instanceof Error) {
             if (msg) console.log(`${msg}:`);
-            console.log(e);
+            ErrorMapper.logError(e);
         }
     }
 }

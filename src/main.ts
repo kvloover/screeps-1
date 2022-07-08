@@ -7,6 +7,8 @@ import { exportStats } from "utils/stats";
 
 import "traveller/traveler";
 import "utils/misc-hacks";
+import "utils/distance-util";
+import "utils/room-visual";
 
 import { ExConsole } from "consoles/extended-console";
 import { TestConsole } from "consoles/test-console";
