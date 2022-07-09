@@ -30,17 +30,17 @@ export const findPositionsInsideRect = function (rect: Rectangle) {
 
 export const distanceTransform =
     function (room: Room, initialCM: CostMatrix | undefined,
-        enableVisuals: boolean = false, mapSize: Rectangle = { x1: 0, y1: 0, x2: 49, y2: 49 })
+        enableVisuals: boolean = false, cutOff: number = 255, mapSize: Rectangle = { x1: 0, y1: 0, x2: 49, y2: 49 })
         : CostMatrix {
 
         // Use a costMatrix to record distances. Use the initialCM if provided, otherwise create one
-        const distanceCM = initialCM || new PathFinder.CostMatrix()
+        const distanceCM = initialCM?.clone() || new PathFinder.CostMatrix()
 
         for (let x = mapSize.x1; x <= mapSize.x2; x++) {
             for (let y = mapSize.y1; y <= mapSize.y2; y++) {
 
                 // Iterate if pos is to be avoided
-                if (distanceCM.get(x, y) == 255) continue
+                if (distanceCM.get(x, y) >= cutOff) continue
 
                 // Otherwise construct a rect and get the positions in a range of 1
                 const rect = { x1: x - 1, y1: y - 1, x2: x + 1, y2: y + 1 }
@@ -56,10 +56,7 @@ export const distanceTransform =
                     // Iterate if the value has yet to be configured
                     if (value == 0) continue
                     // If the value is to be avoided, stop the loop
-                    if (value == 255) {
-                        distanceValue = 1
-                        break
-                    }
+                    if (value >= cutOff) { distanceValue = 1; break; }
                     // Otherwise check if the depth is less than the distance value. If so make it the new distance value plus one
                     if (value < distanceValue) distanceValue = 1 + value
                 }
@@ -76,7 +73,7 @@ export const distanceTransform =
             for (let y = mapSize.y2; y >= mapSize.y1; y--) {
 
                 // Iterate if pos is to be avoided
-                if (distanceCM.get(x, y) == 255) continue
+                if (distanceCM.get(x, y) >= cutOff) continue
 
                 // Otherwise construct a rect and get the positions in a range of 1
                 const adjacentPositions = findPositionsInsideRect({ x1: x - 1, y1: y - 1, x2: x + 1, y2: y + 1 })
@@ -91,7 +88,7 @@ export const distanceTransform =
                     // Iterate if the value has yet to be configured
                     if (value == 0) { continue; }
                     // If the value is to be avoided, stop the loop
-                    if (value == 255) { distanceValue = 1; break; }
+                    if (value >= cutOff) { distanceValue = 1; break; }
                     // Otherwise check if the depth is less than the distance value. If so make it the new distance value plus one
                     if (value < distanceValue) { distanceValue = 1 + value; }
                 }
@@ -116,77 +113,77 @@ export const distanceTransform =
         return distanceCM
     }
 
-export const floodFill =
-    function (room: Room, seeds: Point[], enableVisuals: boolean = false)
-        : CostMatrix {
+// export const floodFill =
+//     function (room: Room, seeds: Point[], enableVisuals: boolean = false)
+//         : CostMatrix {
 
-        // Construct a cost matrix for the flood
-        const floodCM = new PathFinder.CostMatrix();
-        // Get the terrain cost matrix
-        const terrain = room.getTerrain();
-        // Construct a cost matrix for visited tiles and add seeds to it
-        const visitedCM = new PathFinder.CostMatrix();
+//         // Construct a cost matrix for the flood
+//         const floodCM = new PathFinder.CostMatrix();
+//         // Get the terrain cost matrix
+//         const terrain = room.getTerrain();
+//         // Construct a cost matrix for visited tiles and add seeds to it
+//         const visitedCM = new PathFinder.CostMatrix();
 
-        // Construct values for the flood
-        let depth = 0,
-            thisGeneration = seeds,
-            nextGeneration = new Array<Point>();
+//         // Construct values for the flood
+//         let depth = 0,
+//             thisGeneration = seeds,
+//             nextGeneration = new Array<Point>();
 
-        // Loop through positions of seeds
-        for (const pos of seeds) {
-            // Record the seedsPos as visited
-            visitedCM.set(pos.x, pos.y, 1);
-        }
+//         // Loop through positions of seeds
+//         for (const pos of seeds) {
+//             // Record the seedsPos as visited
+//             visitedCM.set(pos.x, pos.y, 1);
+//         }
 
-        // So long as there are positions in this gen
-        while (thisGeneration.length) {
-            // Reset next gen
-            nextGeneration = [];
+//         // So long as there are positions in this gen
+//         while (thisGeneration.length) {
+//             // Reset next gen
+//             nextGeneration = [];
 
-            // Iterate through positions of this gen
-            for (const pos of thisGeneration) {
+//             // Iterate through positions of this gen
+//             for (const pos of thisGeneration) {
 
-                // If the depth isn't 0
-                if (depth != 0) {
-                    // Iterate if the terrain is a wall
-                    if (terrain.get(pos.x, pos.y) == TERRAIN_MASK_WALL) { continue; }
-                    // Otherwise so long as the pos isn't a wall record its depth in the flood cost matrix
-                    floodCM.set(pos.x, pos.y, depth);
-                    // If visuals are enabled, show the depth on the pos
-                    if (enableVisuals && Memory.roomVisuals) {
-                        room.visual.rect(pos.x - 0.5, pos.y - 0.5, 1, 1, {
-                            fill: 'hsl(' + 200 + depth * 2 + ', 100%, 60%)',
-                            opacity: 0.4,
-                        });
-                    }
-                }
+//                 // If the depth isn't 0
+//                 if (depth != 0) {
+//                     // Iterate if the terrain is a wall
+//                     if (terrain.get(pos.x, pos.y) == TERRAIN_MASK_WALL) { continue; }
+//                     // Otherwise so long as the pos isn't a wall record its depth in the flood cost matrix
+//                     floodCM.set(pos.x, pos.y, depth);
+//                     // If visuals are enabled, show the depth on the pos
+//                     if (enableVisuals && Memory.roomVisuals) {
+//                         room.visual.rect(pos.x - 0.5, pos.y - 0.5, 1, 1, {
+//                             fill: 'hsl(' + 200 + depth * 2 + ', 100%, 60%)',
+//                             opacity: 0.4,
+//                         });
+//                     }
+//                 }
 
-                // Construct a rect and get the positions in a range of 1
-                const adjacentPositions = findPositionsInsideRect({ x1: pos.x - 1, y1: pos.y - 1, x2: pos.x + 1, y2: pos.y + 1 });
+//                 // Construct a rect and get the positions in a range of 1
+//                 const adjacentPositions = findPositionsInsideRect({ x1: pos.x - 1, y1: pos.y - 1, x2: pos.x + 1, y2: pos.y + 1 });
 
-                // Loop through adjacent positions
-                for (const adjacentPos of adjacentPositions) {
-                    // Iterate if the adjacent pos has been visited or isn't a tile
-                    if (visitedCM.get(adjacentPos.x, adjacentPos.y) == 1) { continue; }
-                    // Otherwise record that it has been visited
-                    visitedCM.set(adjacentPos.x, adjacentPos.y, 1);
-                    // Add it to the next gen
-                    nextGeneration.push(adjacentPos);
-                }
-            }
+//                 // Loop through adjacent positions
+//                 for (const adjacentPos of adjacentPositions) {
+//                     // Iterate if the adjacent pos has been visited or isn't a tile
+//                     if (visitedCM.get(adjacentPos.x, adjacentPos.y) == 1) { continue; }
+//                     // Otherwise record that it has been visited
+//                     visitedCM.set(adjacentPos.x, adjacentPos.y, 1);
+//                     // Add it to the next gen
+//                     nextGeneration.push(adjacentPos);
+//                 }
+//             }
 
-            // Set this gen to next gen
-            thisGeneration = nextGeneration;
-            // Increment depth
-            depth++;
-        }
+//             // Set this gen to next gen
+//             thisGeneration = nextGeneration;
+//             // Increment depth
+//             depth++;
+//         }
 
-        return floodCM
-    }
+//         return floodCM
+//     }
 
 export const conditionalFloodFill =
     function (room: Room, searchMatrix: CostMatrix, seeds: Point[],
-        check: (v: number) => boolean, hitByAllSeeds: boolean = false, enableVisuals: boolean = false)
+        check: (v: number) => boolean, hitByAllSeeds: boolean = false, enableVisuals: boolean = false, cutOff: number = 255)
         : Point | undefined {
 
         // Construct a cost matrix for visited tiles and add seeds to it
@@ -228,12 +225,12 @@ export const conditionalFloodFill =
                     // If visuals are enabled, show the depth on the pos
                     if (enableVisuals && Memory.roomVisuals) {
                         room.visual.rect(pos.x - 0.5, pos.y - 0.5, 1, 1, {
-                            fill: 'hsl(' + pos.seedIndex*200/(seeds.length-1) + depth * 2 + ', 100%, 60%)',
+                            fill: 'hsl(' + pos.seedIndex * 200 / (seeds.length - 1) + depth * 2 + ', 100%, 60%)',
                             opacity: 0.4,
                         });
                     }
 
-                    if (check(value)) {
+                    if (value < cutOff && check(value)) {
                         if (!hitByAllSeeds) {
                             return pos as Point;
                         }
