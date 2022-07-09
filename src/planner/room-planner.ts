@@ -18,21 +18,21 @@ export class RoomPlanner {
     private _buildingMap = new Map<StructureConstant, number>(
         [
             [STRUCTURE_ROAD, 201],
-            [STRUCTURE_SPAWN, 221],
-            [STRUCTURE_EXTENSION, 222],
-            [STRUCTURE_CONTAINER, 223],
-            [STRUCTURE_STORAGE, 224],
-            [STRUCTURE_LINK, 225],
-            [STRUCTURE_TERMINAL, 226],
-            [STRUCTURE_RAMPART, 227],
-            [STRUCTURE_WALL, 228],
-            [STRUCTURE_TOWER, 229],
-            [STRUCTURE_OBSERVER, 230],
-            [STRUCTURE_NUKER, 231],
-            [STRUCTURE_POWER_SPAWN, 232],
-            [STRUCTURE_EXTRACTOR, 233],
-            [STRUCTURE_LAB, 234],
-            [STRUCTURE_FACTORY, 235],
+            [STRUCTURE_SPAWN, 260],
+            [STRUCTURE_EXTENSION, 261],
+            [STRUCTURE_CONTAINER, 262],
+            [STRUCTURE_STORAGE, 263],
+            [STRUCTURE_LINK, 264],
+            [STRUCTURE_TERMINAL, 265],
+            [STRUCTURE_RAMPART, 266],
+            [STRUCTURE_WALL, 267],
+            [STRUCTURE_TOWER, 268],
+            [STRUCTURE_OBSERVER, 269],
+            [STRUCTURE_NUKER, 270],
+            [STRUCTURE_POWER_SPAWN, 271],
+            [STRUCTURE_EXTRACTOR, 272],
+            [STRUCTURE_LAB, 273],
+            [STRUCTURE_FACTORY, 274],
         ]);
 
 
@@ -113,6 +113,7 @@ export class RoomPlanner {
                     terrainMatrix.set(anchor.x + pos.x, anchor.y + pos.y, buildValue);
                     visual.structure(anchor.x + pos.x, anchor.y + pos.y, building[0] as StructureConstant, { opacity: 0.5 });
                 }
+                visual.connectRoads({ width: 0.2 });
             }
         }
 
@@ -123,10 +124,40 @@ export class RoomPlanner {
         visual.import(tickVisuals);
 
         if (anchor) {
+            terrainMatrix = this.planMainRoads(room, anchor, locs, terrainMatrix);
             terrainMatrix = this.planLab(room, anchor, terrainMatrix);
             terrainMatrix = this.planExtensions(room, anchor, terrainMatrix);
         }
 
+    }
+
+    private planMainRoads(room: Room, anchor: Point, locs: RoomPosition[], terrainMatrix: CostMatrix): CostMatrix {
+
+        const visual = new RoomVisual(room.name);
+        const tickVisuals = visual.export();
+        visual.clear();
+
+        const roomPos = new RoomPosition(anchor.x, anchor.y, room.name);
+        const roadValue = this._buildingMap.get(STRUCTURE_ROAD) || 254;
+        // plot roads to seed locations
+        for (const loc of locs) {
+            console.log(`plotting road to ${loc.x}, ${loc.y}`);
+            const ret = PathFinder.search(roomPos, { pos: loc, range: 2 }, { roomCallback: _ => terrainMatrix });
+            if (ret.incomplete) { continue; }
+            for (let path of ret.path) {
+                terrainMatrix.set(path.x, path.y, roadValue);
+                visual.structure(path.x, path.y, STRUCTURE_ROAD, { opacity: 0.5 });
+            }
+        }
+        visual.connectRoads({ width: 0.2 });
+
+        // store plan for keeping it visualized
+        this.drawings.persist('mains', visual);
+
+        visual.clear();
+        visual.import(tickVisuals);
+
+        return terrainMatrix;
     }
 
     private planLab(room: Room, anchor: Point, terrainMatrix: CostMatrix): CostMatrix {
@@ -163,6 +194,7 @@ export class RoomPlanner {
                     terrainMatrix.set(point.x, point.y, buildValue);
                     visual.structure(point.x, point.y, building[0] as StructureConstant, { opacity: 0.3 });
                 }
+                visual.connectRoads({ width: 0.2 });
             }
         }
 
@@ -219,6 +251,7 @@ export class RoomPlanner {
                         terrainMatrix.set(point.x, point.y, buildValue);
                         visual.structure(point.x, point.y, building[0] as StructureConstant, { opacity: 0.3 });
                     }
+                    visual.connectRoads({ width: 0.2 });
                 }
             }
             if (!center) { break; } // couldn't fit any more extensions

@@ -585,3 +585,5 @@ const STATE_DEST_ROOMNAME = 6;
 Creep.prototype.travelTo = function (destination, options) {
     return Traveler.travelTo(this, destination, options);
 };
+
+global.Traveler = Traveler;

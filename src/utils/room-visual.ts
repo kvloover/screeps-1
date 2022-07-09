@@ -535,7 +535,7 @@ RoomVisual.prototype.connectRoads = function (opts = {}) {
       if (rd) {
         this.line(r[0], r[1], c[0]!, c[1]!, {
           color: color,
-          width: 0.35,
+          width: opts.width || 0.35,
           opacity: opts.opacity || 1,
         });
       }

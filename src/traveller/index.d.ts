@@ -21,7 +21,7 @@ interface TravelToOptions {
     allowHostile?: boolean;
     allowSK?: boolean;
     range?: number;
-    obstacles?: {pos: RoomPosition}[];
+    obstacles?: { pos: RoomPosition }[];
     roomCallback?: (roomName: string, matrix: CostMatrix) => CostMatrix | boolean;
     routeCallback?: (roomName: string) => number;
     returnData?: TravelToReturnData;
@@ -34,7 +34,7 @@ interface TravelToOptions {
     stuckValue?: number;
     maxRooms?: number;
     repath?: number;
-    route?: {[roomName: string]: boolean};
+    route?: { [roomName: string]: boolean };
     ensurePath?: boolean;
 }
 
@@ -51,8 +51,14 @@ interface TravelState {
 }
 
 interface Creep {
-    travelTo(destination: HasPos|RoomPosition, ops?: TravelToOptions): number;
+    travelTo(destination: HasPos | RoomPosition, ops?: TravelToOptions): number;
 }
 
-type Coord = {x: number, y: number};
-type HasPos = {pos: RoomPosition}
+interface Traveler {
+    findTravelPath(origin: HasPos | RoomPosition, destination: HasPos | RoomPosition, options?: TravelToOptions): PathFinderPath;
+}
+
+type Coord = { x: number, y: number };
+type HasPos = { pos: RoomPosition }
+
+declare const Traveler: Traveler;
