@@ -92,7 +92,7 @@ export class RoomPlanner {
         const tickVisuals = visual.export();
         visual.clear();
 
-        const distMatrix = distanceTransform(room, terrainMatrix, distanceType.Chebyshev, true);
+        const distMatrix = distanceTransform(room, terrainMatrix, distanceType.Chebyshev, true, undefined, { x1: 2, y1: 2, x2: 47, y2: 47 });
 
         this.drawings.persist('distance', visual);
 
@@ -123,7 +123,7 @@ export class RoomPlanner {
                 }
             }
         }
-        const distMatrix = distanceTransform(room, terrainMatrix, distanceType.Chebyshev, false);
+        const distMatrix = distanceTransform(room, terrainMatrix, distanceType.Chebyshev, false, undefined, { x1: 2, y1: 2, x2: 47, y2: 47 });
 
         const visual = new RoomVisual(room.name);
         // store current visual for later
@@ -251,7 +251,7 @@ export class RoomPlanner {
 
         const data = this.getLabStamps();
 
-        const dt = distanceTransform(room, terrainMatrix, distanceType.Chebyshev, false, 220); // do not include roads
+        const dt = distanceTransform(room, terrainMatrix, distanceType.Chebyshev, false, 220, { x1: 2, y1: 2, x2: 47, y2: 47 }); // do not include roads
         let center: Point | undefined = undefined;
         for (let plan of data.plans) {
             const size = Math.max(Math.ceil((plan.size.x + 1) / 2), Math.ceil((plan.size.y + 1) / 2));
@@ -305,7 +305,7 @@ export class RoomPlanner {
         const sorted = data.plans.sort((a, b) => a.priority - b.priority);
         let extensions = 0;
         while (extensions < 50) {
-            const dt = distanceTransform(room, terrainMatrix, distanceType.Manhattan, false, 220); // do not include roads
+            const dt = distanceTransform(room, terrainMatrix, distanceType.Manhattan, false, 220, { x1: 2, y1: 2, x2: 47, y2: 47 }); // do not include roads
             let center: Point | undefined = undefined;
             let index = 0;
             while (!center && index < sorted.length) {
