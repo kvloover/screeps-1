@@ -118,7 +118,7 @@ export class RoomPlanner {
             for (let x = loc.x - 1; x <= loc.x + 1; x++) {
                 for (let y = loc.y - 1; y <= loc.y + 1; y++) {
                     if (terrainMatrix.get(x, y) < 255) {
-                        terrainMatrix.set(x, y, 254);
+                        terrainMatrix.set(x, y, 250);
                     }
                 }
             }
@@ -169,6 +169,8 @@ export class RoomPlanner {
             const labs = this.planLab(room, anchor, terrainMatrix);
             const extensions = this.planExtensions(room, anchor, terrainMatrix);
             const roads = this.planMainRoads(room, anchor, locs, terrainMatrix);
+
+            const links = this.planLinks(room, sources.map(s => s.pos), controller[0].pos, terrainMatrix);
 
             this.planPerimeter(room, labs.concat(extensions));
         }
@@ -222,13 +224,13 @@ export class RoomPlanner {
             const ret = PathFinder.search(roomPos, { pos: loc, range: 1 }, { roomCallback: _ => matrix });
             if (ret.incomplete) { continue; }
 
-            const strutures: PlannedStructure[] = [];
+            const structures: PlannedStructure[] = [];
             for (let path of ret.path) {
                 terrainMatrix.set(path.x, path.y, roadValue);
                 visual.structure(path.x, path.y, STRUCTURE_ROAD, { opacity: 0.5 });
-                strutures.push({ type: STRUCTURE_ROAD, pos: new RoomPosition(path.x, path.y, room.name) });
+                structures.push({ type: STRUCTURE_ROAD, pos: new RoomPosition(path.x, path.y, room.name) });
             }
-            planned.push(strutures);
+            planned.push(structures);
         }
         visual.connectRoads({ width: 0.2 });
 
@@ -259,7 +261,7 @@ export class RoomPlanner {
             if (!center) { continue; }
 
             // add buildings in plan to matrix
-            const strutures: PlannedStructure[] = [];
+            const structures: PlannedStructure[] = [];
             for (let building of Object.entries(plan.buildings)) {
                 const buildingData = building[1];
 
@@ -277,11 +279,11 @@ export class RoomPlanner {
                     terrainMatrix.set(point.x, point.y, buildValue);
                     visual.structure(point.x, point.y, building[0] as BuildableStructureConstant, { opacity: 0.3 });
 
-                    strutures.push({ type, pos: new RoomPosition(point.x, point.y, room.name) });
+                    structures.push({ type, pos: new RoomPosition(point.x, point.y, room.name) });
                 }
                 visual.connectRoads({ width: 0.2 });
             }
-            planned.push(strutures);
+            planned.push(structures);
         }
 
         // store plan for keeping it visualized
@@ -318,7 +320,7 @@ export class RoomPlanner {
                 if (!center) { continue; }
 
                 // add buildings in plan to matrix
-                const strutures: PlannedStructure[] = [];
+                const structures: PlannedStructure[] = [];
                 for (let building of Object.entries(plan.buildings)) {
                     const buildingData = building[1];
 
@@ -337,11 +339,11 @@ export class RoomPlanner {
                         terrainMatrix.set(point.x, point.y, buildValue);
                         visual.structure(point.x, point.y, building[0] as StructureConstant, { opacity: 0.3 });
 
-                        strutures.push({ type, pos: new RoomPosition(point.x, point.y, room.name) });
+                        structures.push({ type, pos: new RoomPosition(point.x, point.y, room.name) });
                     }
                     visual.connectRoads({ width: 0.2 });
                 }
-                planned.push(strutures);
+                planned.push(structures);
             }
             if (!center) { break; } // couldn't fit any more extensions
         }
@@ -356,15 +358,17 @@ export class RoomPlanner {
     }
 
     private planPerimeter(room: Room, protect: PlannedStructure[][]): PlannedStructure[] {
+        const structures: PlannedStructure[] = [];
         const cuts = util_mincut.GetCutTiles(room.name, protect.map(p => this.plannedToRect(p)));
 
-        const visual = new RoomVisual(room.name);
         // store current visual for later
+        const visual = new RoomVisual(room.name);
         const tickVisuals = visual.export();
         visual.clear();
 
         for (let cut of cuts) {
             visual.structure(cut.x, cut.y, STRUCTURE_RAMPART, { opacity: 0.5 });
+            structures.push({ type: STRUCTURE_RAMPART, pos: new RoomPosition(cut.x, cut.y, room.name) });
         }
 
         this.drawings.persist('perimeter', visual);
@@ -372,7 +376,74 @@ export class RoomPlanner {
         visual.clear();
         visual.import(tickVisuals);
 
-        return [];
+        return structures;
+    }
+
+    private planLinks(room: Room, sources: RoomPosition[], controller: RoomPosition, terrain: CostMatrix): PlannedStructure[][] {
+        const planned: PlannedStructure[][] = [];
+
+        // store current visual for later
+        const visual = new RoomVisual(room.name);
+        const tickVisuals = visual.export();
+        visual.clear();
+
+        for (let source of sources) {
+            planned.push(this.placeLinkAndRampart(room, source, terrain, visual));
+        }
+
+        planned.push(this.placeLinkAndRampart(room, controller, terrain, visual));
+
+        this.drawings.persist('links', visual);
+
+        visual.clear();
+        visual.import(tickVisuals);
+
+        return planned;
+    }
+
+    private placeLinkAndRampart(room: Room, loc: RoomPosition, terrain: CostMatrix, visual: RoomVisual): PlannedStructure[] {
+        const structures: PlannedStructure[] = [];
+        const roadValue = this._buildingMap.get(STRUCTURE_ROAD) || 254;
+
+        let endpoint: RoomPosition | undefined = undefined
+        for (let x = loc.x - 1; x <= loc.x + 1; x++) {
+            for (let y = loc.y - 1; y <= loc.y + 1; y++) {
+                // if road plan rampart
+                const locValue = terrain.get(x, y);
+                if (locValue == roadValue) {
+
+                    const pos = new RoomPosition(x, y, room.name);
+                    visual.structure(x, y, STRUCTURE_RAMPART, { opacity: 0.5 });
+                    structures.push({ type: STRUCTURE_RAMPART, pos: pos });
+                    endpoint = pos;
+                    break;
+                }
+            }
+            if (endpoint) { break; }
+        }
+
+        if (endpoint) {
+            let placedLink = false;
+            for (let x = endpoint.x - 1; x <= endpoint.x + 1; x++) {
+                for (let y = endpoint.y - 1; y <= endpoint.y + 1; y++) {
+                    // check terrain, if not wall and not yet placed link, place link
+                    const locValue = terrain.get(x, y);
+                    if ((locValue < 200 || locValue == 250) && !placedLink) { // 250 is reserved around loc
+                        placedLink = true;
+
+                        visual.structure(x, y, STRUCTURE_LINK, { opacity: 0.5 });
+                        terrain.set(x, y, this._buildingMap.get(STRUCTURE_LINK) || 254);
+                        structures.push({ type: STRUCTURE_LINK, pos: new RoomPosition(x, y, room.name) });
+
+                        visual.structure(x, y, STRUCTURE_RAMPART, { opacity: 0.5 });
+                        structures.push({ type: STRUCTURE_RAMPART, pos: new RoomPosition(x, y, room.name) });
+
+                    }
+                }
+            }
+        }
+
+        return structures;
     }
 
     private plannedToRect(plan: PlannedStructure[]): Rect {
