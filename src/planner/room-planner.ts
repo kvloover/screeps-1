@@ -8,10 +8,17 @@ import core from "./data/core-stamps.json";
 import extension from "./data/extension-stamps.json";
 import lab from "./data/lab-stamps.json";
 
+import util_mincut, { Rect } from "../utils/mincut";
+
+export interface PlannedStructure {
+    type: BuildableStructureConstant;
+    pos: RoomPosition;
+}
+
 @singleton()
 export class RoomPlanner {
 
-    private _buildingMap = new Map<StructureConstant, number>(
+    private _buildingMap = new Map<BuildableStructureConstant, number>(
         [
             [STRUCTURE_ROAD, 201],
             [STRUCTURE_SPAWN, 260],
@@ -126,25 +133,27 @@ export class RoomPlanner {
         const data = this.getCorestamps();
         let anchor: Point | undefined = undefined;
         // for each plan in plan.plans, run conditionalFloodFill and exit if point found for the given size (max x/y)
+        const planned: PlannedStructure[] = [];
         for (let plan of data.plans) {
             const size = Math.max(Math.ceil((plan.size.x + 1) / 2), Math.ceil((plan.size.y + 1) / 2));
             // run flood fill from seeds and exit as soon as we find a point hit by all
             const seeds = locs.map(pos => { return { x: pos.x, y: pos.y } });
             anchor = conditionalFloodFill(room, distMatrix, seeds, n => n >= size, true);
             if (!anchor) { continue; }
-            console.log(`point: ${anchor.x}, ${anchor.y}`);
 
             // add buildings in plan to matrix
             for (let building of Object.entries(plan.buildings)) {
                 const buildingData = building[1];
 
-                const type = building[0] as StructureConstant;
+                const type = building[0] as BuildableStructureConstant;
                 if (!type) { continue; }
                 const buildValue = this._buildingMap.get(type) || 254;
 
                 for (let pos of buildingData.pos) {
-                    terrainMatrix.set(anchor.x + pos.x, anchor.y + pos.y, buildValue);
-                    visual.structure(anchor.x + pos.x, anchor.y + pos.y, building[0] as StructureConstant, { opacity: 0.5 });
+                    const point = { x: anchor.x + pos.x, y: anchor.y + pos.y }
+                    terrainMatrix.set(point.x, point.y, buildValue);
+                    visual.structure(point.x, point.y, type, { opacity: 0.5 });
+                    planned.push({ type, pos: new RoomPosition(point.x, point.y, room.name) });
                 }
                 visual.connectRoads({ width: 0.2 });
             }
@@ -157,9 +166,11 @@ export class RoomPlanner {
         visual.import(tickVisuals);
 
         if (anchor) {
-            terrainMatrix = this.planLab(room, anchor, terrainMatrix);
-            terrainMatrix = this.planExtensions(room, anchor, terrainMatrix);
-            terrainMatrix = this.planMainRoads(room, anchor, locs, terrainMatrix);
+            const labs = this.planLab(room, anchor, terrainMatrix);
+            const extensions = this.planExtensions(room, anchor, terrainMatrix);
+            const roads = this.planMainRoads(room, anchor, locs, terrainMatrix);
+
+            this.planPerimeter(room, labs.concat(extensions));
         }
 
         // this.visualizeTerrainMatrix(room, terrainMatrix);
@@ -184,7 +195,9 @@ export class RoomPlanner {
         visual.import(tickVisuals);
     }
 
-    private planMainRoads(room: Room, anchor: Point, locs: RoomPosition[], terrainMatrix: CostMatrix): CostMatrix {
+    private planMainRoads(room: Room, anchor: Point, locs: RoomPosition[], terrainMatrix: CostMatrix): PlannedStructure[][] {
+
+        const planned: PlannedStructure[][] = [];
 
         const visual = new RoomVisual(room.name);
         const tickVisuals = visual.export();
@@ -206,13 +219,16 @@ export class RoomPlanner {
         // plot roads to seed locations
         const roomPos = new RoomPosition(anchor.x, anchor.y, room.name);
         for (const loc of locs) {
-            console.log(`plotting road to ${loc.x}, ${loc.y}`);
             const ret = PathFinder.search(roomPos, { pos: loc, range: 1 }, { roomCallback: _ => matrix });
             if (ret.incomplete) { continue; }
+
+            const strutures: PlannedStructure[] = [];
             for (let path of ret.path) {
                 terrainMatrix.set(path.x, path.y, roadValue);
                 visual.structure(path.x, path.y, STRUCTURE_ROAD, { opacity: 0.5 });
+                strutures.push({ type: STRUCTURE_ROAD, pos: new RoomPosition(path.x, path.y, room.name) });
             }
+            planned.push(strutures);
         }
         visual.connectRoads({ width: 0.2 });
 
@@ -222,10 +238,12 @@ export class RoomPlanner {
         visual.clear();
         visual.import(tickVisuals);
 
-        return terrainMatrix;
+        return planned;
     }
 
-    private planLab(room: Room, anchor: Point, terrainMatrix: CostMatrix): CostMatrix {
+    private planLab(room: Room, anchor: Point, terrainMatrix: CostMatrix): PlannedStructure[][] {
+
+        const planned: PlannedStructure[][] = [];
 
         const visual = new RoomVisual(room.name);
         const tickVisuals = visual.export();
@@ -239,13 +257,13 @@ export class RoomPlanner {
             const size = Math.max(Math.ceil((plan.size.x + 1) / 2), Math.ceil((plan.size.y + 1) / 2));
             center = conditionalFloodFill(room, dt, [anchor], n => n >= size, true, false, 220);
             if (!center) { continue; }
-            console.log(`center for ${plan.name}: ${center.x}, ${center.y} - size: ${size}`);
 
             // add buildings in plan to matrix
+            const strutures: PlannedStructure[] = [];
             for (let building of Object.entries(plan.buildings)) {
                 const buildingData = building[1];
 
-                const type = building[0] as StructureConstant;
+                const type = building[0] as BuildableStructureConstant;
                 if (!type) { continue; }
                 const buildValue = this._buildingMap.get(type) || 254;
 
@@ -257,10 +275,13 @@ export class RoomPlanner {
                     if (locValue > 200 && (locValue == 254 || locValue != buildValue)) { continue; }
 
                     terrainMatrix.set(point.x, point.y, buildValue);
-                    visual.structure(point.x, point.y, building[0] as StructureConstant, { opacity: 0.3 });
+                    visual.structure(point.x, point.y, building[0] as BuildableStructureConstant, { opacity: 0.3 });
+
+                    strutures.push({ type, pos: new RoomPosition(point.x, point.y, room.name) });
                 }
                 visual.connectRoads({ width: 0.2 });
             }
+            planned.push(strutures);
         }
 
         // store plan for keeping it visualized
@@ -269,10 +290,12 @@ export class RoomPlanner {
         visual.clear();
         visual.import(tickVisuals);
 
-        return terrainMatrix;
+        return planned;
     }
 
-    private planExtensions(room: Room, anchor: Point, terrainMatrix: CostMatrix): CostMatrix {
+    private planExtensions(room: Room, anchor: Point, terrainMatrix: CostMatrix): PlannedStructure[][] {
+
+        const planned: PlannedStructure[][] = [];
 
         const visual = new RoomVisual(room.name);
         const tickVisuals = visual.export();
@@ -295,11 +318,11 @@ export class RoomPlanner {
                 if (!center) { continue; }
 
                 // add buildings in plan to matrix
-                console.log(`center for ${plan.name}: ${center.x}, ${center.y} - size: ${size}`);
+                const strutures: PlannedStructure[] = [];
                 for (let building of Object.entries(plan.buildings)) {
                     const buildingData = building[1];
 
-                    const type = building[0] as StructureConstant;
+                    const type = building[0] as BuildableStructureConstant;
                     if (!type) { continue; }
                     const buildValue = this._buildingMap.get(type) || 254;
 
@@ -309,15 +332,16 @@ export class RoomPlanner {
                         // compare current location with building
                         const locValue = terrainMatrix.get(point.x, point.y);
                         if (locValue > 200 && (locValue == 254 || locValue != buildValue)) { continue; }
-                        console.log(`locValue: ${locValue} for point ${point.x}, ${point.y}`);
-
                         if (building[0] == STRUCTURE_EXTENSION && extensions >= 50) { break; }
                         if (building[0] == STRUCTURE_EXTENSION) { extensions++; }
                         terrainMatrix.set(point.x, point.y, buildValue);
                         visual.structure(point.x, point.y, building[0] as StructureConstant, { opacity: 0.3 });
+
+                        strutures.push({ type, pos: new RoomPosition(point.x, point.y, room.name) });
                     }
                     visual.connectRoads({ width: 0.2 });
                 }
+                planned.push(strutures);
             }
             if (!center) { break; } // couldn't fit any more extensions
         }
@@ -328,7 +352,36 @@ export class RoomPlanner {
         visual.clear();
         visual.import(tickVisuals);
 
-        return terrainMatrix;
+        return planned;
+    }
+
+    private planPerimeter(room: Room, protect: PlannedStructure[][]): PlannedStructure[] {
+        const cuts = util_mincut.GetCutTiles(room.name, protect.map(p => this.plannedToRect(p)));
+
+        const visual = new RoomVisual(room.name);
+        // store current visual for later
+        const tickVisuals = visual.export();
+        visual.clear();
+
+        for (let cut of cuts) {
+            visual.structure(cut.x, cut.y, STRUCTURE_RAMPART, { opacity: 0.5 });
+        }
+
+        this.drawings.persist('perimeter', visual);
+
+        visual.clear();
+        visual.import(tickVisuals);
+
+        return [];
+    }
+
+    private plannedToRect(plan: PlannedStructure[]): Rect {
+        return {
+            x1: plan.map(s => s.pos.x).reduce((a, b) => Math.min(a, b)),
+            y1: plan.map(s => s.pos.y).reduce((a, b) => Math.min(a, b)),
+            x2: plan.map(s => s.pos.x).reduce((a, b) => Math.max(a, b)),
+            y2: plan.map(s => s.pos.y).reduce((a, b) => Math.max(a, b))
+        }
     }
 
 }
