@@ -1,11 +1,7 @@
-// import * as mincut from "utils/mincut"
-// import "utils/floodFill";
-// import "utils/distanceTransform";
-
 import { RoomDrawings } from "room/room-drawings";
 import { singleton } from "tsyringe";
 import { SOURCE } from "utils/custom-types";
-import { conditionalFloodFill, distanceTransform, Point } from "utils/distance-util";
+import { conditionalFloodFill, distanceTransform, distanceType, Point } from "utils/distance-util";
 import { Plan } from "./data";
 
 import core from "./data/core-stamps.json";
@@ -66,7 +62,7 @@ export class RoomPlanner {
         return lab as Plan;
     }
 
-    public planRoom(room: Room): void {
+    public test(room: Room): void {
         const sources = room.memory.objects?.[SOURCE];
         const controller = global.refs?.[room.name]?.objects?.[STRUCTURE_CONTROLLER];
         if (!controller || !sources) return;
@@ -83,7 +79,42 @@ export class RoomPlanner {
                 }
             }
         }
-        const distMatrix = distanceTransform(room, terrainMatrix, false);
+
+        const visual = new RoomVisual(room.name);
+        // store current visual for later
+        const tickVisuals = visual.export();
+        visual.clear();
+
+        const distMatrix = distanceTransform(room, terrainMatrix, distanceType.Chebyshev, true);
+
+        this.drawings.persist('distance', visual);
+
+        visual.clear();
+        visual.import(tickVisuals);
+    }
+
+    public planRoom(room: Room): void {
+        // todo determine algorithm on type of stamp
+        // symmetric manhattan
+        // asymmetric chebyshev
+
+        const sources = room.memory.objects?.[SOURCE];
+        const controller = global.refs?.[room.name]?.objects?.[STRUCTURE_CONTROLLER];
+        if (!controller || !sources) return;
+        if (controller.length == 0 || sources.length == 0) return;
+
+        const locs = sources.map(s => s.pos).concat(controller[0].pos);
+
+        let terrainMatrix = this.getRoomCostMatrix(room);
+        // add squares around source locations to terainMatrix as value 255 - cost of unwalkable terrain
+        for (let loc of locs) {
+            for (let x = loc.x - 1; x <= loc.x + 1; x++) {
+                for (let y = loc.y - 1; y <= loc.y + 1; y++) {
+                    terrainMatrix.set(x, y, 254);
+                }
+            }
+        }
+        const distMatrix = distanceTransform(room, terrainMatrix, distanceType.Chebyshev, false);
 
         const visual = new RoomVisual(room.name);
         // store current visual for later
@@ -124,11 +155,31 @@ export class RoomPlanner {
         visual.import(tickVisuals);
 
         if (anchor) {
-            terrainMatrix = this.planMainRoads(room, anchor, locs, terrainMatrix);
             terrainMatrix = this.planLab(room, anchor, terrainMatrix);
             terrainMatrix = this.planExtensions(room, anchor, terrainMatrix);
+            terrainMatrix = this.planMainRoads(room, anchor, locs, terrainMatrix);
         }
 
+        // this.visualizeTerrainMatrix(room, terrainMatrix);
+    }
+
+    private visualizeTerrainMatrix(room: Room, terrainMatrix: CostMatrix): void {
+        const visual = new RoomVisual(room.name);
+        // store current visual for later
+        const tickVisuals = visual.export();
+        visual.clear();
+
+        for (let x = 0; x < 50; x++) {
+            for (let y = 0; y < 50; y++) {
+                const value = terrainMatrix.get(x, y);
+                visual.text(value.toString(), x, y, { color: 'white' });
+            }
+        }
+
+        this.drawings.persist('terrain', visual);
+
+        visual.clear();
+        visual.import(tickVisuals);
     }
 
     private planMainRoads(room: Room, anchor: Point, locs: RoomPosition[], terrainMatrix: CostMatrix): CostMatrix {
@@ -139,10 +190,20 @@ export class RoomPlanner {
 
         const roomPos = new RoomPosition(anchor.x, anchor.y, room.name);
         const roadValue = this._buildingMap.get(STRUCTURE_ROAD) || 254;
+        const matrix = terrainMatrix.clone();
+        // substitute roadValue in matrix with 0
+        for (let x = 0; x < 50; x++) {
+            for (let y = 0; y < 50; y++) {
+                if (matrix.get(x, y) == roadValue) {
+                    matrix.set(x, y, 0);
+                }
+            }
+        }
+
         // plot roads to seed locations
         for (const loc of locs) {
             console.log(`plotting road to ${loc.x}, ${loc.y}`);
-            const ret = PathFinder.search(roomPos, { pos: loc, range: 2 }, { roomCallback: _ => terrainMatrix });
+            const ret = PathFinder.search(roomPos, { pos: loc, range: 2 }, { roomCallback: _ => matrix });
             if (ret.incomplete) { continue; }
             for (let path of ret.path) {
                 terrainMatrix.set(path.x, path.y, roadValue);
@@ -168,7 +229,7 @@ export class RoomPlanner {
 
         const data = this.getLabStamps();
 
-        const dt = distanceTransform(room, terrainMatrix, false, 220); // do not include roads
+        const dt = distanceTransform(room, terrainMatrix, distanceType.Chebyshev, false, 220); // do not include roads
         let center: Point | undefined = undefined;
         for (let plan of data.plans) {
             const size = Math.max(Math.ceil((plan.size.x + 1) / 2), Math.ceil((plan.size.y + 1) / 2));
@@ -217,7 +278,7 @@ export class RoomPlanner {
         const sorted = data.plans.sort((a, b) => a.priority - b.priority);
         let extensions = 0;
         while (extensions < 50) {
-            const dt = distanceTransform(room, terrainMatrix, false, 220); // do not include roads
+            const dt = distanceTransform(room, terrainMatrix, distanceType.Manhattan, false, 220); // do not include roads
             let center: Point | undefined = undefined;
             let index = 0;
             while (!center && index < sorted.length) {
@@ -225,7 +286,7 @@ export class RoomPlanner {
                 const plan = sorted[index];
                 index++;
 
-                const size = Math.max(Math.ceil((plan.size.x + 1) / 2), Math.ceil((plan.size.y + 1) / 2)) - 1; // naive attempt to overlap with other extensions
+                const size = Math.max(Math.ceil((plan.size.x + 1) / 2), Math.ceil((plan.size.y + 1) / 2));
                 center = conditionalFloodFill(room, dt, [anchor], n => n >= size, true, false, 220);
                 if (!center) { continue; }
 

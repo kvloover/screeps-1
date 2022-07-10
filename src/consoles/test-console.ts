@@ -1,7 +1,6 @@
 import { Role, Roles } from "creeps/roles/role-registry";
 import { RoomPlanner } from "planner/room-planner";
 import { Persistency, Persistent } from "repos/persistent";
-import { SupplyTaskRepo } from "repos/supply-task-repo";
 import { container } from "tsyringe";
 import { relativeExitTo } from "../utils/utils";
 
@@ -15,6 +14,7 @@ export class TestConsole {
             memory: TestConsole.memory,
             remove: TestConsole.remove,
             plan: TestConsole.plan,
+            test: TestConsole.test,
         }
     }
 
@@ -82,6 +82,15 @@ export class TestConsole {
         return `Room not known: ${roomName}`
     }
 
+    static test(roomName: string): string {
+        if (Game.rooms.hasOwnProperty(roomName)) {
+            const room = Game.rooms[roomName];
+            container.resolve(RoomPlanner).test(room);
+            return `Test planned ${roomName}.`;
+        }
+        return `Room not known: ${roomName}`
+    }
+
 }
 
 const countCpu = (fn: () => void): number => {
@@ -106,6 +115,7 @@ declare global {
             remove: (id: string) => string;
 
             plan: (room: string) => string;
+            test: (room: string) => string;
         }
     }
 }

@@ -14,24 +14,60 @@ export interface SeededPoint extends Point {
     seedIndex: number;
 }
 
-export const findPositionsInsideRect = function (rect: Rectangle) {
+const getAdjacentForDirect = (point: Point): Point[] =>
+    findPositionsInDirections(point, { x1: point.x - 1, y1: point.y - 1, x2: point.x + 1, y2: point.y + 1 });
+
+const getAdjacentForRectangle = (point: Point): Point[] =>
+    findPositionsInsideRect({ x1: point.x - 1, y1: point.y - 1, x2: point.x + 1, y2: point.y + 1 });
+
+export const findPositionsInsideRect = function (rect: Rectangle): Point[] {
     const positions = []
     for (let x = rect.x1; x <= rect.x2; x++) {
         for (let y = rect.y1; y <= rect.y2; y++) {
-            // Iterate if the pos doesn't map onto a room
             if (x < 0 || x >= 50 ||
                 y < 0 || y >= 50) continue
-            // Otherwise ass the x and y to positions
-            positions.push({ x, y })
+            positions.push({ x: x, y: y })
         }
     }
     return positions
 }
 
+export const findPositionsInDirections = function (point: Point, rect: Rectangle): Point[] {
+    const positions = []
+    for (let x = rect.x1; x <= rect.x2; x++) {
+        if (x < 0 || x >= 50) continue;
+        positions.push({ x: x, y: point.y });
+    }
+    for (let y = rect.y1; y <= rect.y2; y++) {
+        if (y < 0 || y >= 50) continue;
+        positions.push({ x: point.x, y: y });
+    }
+    return positions;
+}
+
+export enum distanceType {
+    Chebyshev = 1,
+    Manhattan = 2,
+}
+
+const getAdjacentFunction = function (type: distanceType): (point: Point) => Point[] {
+    switch (type) {
+        case distanceType.Chebyshev:
+            return getAdjacentForRectangle;
+        case distanceType.Manhattan:
+            return getAdjacentForDirect;
+        default:
+            return getAdjacentForRectangle;
+    }
+}
+
 export const distanceTransform =
-    function (room: Room, initialCM: CostMatrix | undefined,
+    function (room: Room, initialCM: CostMatrix | undefined, type: distanceType = distanceType.Manhattan,
         enableVisuals: boolean = false, cutOff: number = 255, mapSize: Rectangle = { x1: 0, y1: 0, x2: 49, y2: 49 })
         : CostMatrix {
+
+
+        const getAdjacent = getAdjacentFunction(type);
 
         // Use a costMatrix to record distances. Use the initialCM if provided, otherwise create one
         const distanceCM = initialCM?.clone() || new PathFinder.CostMatrix()
@@ -43,8 +79,7 @@ export const distanceTransform =
                 if (distanceCM.get(x, y) >= cutOff) continue
 
                 // Otherwise construct a rect and get the positions in a range of 1
-                const rect = { x1: x - 1, y1: y - 1, x2: x + 1, y2: y + 1 }
-                const adjacentPositions = findPositionsInsideRect(rect)
+                const adjacentPositions = getAdjacent({ x: x, y: y })
 
                 // Construct the distance value as the avoid value
                 let distanceValue = 255
@@ -76,7 +111,7 @@ export const distanceTransform =
                 if (distanceCM.get(x, y) >= cutOff) continue
 
                 // Otherwise construct a rect and get the positions in a range of 1
-                const adjacentPositions = findPositionsInsideRect({ x1: x - 1, y1: y - 1, x2: x + 1, y2: y + 1 })
+                const adjacentPositions = getAdjacent({ x: x, y: y })
 
                 // Construct the distance value as the avoid value
                 let distanceValue = 255
