@@ -110,7 +110,9 @@ export class RoomPlanner {
         for (let loc of locs) {
             for (let x = loc.x - 1; x <= loc.x + 1; x++) {
                 for (let y = loc.y - 1; y <= loc.y + 1; y++) {
-                    terrainMatrix.set(x, y, 254);
+                    if (terrainMatrix.get(x, y) < 255) {
+                        terrainMatrix.set(x, y, 254);
+                    }
                 }
             }
         }
@@ -188,7 +190,6 @@ export class RoomPlanner {
         const tickVisuals = visual.export();
         visual.clear();
 
-        const roomPos = new RoomPosition(anchor.x, anchor.y, room.name);
         const roadValue = this._buildingMap.get(STRUCTURE_ROAD) || 254;
         const matrix = terrainMatrix.clone();
         // substitute roadValue in matrix with 0
@@ -200,10 +201,13 @@ export class RoomPlanner {
             }
         }
 
+        // this.visualizeTerrainMatrix(room, matrix);
+
         // plot roads to seed locations
+        const roomPos = new RoomPosition(anchor.x, anchor.y, room.name);
         for (const loc of locs) {
             console.log(`plotting road to ${loc.x}, ${loc.y}`);
-            const ret = PathFinder.search(roomPos, { pos: loc, range: 2 }, { roomCallback: _ => matrix });
+            const ret = PathFinder.search(roomPos, { pos: loc, range: 1 }, { roomCallback: _ => matrix });
             if (ret.incomplete) { continue; }
             for (let path of ret.path) {
                 terrainMatrix.set(path.x, path.y, roadValue);
