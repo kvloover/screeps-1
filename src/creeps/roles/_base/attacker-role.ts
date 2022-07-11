@@ -63,7 +63,8 @@ export abstract class AttackerRole {
                 } else {
 
                     if (creep.memory.target) {
-                        this.pathing.moveTo(creep, creep.memory.target, true);
+                        const pos = new RoomPosition(creep.memory.target.x, creep.memory.target.y, creep.memory.target.roomName);
+                        this.pathing.moveTo(creep, pos, true);
                     } else {
                         const flag = creep.room.find(FIND_FLAGS, { filter: (fl) => fl.name.startsWith('Guardian') });
                         if (flag && flag.length > 0) {

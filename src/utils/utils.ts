@@ -17,7 +17,7 @@ export const isResourceConstant =
   (item: any): item is ResourceConstant => isDefined((item as ResourceConstant))
 
 export const isController =
-  (item: any): item is StructureController => isDefined((item as StructureController)?.progress)
+  (item: any): item is StructureController => item instanceof StructureController
 
 export const isStructure =
   (item: any): item is Structure => isDefined((item as Structure)?.structureType)

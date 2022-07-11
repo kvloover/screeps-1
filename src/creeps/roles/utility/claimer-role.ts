@@ -60,9 +60,9 @@ export class ClaimerRole implements Role {
                 this.pathing.moveTo(creep, obj.pos);
 
                 if (obj.room.name == creep.room.name && creep.pos.inRangeTo(obj, 1)) {
-                    // if (!obj.sign || obj.sign.username !== whoAmI()) {
-                    //     creep.signController(obj, `swamp`);
-                    // }
+                    if (!obj.sign || obj.sign.username !== whoAmI()) {
+                        creep.signController(obj, `swamps are made of sweat and tears`);
+                    }
                     if (creep.memory.state === CreepState.claim) {
                         if (!obj.my) {
                             creep.claimController(obj);
@@ -75,7 +75,8 @@ export class ClaimerRole implements Role {
                 }
             } else {
                 if (creep.memory.target) {
-                    this.pathing.moveTo(creep, creep.memory.target);
+                    const pos = new RoomPosition(creep.memory.target.x, creep.memory.target.y, creep.memory.target.roomName);
+                    this.pathing.moveTo(creep, pos);
                 } else {
                     creep.memory.targetId = undefined; // clear
                 }

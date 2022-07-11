@@ -37,7 +37,8 @@ export class HealerRole implements Role {
                     }
                 } else {
                     if (creep.memory.target) {
-                        this.pathing.moveTo(creep, new RoomPosition(creep.memory.target.x, creep.memory.target.y, creep.memory.target.roomName), true);
+                        const pos = new RoomPosition(creep.memory.target.x, creep.memory.target.y, creep.memory.target.roomName);
+                        this.pathing.moveTo(creep, pos, true);
                     } else {
                         const flag = creep.room.find(FIND_FLAGS, { filter: (fl) => fl.name.startsWith('Staging') });
                         if (flag && flag.length > 0) {
