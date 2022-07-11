@@ -1,7 +1,7 @@
 import { singleton } from 'tsyringe';
 
-import { BUILDING_MAP, IPlan, PlanCreateFn, PlannedStructure } from '../plan';
-import { Plan } from '../data';
+import { BUILDING_MAP, IPlan, PlanCreateFn, PlanKey, PlannedStructure } from '../../plan';
+import { Plan } from '../../data';
 
 import { conditionalFloodFill, distanceTransform, distanceType, Point } from 'utils/distance-util';
 
@@ -9,7 +9,7 @@ import stamps from "./core-stamps.json";
 
 @singleton()
 export class CorePlan implements IPlan {
-    name = 'core';
+    name: PlanKey = 'core';
 
     constructor() { }
 
@@ -24,7 +24,7 @@ export class CorePlan implements IPlan {
 
         const distMatrix = distanceTransform(roomName, terrain, distanceType.Chebyshev, false, undefined, { x1: 2, y1: 2, x2: 47, y2: 47 });
 
-        const locs = poi['source'].concat(poi['controller']);
+        const locs = poi['source']?.concat(poi['controller'] || [])  || [];
 
         let anchor: Point | undefined = undefined;
         // for each plan in plan.plans, run conditionalFloodFill and exit if point found for the given size (max x/y)
@@ -47,7 +47,7 @@ export class CorePlan implements IPlan {
                     const point = { x: anchor.x + pos.x, y: anchor.y + pos.y }
                     terrain.set(point.x, point.y, buildValue);
                     visual.structure(point.x, point.y, type, { opacity: 0.5 });
-                    structures.push({ type, pos: new RoomPosition(point.x, point.y, roomName) });
+                    structures.push({ plan: this.name, type, pos: new RoomPosition(point.x, point.y, roomName) });
                 }
                 visual.connectRoads({ width: 0.2 });
             }

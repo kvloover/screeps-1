@@ -1,10 +1,10 @@
 import { singleton } from 'tsyringe';
 
-import { BUILDING_MAP, IPlan, PlanCreateFn, PlannedStructure } from '../plan';
+import { BUILDING_MAP, IPlan, PlanCreateFn, PlanKey, PlannedStructure } from '../../plan';
 
 @singleton()
 export class RoadPlan implements IPlan {
-    name = 'road';
+    name: PlanKey = 'road';
 
     constructor() { }
 
@@ -28,11 +28,13 @@ export class RoadPlan implements IPlan {
         // this.visualizeTerrainMatrix(room, matrix);
 
         // plot roads to seed locations
-        const anchor = poi['anchor'][0];
-        const roomPos = new RoomPosition(anchor.x, anchor.y, roomName);
-        const locs = poi['source'].concat(poi['controller']);
+        const anchor = poi['anchor']?.[0];
+        if (!anchor) return planned;
 
-        for (const loc of locs) {
+        const roomPos = new RoomPosition(anchor.x, anchor.y, roomName);
+        const locs = poi['source']?.concat(poi['controller'] || []);
+
+        for (const loc of locs || []) {
             const ret = PathFinder.search(roomPos, { pos: loc, range: 1 }, { roomCallback: _ => matrix });
             if (ret.incomplete) { continue; }
 
@@ -40,7 +42,7 @@ export class RoadPlan implements IPlan {
             for (let path of ret.path) {
                 terrain.set(path.x, path.y, roadValue);
                 visual.structure(path.x, path.y, STRUCTURE_ROAD, { opacity: 0.5 });
-                structures.push({ type: STRUCTURE_ROAD, pos: new RoomPosition(path.x, path.y, roomName) });
+                structures.push({ plan: this.name, type: STRUCTURE_ROAD, pos: new RoomPosition(path.x, path.y, roomName) });
             }
             planned.push(structures);
         }

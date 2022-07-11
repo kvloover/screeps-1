@@ -1,7 +1,7 @@
 import { singleton } from 'tsyringe';
 
-import { BUILDING_MAP, IPlan, PlanCreateFn, PlannedStructure } from '../plan';
-import { Plan } from '../data';
+import { BUILDING_MAP, IPlan, PlanCreateFn, PlanKey, PlannedStructure } from '../../plan';
+import { Plan } from '../../data';
 
 import { conditionalFloodFill, distanceTransform, distanceType, Point } from 'utils/distance-util';
 
@@ -9,7 +9,7 @@ import stamps from "./extension-stamps.json";
 
 @singleton()
 export class ExtensionsPlan implements IPlan {
-    name = 'extensions';
+    name: PlanKey  = 'extensions';
 
     constructor() { }
 
@@ -36,7 +36,7 @@ export class ExtensionsPlan implements IPlan {
                 index++;
 
                 const size = Math.max(Math.ceil((plan.size.x + 1) / 2), Math.ceil((plan.size.y + 1) / 2));
-                center = conditionalFloodFill(roomName, dt, poi['anchor'], n => n >= size, true, false, 220);
+                center = conditionalFloodFill(roomName, dt, poi['anchor'] || [], n => n >= size, true, false, 220);
                 if (!center) { continue; }
 
                 // add buildings in plan to matrix
@@ -59,7 +59,7 @@ export class ExtensionsPlan implements IPlan {
                         terrain.set(point.x, point.y, buildValue);
                         visual.structure(point.x, point.y, building[0] as StructureConstant, { opacity: 0.3 });
 
-                        structures.push({ type, pos: new RoomPosition(point.x, point.y, roomName) });
+                        structures.push({ plan: this.name, type, pos: new RoomPosition(point.x, point.y, roomName) });
                     }
                     visual.connectRoads({ width: 0.2 });
                 }

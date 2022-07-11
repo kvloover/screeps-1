@@ -1,10 +1,10 @@
 import { singleton } from 'tsyringe';
 
-import { BUILDING_MAP, IPostPlan, PostPlanCreateFn, PlannedStructure } from '../plan';
+import { BUILDING_MAP, IPostPlan, PostPlanCreateFn, PlannedStructure, PostPlanKey } from '../../plan';
 
 @singleton()
 export class LinksPlan implements IPostPlan {
-    name = 'links';
+    name: PostPlanKey = 'links';
 
     constructor() { }
 
@@ -14,11 +14,11 @@ export class LinksPlan implements IPostPlan {
 
         if (planned.length == 0) { return structures; }
 
-        for (let source of poi['source']) {
+        for (let source of poi['source'] || []) {
             structures.push(this.placeLinkAndRampart(roomName, source, terrain, visual));
         }
 
-        for (let controller of poi['controller']) {
+        for (let controller of poi['controller'] || []) {
             structures.push(this.placeLinkAndRampart(roomName, controller, terrain, visual));
         }
 
@@ -39,7 +39,7 @@ export class LinksPlan implements IPostPlan {
 
                     const pos = new RoomPosition(x, y, roomName);
                     visual.structure(x, y, STRUCTURE_RAMPART, { opacity: 0.5 });
-                    structures.push({ type: STRUCTURE_RAMPART, pos: pos });
+                    structures.push({ plan: this.name, type: STRUCTURE_RAMPART, pos: pos });
                     endpoint = pos;
                     break;
                 }
@@ -58,10 +58,10 @@ export class LinksPlan implements IPostPlan {
 
                         visual.structure(x, y, STRUCTURE_LINK, { opacity: 0.5 });
                         terrain.set(x, y, BUILDING_MAP.get(STRUCTURE_LINK) || 254);
-                        structures.push({ type: STRUCTURE_LINK, pos: new RoomPosition(x, y, roomName) });
+                        structures.push({ plan: this.name, type: STRUCTURE_LINK, pos: new RoomPosition(x, y, roomName) });
 
                         visual.structure(x, y, STRUCTURE_RAMPART, { opacity: 0.5 });
-                        structures.push({ type: STRUCTURE_RAMPART, pos: new RoomPosition(x, y, roomName) });
+                        structures.push({ plan: this.name, type: STRUCTURE_RAMPART, pos: new RoomPosition(x, y, roomName) });
 
                     }
                 }

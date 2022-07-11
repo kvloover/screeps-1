@@ -29,7 +29,7 @@ export class RoomPlanner {
 
         // add squares around source locations to terainMatrix as value 255 - cost of unwalkable terrain
         if (!('source' in poi) || !('controller' in poi)) return costs;
-        const locs = poi['source'].concat(poi['controller']);
+        const locs = poi['source']?.concat(poi['controller'] || []) || [];
         for (let loc of locs) {
             for (let x = loc.x - 1; x <= loc.x + 1; x++) {
                 for (let y = loc.y - 1; y <= loc.y + 1; y++) {

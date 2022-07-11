@@ -1,12 +1,12 @@
 import { singleton } from 'tsyringe';
 
-import { IPostPlan, PostPlanCreateFn, PlannedStructure } from '../plan';
-import util_mincut, { Rect } from "../../utils/mincut";
+import { IPostPlan, PostPlanCreateFn, PlannedStructure, PostPlanKey } from '../../plan';
+import util_mincut, { Rect } from "../../../utils/mincut";
 import { isDefined } from 'utils/utils';
 
 @singleton()
 export class PerimeterPlan implements IPostPlan {
-    name = 'perimeter';
+    name: PostPlanKey = 'perimeter';
 
     constructor() { }
 
@@ -20,7 +20,7 @@ export class PerimeterPlan implements IPostPlan {
 
         for (let cut of cuts) {
             visual.structure(cut.x, cut.y, STRUCTURE_RAMPART, { opacity: 0.5 });
-            structures.push({ type: STRUCTURE_RAMPART, pos: new RoomPosition(cut.x, cut.y, roomName) });
+            structures.push({ plan: this.name, type: STRUCTURE_RAMPART, pos: new RoomPosition(cut.x, cut.y, roomName) });
         }
 
         return [structures];

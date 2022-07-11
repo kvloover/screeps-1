@@ -1,10 +1,15 @@
+export type PoiKey = 'source' | 'controller' | 'anchor';
+export type PlanKey = 'core' | 'lab' | 'extensions' | 'road';
+export type PostPlanKey = 'perimeter' | 'links';
+export type PlannedKey = PlanKey | PostPlanKey;
+
 export interface IPlan {
-    name: string;
+    name: PlanKey;
     create: PlanCreateFn;
 }
 
 export interface IPostPlan {
-    name: string;
+    name: PostPlanKey;
     create: PostPlanCreateFn;
 }
 
@@ -12,11 +17,12 @@ export type PlanFn = () => PlannedStructure[][];
 export type PlanCreateFn = (roomName: string, poi: Poi, terrain: CostMatrix) => PlannedStructure[][];
 export type PostPlanCreateFn = (roomName: string, poi: Poi, terrain: CostMatrix, planned: PlannedStructure[][]) => PlannedStructure[][];
 
-export interface Poi {
-    [key: string]: RoomPosition[]
-}
+export type Poi = {
+    [key in PoiKey]?: RoomPosition[];
+};
 
 export interface PlannedStructure {
+    plan: PlannedKey;
     type: BuildableStructureConstant;
     pos: RoomPosition;
 }
