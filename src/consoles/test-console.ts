@@ -14,7 +14,6 @@ export class TestConsole {
             memory: TestConsole.memory,
             remove: TestConsole.remove,
             plan: TestConsole.plan,
-            test: TestConsole.test,
         }
     }
 
@@ -74,21 +73,8 @@ export class TestConsole {
     }
 
     static plan(roomName: string): string {
-        if (Game.rooms.hasOwnProperty(roomName)) {
-            const room = Game.rooms[roomName];
-            container.resolve(RoomPlanner).planRoom(room);
-            return `Planned ${roomName}.`;
-        }
-        return `Room not known: ${roomName}`
-    }
-
-    static test(roomName: string): string {
-        if (Game.rooms.hasOwnProperty(roomName)) {
-            const room = Game.rooms[roomName];
-            container.resolve(RoomPlanner).test(room);
-            return `Test planned ${roomName}.`;
-        }
-        return `Room not known: ${roomName}`
+        container.resolve(RoomPlanner).planRoom(roomName);
+        return `Planned ${roomName}.`;
     }
 
 }
@@ -115,7 +101,6 @@ declare global {
             remove: (id: string) => string;
 
             plan: (room: string) => string;
-            test: (room: string) => string;
         }
     }
 }

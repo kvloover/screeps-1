@@ -62,10 +62,11 @@ const getAdjacentFunction = function (type: distanceType): (point: Point) => Poi
 }
 
 export const distanceTransform =
-    function (room: Room, initialCM: CostMatrix | undefined, type: distanceType = distanceType.Manhattan,
+    function (roomName: string, initialCM: CostMatrix | undefined, type: distanceType = distanceType.Manhattan,
         enableVisuals: boolean = false, cutOff: number = 255, mapSize: Rectangle = { x1: 0, y1: 0, x2: 49, y2: 49 })
         : CostMatrix {
 
+        const visual = enableVisuals ? new RoomVisual(roomName) : undefined;
 
         const getAdjacent = getAdjacentFunction(type);
 
@@ -135,8 +136,8 @@ export const distanceTransform =
                 distanceCM.set(x, y, distanceValue)
 
                 // If roomVisuals are enabled, show the terrain's distanceValue
-                if (enableVisuals && Memory.roomVisuals) {
-                    room.visual.text(distanceValue.toFixed(0), x, y);
+                if (visual && Memory.roomVisuals) {
+                    visual.text(distanceValue.toFixed(0), x, y);
                     // room.visual.rect(x - 0.5, y - 0.5, 1, 1, {
                     //     fill: 'hsl(' + 200 + distanceValue * 10 + ', 100%, 60%)',
                     //     opacity: 0.4,
@@ -217,9 +218,11 @@ export const distanceTransform =
 //     }
 
 export const conditionalFloodFill =
-    function (room: Room, searchMatrix: CostMatrix, seeds: Point[],
+    function (roomName: string, searchMatrix: CostMatrix, seeds: Point[],
         check: (v: number) => boolean, hitByAllSeeds: boolean = false, enableVisuals: boolean = false, cutOff: number = 255)
         : Point | undefined {
+
+        const visual = enableVisuals ? new RoomVisual(roomName) : undefined;
 
         // Construct a cost matrix for visited tiles and add seeds to it
 
@@ -258,8 +261,8 @@ export const conditionalFloodFill =
                     // Iterate if the terrain is to be avoided
                     if (value == 255) { continue; }
                     // If visuals are enabled, show the depth on the pos
-                    if (enableVisuals && Memory.roomVisuals) {
-                        room.visual.rect(pos.x - 0.5, pos.y - 0.5, 1, 1, {
+                    if (visual && Memory.roomVisuals) {
+                        visual.rect(pos.x - 0.5, pos.y - 0.5, 1, 1, {
                             fill: 'hsl(' + pos.seedIndex * 200 / (seeds.length - 1) + depth * 2 + ', 100%, 60%)',
                             opacity: 0.4,
                         });
