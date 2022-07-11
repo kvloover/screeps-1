@@ -1,6 +1,6 @@
 import { singleton } from 'tsyringe';
 
-import { BUILDING_MAP, IPostPlan, PostPlanCreateFn, PlannedStructure, PostPlanKey } from '../../plan';
+import { BUILDING_MAP, IPostPlan, PostPlanCreateFn, StructurePlan, PostPlanKey } from '../../plan';
 
 @singleton()
 export class LinksPlan implements IPostPlan {
@@ -8,8 +8,8 @@ export class LinksPlan implements IPostPlan {
 
     constructor() { }
 
-    create: PostPlanCreateFn = (roomName, poi, terrain, planned: PlannedStructure[][]): PlannedStructure[][] => {
-        const structures: PlannedStructure[][] = [];
+    create: PostPlanCreateFn = (roomName, poi, terrain, planned: StructurePlan[][]): StructurePlan[][] => {
+        const structures: StructurePlan[][] = [];
         const visual = new RoomVisual(roomName);
 
         if (planned.length == 0) { return structures; }
@@ -25,8 +25,8 @@ export class LinksPlan implements IPostPlan {
         return structures;
     }
 
-    private placeLinkAndRampart(roomName: string, loc: RoomPosition, terrain: CostMatrix, visual: RoomVisual): PlannedStructure[] {
-        const structures: PlannedStructure[] = [];
+    private placeLinkAndRampart(roomName: string, loc: RoomPosition, terrain: CostMatrix, visual: RoomVisual): StructurePlan[] {
+        const structures: StructurePlan[] = [];
 
         const roadValue = BUILDING_MAP.get(STRUCTURE_ROAD) || 254;
 

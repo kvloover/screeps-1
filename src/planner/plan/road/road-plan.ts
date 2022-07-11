@@ -1,6 +1,6 @@
 import { singleton } from 'tsyringe';
 
-import { BUILDING_MAP, IPlan, PlanCreateFn, PlanKey, PlannedStructure } from '../../plan';
+import { BUILDING_MAP, IPlan, PlanCreateFn, PlanKey, StructurePlan } from '../../plan';
 
 @singleton()
 export class RoadPlan implements IPlan {
@@ -8,8 +8,8 @@ export class RoadPlan implements IPlan {
 
     constructor() { }
 
-    create: PlanCreateFn = (roomName, poi, terrain): PlannedStructure[][] => {
-        const planned: PlannedStructure[][] = [];
+    create: PlanCreateFn = (roomName, poi, terrain): StructurePlan[][] => {
+        const planned: StructurePlan[][] = [];
         const visual = new RoomVisual(roomName);
 
         if (!('anchor' in poi)) { return planned; }
@@ -38,7 +38,7 @@ export class RoadPlan implements IPlan {
             const ret = PathFinder.search(roomPos, { pos: loc, range: 1 }, { roomCallback: _ => matrix });
             if (ret.incomplete) { continue; }
 
-            const structures: PlannedStructure[] = [];
+            const structures: StructurePlan[] = [];
             for (let path of ret.path) {
                 terrain.set(path.x, path.y, roadValue);
                 visual.structure(path.x, path.y, STRUCTURE_ROAD, { opacity: 0.5 });

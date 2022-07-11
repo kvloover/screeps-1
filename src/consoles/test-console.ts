@@ -73,6 +73,7 @@ export class TestConsole {
     }
 
     static plan(roomName: string): string {
+        Memory.rooms[roomName].visuals = {};
         container.resolve(RoomPlanner).planRoom(roomName);
         return `Planned ${roomName}.`;
     }

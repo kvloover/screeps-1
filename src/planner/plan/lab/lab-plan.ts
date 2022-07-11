@@ -1,6 +1,6 @@
 import { singleton } from 'tsyringe';
 
-import { BUILDING_MAP, IPlan, PlanCreateFn, PlanKey, PlannedStructure } from '../../plan';
+import { BUILDING_MAP, IPlan, PlanCreateFn, PlanKey, StructurePlan } from '../../plan';
 import { Plan } from '../../data';
 
 import { conditionalFloodFill, distanceTransform, distanceType, Point } from 'utils/distance-util';
@@ -17,8 +17,8 @@ export class LabPlan implements IPlan {
         return stamps as Plan;
     }
 
-    create: PlanCreateFn = (roomName, poi, terrain): PlannedStructure[][] => {
-        const planned: PlannedStructure[][] = [];
+    create: PlanCreateFn = (roomName, poi, terrain): StructurePlan[][] => {
+        const planned: StructurePlan[][] = [];
         const visual = new RoomVisual(roomName);
         const data = this.getStamps();
 
@@ -32,7 +32,7 @@ export class LabPlan implements IPlan {
             if (!center) { continue; }
 
             // add buildings in plan to matrix
-            const structures: PlannedStructure[] = [];
+            const structures: StructurePlan[] = [];
             for (let building of Object.entries(plan.buildings)) {
                 const buildingData = building[1];
 

@@ -1,6 +1,6 @@
 import { singleton } from 'tsyringe';
 
-import { IPostPlan, PostPlanCreateFn, PlannedStructure, PostPlanKey } from '../../plan';
+import { IPostPlan, PostPlanCreateFn, StructurePlan, PostPlanKey } from '../../plan';
 import util_mincut, { Rect } from "../../../utils/mincut";
 import { isDefined } from 'utils/utils';
 
@@ -10,8 +10,8 @@ export class PerimeterPlan implements IPostPlan {
 
     constructor() { }
 
-    create: PostPlanCreateFn = (roomName, poi, terrain, planned: PlannedStructure[][]): PlannedStructure[][] => {
-        const structures: PlannedStructure[] = [];
+    create: PostPlanCreateFn = (roomName, poi, terrain, planned: StructurePlan[][]): StructurePlan[][] => {
+        const structures: StructurePlan[] = [];
         const visual = new RoomVisual(roomName);
 
         if (planned.length == 0) { return [structures]; }
@@ -26,7 +26,7 @@ export class PerimeterPlan implements IPostPlan {
         return [structures];
     }
 
-    private plannedToRect(plan: PlannedStructure[]): Rect | undefined {
+    private plannedToRect(plan: StructurePlan[]): Rect | undefined {
         if (!plan.some(p => p.type != STRUCTURE_ROAD)) // ignore pure road sets
             return undefined;
         return {

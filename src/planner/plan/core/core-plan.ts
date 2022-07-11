@@ -1,6 +1,6 @@
 import { singleton } from 'tsyringe';
 
-import { BUILDING_MAP, IPlan, PlanCreateFn, PlanKey, PlannedStructure } from '../../plan';
+import { BUILDING_MAP, IPlan, PlanCreateFn, PlanKey, StructurePlan } from '../../plan';
 import { Plan } from '../../data';
 
 import { conditionalFloodFill, distanceTransform, distanceType, Point } from 'utils/distance-util';
@@ -17,8 +17,8 @@ export class CorePlan implements IPlan {
         return stamps as Plan;
     }
 
-    create: PlanCreateFn = (roomName, poi, terrain): PlannedStructure[][] => {
-        const structures: PlannedStructure[] = [];
+    create: PlanCreateFn = (roomName, poi, terrain): StructurePlan[][] => {
+        const structures: StructurePlan[] = [];
         const visual = new RoomVisual(roomName);
         const data = this.getStamps();
 

@@ -1,6 +1,7 @@
 import { injectAll, singleton } from "tsyringe";
 import { SOURCE } from "utils/custom-types";
-import { IPlan, IPostPlan, Poi, PlannedStructure } from "./plan";
+import { IPlan, IPostPlan, Poi, StructurePlan } from "./plan";
+import { PlanConverter } from "./plan-converter";
 import { Plans } from "./plan-service";
 import { VisualWrapper } from "./visual-wrapper";
 
@@ -63,7 +64,7 @@ export class RoomPlanner {
         const sorted = this.plans.sort((a, b) => this.planSequence(a.name) - this.planSequence(b.name));
         const sortedPost = this.postPlans.sort((a, b) => this.postPlanSequence(a.name) - this.postPlanSequence(b.name));
 
-        let planned: PlannedStructure[][] = [];
+        let planned: StructurePlan[][] = [];
         for (let plan of sorted) {
             planned = planned.concat(
                 this.visualWrapper.WrapVisual(roomName, plan.name, () => plan.create(roomName, poi, terrain))()
@@ -74,6 +75,8 @@ export class RoomPlanner {
                 this.visualWrapper.WrapVisual(roomName, plan.name, () => plan.create(roomName, poi, terrain, planned))()
             );
         }
+
+        console.log(`${JSON.stringify(PlanConverter.convert(planned), null, "\t")}`);
     }
 
     private planSequence(name: string): number {

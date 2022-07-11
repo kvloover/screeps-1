@@ -1,7 +1,7 @@
 import { singleton } from "tsyringe";
 
 import { RoomDrawings } from "room/room-drawings";
-import { PlanFn, PlannedStructure } from "./plan"
+import { PlanFn, StructurePlan } from "./plan"
 
 @singleton()
 export class VisualWrapper {
@@ -10,7 +10,7 @@ export class VisualWrapper {
 
     public WrapVisual(roomName: string, key: string, fn: PlanFn): PlanFn {
         // store current visual for later
-        return (): PlannedStructure[][] => {
+        return (): StructurePlan[][] => {
             const visual = new RoomVisual(roomName);
             const tickVisuals = visual.export();
             visual.clear();
