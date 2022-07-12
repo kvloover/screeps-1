@@ -335,7 +335,7 @@ var util_mincut = {
         let source = 2 * 50 * 50; // Position Source / Sink in Room-Graph
         let sink = 2 * 50 * 50 + 1;
         let count = graph.Calcmincut(source, sink);
-        if (verbose) console.log('NUmber of Tiles in Cut:', count);
+        if (verbose) console.log('Number of Tiles in Cut:', count);
         let positions = [];
         if (count > 0) {
             let cut_edges = graph.Bfsthecut(source);

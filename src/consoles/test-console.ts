@@ -3,6 +3,7 @@ import { RoomPlanner } from "planner/room-planner";
 import { Persistency, Persistent } from "repos/persistent";
 import { container } from "tsyringe";
 import { relativeExitTo } from "../utils/utils";
+import util_mincut, { Rect } from "../utils/mincut";
 
 export class TestConsole {
 
@@ -14,6 +15,7 @@ export class TestConsole {
             memory: TestConsole.memory,
             remove: TestConsole.remove,
             plan: TestConsole.plan,
+            mincut: TestConsole.mincut
         }
     }
 
@@ -78,6 +80,11 @@ export class TestConsole {
         return `Planned ${roomName}.`;
     }
 
+    static mincut(roomName: string, rect: Rect): string {
+        util_mincut.GetCutTiles(roomName, [rect], undefined, true, true);
+        return `Mincut run for ${roomName}.`;
+    }
+
 }
 
 const countCpu = (fn: () => void): number => {
@@ -102,6 +109,7 @@ declare global {
             remove: (id: string) => string;
 
             plan: (room: string) => string;
+            mincut(roomName: string, rect: Rect): string;
         }
     }
 }

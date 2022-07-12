@@ -33,7 +33,7 @@ export class RoadPlan implements IPlan {
             }
         }
 
-        visual.costMatrix(matrix);
+        // visual.costMatrix(matrix);
 
         // plot roads to seed locations
         const anchor = poi['anchor']?.[0];
