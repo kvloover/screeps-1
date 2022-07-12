@@ -1,6 +1,6 @@
 import { singleton } from 'tsyringe';
 
-import { BUILDING_MAP, IPlan, PlanCreateFn, PlanKey, StructurePlan } from '../../plan';
+import { BUILDING_MAP, IPlan, PlanCreateFn, PlanKey, StructurePlan } from '../../entities/plan';
 
 @singleton()
 export class RoadPlan implements IPlan {

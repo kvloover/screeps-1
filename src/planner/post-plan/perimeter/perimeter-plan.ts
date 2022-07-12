@@ -1,6 +1,6 @@
 import { singleton } from 'tsyringe';
 
-import { IPostPlan, PostPlanCreateFn, StructurePlan, PostPlanKey } from '../../plan';
+import { IPostPlan, PostPlanCreateFn, StructurePlan, PostPlanKey } from '../../entities/plan';
 import util_mincut, { Rect } from "../../../utils/mincut";
 import { isDefined } from 'utils/utils';
 

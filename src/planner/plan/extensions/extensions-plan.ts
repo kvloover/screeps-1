@@ -1,7 +1,7 @@
 import { singleton } from 'tsyringe';
 
-import { BUILDING_MAP, IPlan, PlanCreateFn, PlanKey, StructurePlan } from '../../plan';
-import { Plan } from '../../data';
+import { BUILDING_MAP, IPlan, PlanCreateFn, PlanKey, StructurePlan } from '../../entities/plan';
+import { StampCollection } from '../../entities/stamp';
 
 import { conditionalFloodFill, distanceTransform, distanceType, Point } from 'utils/distance-util';
 
@@ -13,8 +13,8 @@ export class ExtensionsPlan implements IPlan {
 
     constructor() { }
 
-    public getStamps(): Plan {
-        return stamps as Plan;
+    public getStamps(): StampCollection {
+        return stamps as StampCollection;
     }
 
     create: PlanCreateFn = (roomName, poi, terrain): StructurePlan[][] => {

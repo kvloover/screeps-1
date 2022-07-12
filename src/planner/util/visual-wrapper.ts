@@ -1,7 +1,7 @@
 import { singleton } from "tsyringe";
 
 import { RoomDrawings } from "room/room-drawings";
-import { PlanFn, StructurePlan } from "./plan"
+import { PlanFn, StructurePlan } from "../entities/plan"
 
 @singleton()
 export class VisualWrapper {

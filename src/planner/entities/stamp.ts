@@ -1,8 +1,8 @@
-export interface Plan {
-    plans: Data[];
+export interface StampCollection {
+    plans: Stamp[];
 }
 
-export interface Data {
+export interface Stamp {
     priority: number;
     name: string;
     size: Position;

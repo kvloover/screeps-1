@@ -1,9 +1,9 @@
 import { injectAll, singleton } from "tsyringe";
 import { SOURCE } from "utils/custom-types";
-import { IPlan, IPostPlan, Poi, StructurePlan } from "./plan";
+import { IPlan, IPostPlan, Poi, StructurePlan } from "./entities/plan";
 import { PlanConverter } from "./plan-converter";
-import { Plans } from "./plan-service";
-import { VisualWrapper } from "./visual-wrapper";
+import { Plans } from "./ioc/plan-service";
+import { VisualWrapper } from "./util/visual-wrapper";
 
 @singleton()
 export class RoomPlanner {

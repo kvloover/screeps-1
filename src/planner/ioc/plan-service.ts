@@ -1,10 +1,10 @@
 import { registry } from "tsyringe";
-import { CorePlan } from "./plan/core/core-plan";
-import { ExtensionsPlan } from "./plan/extensions/extensions-plan";
-import { LabPlan } from "./plan/lab/lab-plan";
-import { LinksPlan } from "./post-plan/links/links-plan";
-import { PerimeterPlan } from "./post-plan/perimeter/perimeter-plan";
-import { RoadPlan } from "./plan/road/road-plan";
+import { CorePlan } from "../plan/core/core-plan";
+import { ExtensionsPlan } from "../plan/extensions/extensions-plan";
+import { LabPlan } from "../plan/lab/lab-plan";
+import { LinksPlan } from "../post-plan/links/links-plan";
+import { PerimeterPlan } from "../post-plan/perimeter/perimeter-plan";
+import { RoadPlan } from "../plan/road/road-plan";
 
 @registry([
     { token: Plans.plan, useToken: CorePlan },
