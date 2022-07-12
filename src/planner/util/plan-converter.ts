@@ -1,7 +1,7 @@
-import { STRUCTURE_BUDGET } from "./budget";
-import { ExecutablePlan, PlanSummary, RclPlan } from "./entities/executable-plan";
-import { StructurePlan } from "./entities/plan";
-import { PlannedStructure } from "./entities/planned-structure";
+import { STRUCTURE_BUDGET } from "./constants";
+import { ExecutablePlan, PlanSummary, RclPlan } from "../entities/executable-plan";
+import { StructurePlan } from "../entities/plan";
+import { PlannedStructure } from "../entities/planned-structure";
 
 export class PlanConverter {
 

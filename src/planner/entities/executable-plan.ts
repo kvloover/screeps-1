@@ -13,13 +13,3 @@ export interface RclPlan {
 export type PlanSummary = {
     [typ in BuildableStructureConstant]?: number;
 }
-
-declare global {
-    namespace NodeJS {
-        interface Global {
-            plans: {
-                [roomName: string]: ExecutablePlan | undefined
-            }
-        }
-    }
-}

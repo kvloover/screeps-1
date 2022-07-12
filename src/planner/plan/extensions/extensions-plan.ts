@@ -1,6 +1,7 @@
 import { singleton } from 'tsyringe';
 
-import { BUILDING_MAP, IPlan, PlanCreateFn, PlanKey, StructurePlan } from '../../entities/plan';
+import { IPlan, PlanCreateFn, PlanKey, StructurePlan } from '../../entities/plan';
+import { BUILDING_MAP } from '../../util/constants';
 import { StampCollection } from '../../entities/stamp';
 
 import { conditionalFloodFill, distanceTransform, distanceType, Point } from 'utils/distance-util';

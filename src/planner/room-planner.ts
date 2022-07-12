@@ -1,9 +1,10 @@
 import { injectAll, singleton } from "tsyringe";
 import { SOURCE } from "utils/custom-types";
 import { IPlan, IPostPlan, Poi, StructurePlan } from "./entities/plan";
-import { PlanConverter } from "./plan-converter";
+import { PlanConverter } from "./util/plan-converter";
 import { Plans } from "./ioc/plan-service";
 import { VisualWrapper } from "./util/visual-wrapper";
+import { ExecutablePlan } from "./entities/executable-plan";
 
 @singleton()
 export class RoomPlanner {
@@ -44,7 +45,7 @@ export class RoomPlanner {
         return costs;
     }
 
-    public planRoom(roomName: string): void {
+    public planRoom(roomName: string, visualize: boolean = false): ExecutablePlan | undefined {
         // todo determine algorithm on type of stamp
         // symmetric manhattan
         // asymmetric chebyshev
@@ -66,17 +67,22 @@ export class RoomPlanner {
 
         let planned: StructurePlan[][] = [];
         for (let plan of sorted) {
+            const fn = () => plan.create(roomName, poi, terrain);
             planned = planned.concat(
-                this.visualWrapper.WrapVisual(roomName, plan.name, () => plan.create(roomName, poi, terrain))()
+                visualize ? this.visualWrapper.WrapVisual(roomName, plan.name, fn)() : fn()
             );
         }
         for (let plan of sortedPost) {
+            const fn = () => plan.create(roomName, poi, terrain, planned);
             planned = planned.concat(
-                this.visualWrapper.WrapVisual(roomName, plan.name, () => plan.create(roomName, poi, terrain, planned))()
+                visualize ? this.visualWrapper.WrapVisual(roomName, plan.name, fn)() : fn()
             );
         }
 
-        console.log(`${JSON.stringify(PlanConverter.convert(planned), null, "\t")}`);
+        if (planned.length == 0)
+            return;
+        else
+            return PlanConverter.convert(planned);
     }
 
     private planSequence(name: string): number {

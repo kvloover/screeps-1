@@ -1,6 +1,7 @@
 import { singleton } from 'tsyringe';
 
-import { BUILDING_MAP, IPostPlan, PostPlanCreateFn, StructurePlan, PostPlanKey } from '../../entities/plan';
+import { IPostPlan, PostPlanCreateFn, StructurePlan, PostPlanKey } from '../../entities/plan';
+import { BUILDING_MAP } from '../../util/constants';
 
 @singleton()
 export class LinksPlan implements IPostPlan {
