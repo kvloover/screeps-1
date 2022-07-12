@@ -562,7 +562,7 @@
                 "role": "remote-builder",
                 "priority": 9,
                 "count": 1,
-                "condition": "conquer",
+                "condition": "remote_builder",
                 "template": {
                     "carry": 10,
                     "work": 6,
@@ -735,7 +735,7 @@
                 "role": "remote-builder",
                 "priority": 9,
                 "count": 1,
-                "condition": "conquer",
+                "condition": "remote_builder",
                 "template": {
                     "carry": 10,
                     "work": 6,
@@ -908,7 +908,7 @@
                 "role": "remote-builder",
                 "priority": 9,
                 "count": 1,
-                "condition": "conquer",
+                "condition": "remote_builder",
                 "template": {
                     "carry": 10,
                     "work": 6,
