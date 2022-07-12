@@ -58,7 +58,7 @@ export class TerminalController implements Controller {
             if (amount < requestAmount) {
                 this.request.add(new RequestTask(struct.room.name, 2, requestAmount - amount, RESOURCE_ENERGY, struct.id, undefined, struct.pos));
                 this.request.mergeEmpty();
-                this.log.debug(struct.room, `${struct.pos}: added request task`);
+                this.log.debug(struct.room.name, `${struct.pos}: added request task`);
             }
         }
 
@@ -69,7 +69,7 @@ export class TerminalController implements Controller {
             if (amount < usedCapcity) {
                 this.providerRepo.add(new SupplyTask(struct.room.name, 3, usedCapcity - amount, RESOURCE_ENERGY, struct.id, undefined, struct.pos));
                 this.providerRepo.mergeEmpty();
-                this.log.debug(struct.room, `${struct.pos}: added supply task`);
+                this.log.debug(struct.room.name, `${struct.pos}: added supply task`);
             }
         }
     }
@@ -86,7 +86,7 @@ export class TerminalController implements Controller {
             if (amount < requestAmount) {
                 this.demandRepo.add(new StorageTask(struct.room.name, 3, requestAmount - amount, RESOURCE_ENERGY, struct.id, undefined, struct.pos));
                 this.demandRepo.mergeEmpty();
-                this.log.debug(struct.room, `${struct.pos}: added storage task`);
+                this.log.debug(struct.room.name, `${struct.pos}: added storage task`);
             }
         }
 
@@ -97,7 +97,7 @@ export class TerminalController implements Controller {
             if (amount < usedCapcity) {
                 this.exchange.add(new ExchangeTask(struct.room.name, 2, usedCapcity - amount, RESOURCE_ENERGY, struct.id, undefined, struct.pos));
                 this.exchange.mergeEmpty();
-                this.log.debug(struct.room, `${struct.pos}: added exchange task`);
+                this.log.debug(struct.room.name, `${struct.pos}: added exchange task`);
             }
         }
     }

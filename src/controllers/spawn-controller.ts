@@ -43,7 +43,7 @@ export class SpawnController implements Controller {
                 const amount = tasks.reduce((p, c) => p + (c?.amount ?? 0), 0);
                 if (amount < free) {
                     this.demands.add(new DemandTask(s.room.name, 1, free - amount, RESOURCE_ENERGY, s.id, undefined, s.pos));
-                    this.log.debug(s.room, `${s.pos}: added supply task`);
+                    this.log.debug(s.room.name, `${s.pos}: added supply task`);
                 }
             }
         });

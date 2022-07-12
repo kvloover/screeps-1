@@ -26,7 +26,7 @@ export class HarvestSupplierRole extends HarvesterRole {
     }
 
     public run(creep: Creep): void {
-        this.log.debug(creep.room, `Running harvester supplier`);
+        this.log.debug(creep.room.name, `Running harvester supplier`);
         super.run(creep);
     }
 }
@@ -45,7 +45,7 @@ export class HarvestMidstreamRole extends HarvesterRole {
     }
 
     public run(creep: Creep): void {
-        this.log.debug(creep.room, `Running harvester midstream`);
+        this.log.debug(creep.room.name, `Running harvester midstream`);
         super.run(creep);
     }
 }
@@ -66,7 +66,7 @@ export class RemoteHarvestMidstreamRole extends RemoteHarvesterRole {
     }
 
     public run(creep: Creep): void {
-        this.log.debug(creep.room, `Running remote harvester midstream`);
+        this.log.debug(creep.room.name, `Running remote harvester midstream`);
         super.run(creep);
     }
 }

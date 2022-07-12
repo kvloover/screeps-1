@@ -1,3 +1,4 @@
+import { LogFilter, LogLevel } from "logger";
 import { RepairTask, Task } from "repos/task";
 import { CreepState } from "./utils/creep-state";
 
@@ -8,6 +9,7 @@ declare global {
     interface Memory {
         avoid: string[];
         roomVisuals: boolean;
+        logger: { level: LogLevel, filter: LogFilter } | undefined;
     }
 
     interface FlagMemory {

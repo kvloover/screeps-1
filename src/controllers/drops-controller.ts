@@ -38,7 +38,7 @@ export class DropsController implements Controller {
                         const amount = current.reduce((p, c) => p + (c.amount ?? 0), 0);
                         if (amount < stored && i.room) {
                             this.supplyRepo.add(new SupplyTask(i.room.name, 1, stored - amount, type, i.id, undefined, i.pos));
-                            this.log.debug(room, `${i.pos}: added tomb supply task`);
+                            this.log.debug(room.name, `${i.pos}: added tomb supply task`);
                         }
                     }
                 }
@@ -57,7 +57,7 @@ export class DropsController implements Controller {
                 const amount = current.reduce((p, c) => p + (c.amount ?? 0), 0);
                 if (amount < stored && i.room) {
                     this.supplyRepo.add(new SupplyTask(i.room.name, 1, stored - amount, i.resourceType, i.id, undefined, i.pos));
-                    this.log.debug(room, `${i.pos}: added dropped supply task`);
+                    this.log.debug(room.name, `${i.pos}: added dropped supply task`);
                 }
             }
         })

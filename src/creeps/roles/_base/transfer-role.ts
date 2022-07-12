@@ -48,15 +48,15 @@ export abstract class TransferRole {
         if (!creep.memory.tasks_blacklist) { creep.memory.tasks_blacklist = {}; }
 
         if (this.getState(creep) == CreepState.consume) {
-            this.log.debug(creep.room, `${creep.name}: running consume`);
+            this.log.debug(creep.room.name, `${creep.name}: running consume`);
             this.consume(creep);
         }
         if (this.getState(creep) == CreepState.supply) {
-            this.log.debug(creep.room, `${creep.name}: running supply`);
+            this.log.debug(creep.room.name, `${creep.name}: running supply`);
             this.supply(creep);
         }
         if (this.getState(creep) == CreepState.idle) {
-            this.log.debug(creep.room, `${creep.name}: running idle`);
+            this.log.debug(creep.room.name, `${creep.name}: running idle`);
             this.idle(creep);
         }
     }
@@ -100,7 +100,7 @@ export abstract class TransferRole {
             ? (blacklist ?? []).concat(ignore)
             : blacklist;
 
-        this.log.debug(creep.room, `blacklist for ${creep.name} on ${key}: ${JSON.stringify(retVal)}`);
+        this.log.debug(creep.room.name, `blacklist for ${creep.name} on ${key}: ${JSON.stringify(retVal)}`);
 
         return retVal;
     }
@@ -115,12 +115,12 @@ export abstract class TransferRole {
                 if (creepTask.amount && maxAmount < creepTask.amount && repo.trySplitTask(task, maxAmount)) {
                     if (creepTask) { creepTask.amount = maxAmount; }
                     task.amount = maxAmount; // for return
-                    this.log.debug(creep.room, `${creep.name}: ${key} task split for remaining amount on ${repo.key} : ${creepTask?.amount}`);
+                    this.log.debug(creep.room.name, `${creep.name}: ${key} task split for remaining amount on ${repo.key} : ${creepTask?.amount}`);
                 }
             }
 
         } else {
-            this.log.debug(creep.room, `${creep.name}: ${key} no task found on repo ${repo.key}`);
+            this.log.debug(creep.room.name, `${creep.name}: ${key} no task found on repo ${repo.key}`);
         }
         return task;
     }
@@ -138,11 +138,11 @@ export abstract class TransferRole {
         const stored = creep.memory.tasks[key];
         const memTask = stored?.task;
         if (memTask) {
-            this.log.debug(creep.room, `${creep.name}: consuming for ${key} task ${memTask.id}`);
+            this.log.debug(creep.room.name, `${creep.name}: consuming for ${key} task ${memTask.id}`);
             const res = this.tryConsumeForTask(stored.repo, key, creep, memTask);
             if (res.error || (res.executed && this.completed(stored, repo, res.amount))) {
                 repo.finishTask(creep, memTask, key);
-                this.log.debug(creep.room, `${creep.name}: consume ${key} task removed for ${memTask.id}`);
+                this.log.debug(creep.room.name, `${creep.name}: consume ${key} task removed for ${memTask.id}`);
             }
         }
     }
@@ -160,11 +160,11 @@ export abstract class TransferRole {
         const stored = creep.memory.tasks[key];
         const memTask = stored?.task;
         if (memTask) {
-            this.log.debug(creep.room, `${creep.name}: supplying for ${key} task ${memTask.id}`);
+            this.log.debug(creep.room.name, `${creep.name}: supplying for ${key} task ${memTask.id}`);
             const res = this.trySupplyForTask(stored.repo, key, creep, memTask);
             if (res.error || (res.executed && this.completed(stored, repo, res.amount))) {
                 repo.finishTask(creep, memTask, key);
-                this.log.debug(creep.room, `${creep.name}: supply ${key} task removed for ${memTask.id}`);
+                this.log.debug(creep.room.name, `${creep.name}: supply ${key} task removed for ${memTask.id}`);
             }
         }
     }
@@ -210,14 +210,14 @@ export abstract class TransferRole {
                     const transfering = this.energyPerTick(repo, key, creep, task, type) * this.amountPerEnergy(repo);
 
                     if (pos && !creep.pos.inRangeTo(pos, this.rangeTo(repo))) {
-                        this.log.debug(creep.room, `${creep.name} not in range, moving`);
+                        this.log.debug(creep.room.name, `${creep.name} not in range, moving`);
                         this.pathing.moveTo(creep, pos);
                     }
                     // todo if transfering multiple types and accepting multipe = transfer all at once
                     if (this.supplyAction(repo, creep, dest, type, transfering) === OK) {
                         return { executed: true, error: false, type: type, amount: transfering };
                     } else {
-                        this.log.debug(creep.room, `${creep.name} could not supply`);
+                        this.log.debug(creep.room.name, `${creep.name} could not supply`);
                     }
                 }
             }

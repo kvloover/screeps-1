@@ -74,7 +74,7 @@ export class ConstructionController implements Controller {
                 if (amount < left) {
                     const prio = this._config.get(i.structureType);
                     this.conRepo.add(new ConstructionTask(room.name, prio ?? 20, left - amount, RESOURCE_ENERGY, i.id, undefined, i.pos));
-                    this.log.debug(room, `${i.pos}: added construction task`);
+                    this.log.debug(room.name, `${i.pos}: added construction task`);
                 }
             }
 

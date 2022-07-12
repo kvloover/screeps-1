@@ -27,7 +27,7 @@ export class HaulerDropsRole extends HaulerRole {
     }
 
     public run(creep: Creep): void {
-        this.log.debug(creep.room, `Running hauler midstream`);
+        this.log.debug(creep.room.name, `Running hauler midstream`);
         super.run(creep);
     }
 
@@ -54,7 +54,7 @@ export class HaulerMidstreamRole extends HaulerRole {
     }
 
     public run(creep: Creep): void {
-        this.log.debug(creep.room, `Running hauler midstream`);
+        this.log.debug(creep.room.name, `Running hauler midstream`);
         super.run(creep);
     }
 
@@ -95,7 +95,7 @@ export class HaulerStorageRole extends HaulerRole {
     }
 
     public run(creep: Creep): void {
-        this.log.debug(creep.room, `Running hauler storage`);
+        this.log.debug(creep.room.name, `Running hauler storage`);
         super.run(creep);
     }
 
@@ -133,7 +133,7 @@ export class RemoteHaulerStorageRole extends HaulerRole {
             }
         }
 
-        this.log.debug(creep.room, `Running remote hauler storage`);
+        this.log.debug(creep.room.name, `Running remote hauler storage`);
         super.run(creep);
     }
 
@@ -141,7 +141,7 @@ export class RemoteHaulerStorageRole extends HaulerRole {
         if (creep.memory.targetRoom
             && creep.memory.targetRoom != creep.room.name
             && !Game.rooms.hasOwnProperty(creep.memory.targetRoom)) {
-            this.log.debug(creep.room, `scouting room ${creep.memory.targetRoom}`);
+            this.log.debug(creep.room.name, `scouting room ${creep.memory.targetRoom}`);
             this.pathing.scoutRoom(creep, creep.memory.targetRoom);
         } else {
             super.consume(creep);

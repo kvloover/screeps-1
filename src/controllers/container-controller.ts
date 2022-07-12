@@ -38,7 +38,7 @@ export class ContainerController implements Controller {
                 const amount = current.reduce((p, c) => p + (c.amount ?? 0), 0);
                 if (amount < free) {
                     this.transferRepo.add(new MidstreamTask(struct.room.name, 2, free - amount, RESOURCE_ENERGY, i.id, undefined, i.pos));
-                    this.log.debug(room, `${i.pos}: added container midstream task`);
+                    this.log.debug(room.name, `${i.pos}: added container midstream task`);
                 }
             }
 
@@ -50,7 +50,7 @@ export class ContainerController implements Controller {
                         const amount = current.reduce((p, c) => p + (c.amount ?? 0), 0);
                         if (amount < stored) {
                             this.supplyRepo.add(new SupplyTask(struct.room.name, 1, stored - amount, type, i.id, undefined, i.pos));
-                            this.log.debug(room, `${i.pos}: added container supply task`);
+                            this.log.debug(room.name, `${i.pos}: added container supply task`);
                         }
                     }
                 }

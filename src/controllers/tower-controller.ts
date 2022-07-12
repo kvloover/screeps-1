@@ -33,7 +33,7 @@ export class TowerController implements Controller {
                     const amount = current.reduce((p, c) => p + (c.amount ?? 0), 0);
                     if (amount < struct.store.getFreeCapacity(RESOURCE_ENERGY)) {
                         this.demands.add(new DemandTask(struct.room.name, 2, struct.store.getFreeCapacity(RESOURCE_ENERGY) - amount, RESOURCE_ENERGY, struct.id, undefined, struct.pos));
-                        this.log.debug(struct.room, `${struct.pos}: added supply task`);
+                        this.log.debug(struct.room.name, `${struct.pos}: added supply task`);
                     }
                 }
             }

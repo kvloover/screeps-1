@@ -50,7 +50,7 @@ export class StorageController implements Controller {
                             if (amount < fill) {
                                 this.demandRepo.add(new StorageTask(struct.room.name, prio.prio, fill - amount, undefined, struct.id, undefined, struct.pos));
                                 this.demandRepo.mergeEmpty();
-                                this.log.debug(room, `${struct.pos}: added storage demand task`);
+                                this.log.debug(room.name, `${struct.pos}: added storage demand task`);
                             }
                         }
                     }
@@ -67,7 +67,7 @@ export class StorageController implements Controller {
                             if (amount < stored) {
                                 this.providerRepo.add(new SupplyTask(struct.room.name, 2, stored - amount, type, struct.id, undefined, struct.pos));
                                 this.providerRepo.mergeEmpty();
-                                this.log.debug(room, `${struct.pos}: added storage provider task`);
+                                this.log.debug(room.name, `${struct.pos}: added storage provider task`);
                             }
                         }
                     }

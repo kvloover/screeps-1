@@ -24,6 +24,6 @@ export class VisualWrapper {
 
             return ret;
         }
-
     }
+
 }

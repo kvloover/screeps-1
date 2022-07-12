@@ -1,3 +1,4 @@
+import { Logger } from "logger";
 import { Persistency, Persistent } from "repos/persistent";
 import { LinkManager, SpawnManager, TowerManager } from "structures";
 import { container } from "tsyringe";
@@ -7,13 +8,12 @@ import { GarbageCollector } from "../utils/garbage-collect";
 export class ExConsole {
     static init() {
         global.cli = {
-            help: ExConsole.help,
-
             gc: ExConsole.gc,
 
             reset: ExConsole.reset,
-            debug: (m) => ExConsole.toggle(m, 'debug', true),
-            stopDebug: (m) => ExConsole.toggle(m, 'debug', false),
+            logLevel: (v) => { Logger.setLevel(v); return `Log level set to ${v}`; },
+            logContent: (v) => { Logger.setFilterContent(v); return `Log content set to ${v}`; },
+            logRooms: (v) => { Logger.setFilterRooms(v); return `Log rooms set to ${v}`; },
 
             remote: (m, v) => ExConsole.toggle(m, 'remote', v),
             attack: (m, v) => ExConsole.toggle(m, 'attack', v),
@@ -36,31 +36,6 @@ export class ExConsole {
 
             print: ExConsole.print
         }
-    }
-
-    static help(): string {
-        const lines: string[] = [];
-        lines.push(`gc(roomName)\t\t\t remove reference to dead artifacts`);
-        lines.push(`------------------------------------------------------------------`);
-        lines.push(`debug(roomName)\t\t\t turn on debugging`);
-        lines.push(`stopDebug(roomName)\t\t turn off debugging`);
-        lines.push(`------------------------------------------------------------------`);
-        lines.push(`reset(roomName)\t\t\t reset all persistency and creeps of the room`);
-        lines.push(`init_links(roomName)\t\t initialize the links and their config`);
-        lines.push(`init_towers(roomName)\t\t initialize the towers and their config`);
-        lines.push(`init_spawns(roomName)\t\t initialize the spawns and their config`);
-        lines.push(`------------------------------------------------------------------`);
-        lines.push(`remote(roomName, value)\t\t set the remote room`);
-        lines.push(`attack(roomName, value)\t\t set the attack room`);
-        lines.push(`attack(roomName, value)\t\t set the conquer room`);
-        lines.push(`------------------------------------------------------------------`);
-        lines.push(`upgrading(roomName, value)\t set upgrading toggle`);
-        lines.push(`building(roomName, value)\t set building toggle`);
-        lines.push(`remote_attack(roomName, value)\t set remote_attack toggle`);
-        lines.push(`remote_mining(roomName, value)\t set remote_mining toggle`);
-        lines.push(`claim(roomName, value)\t\t set claim toggle`);
-        lines.push(`------------------------------------------------------------------`);
-        return lines.join('\n');
     }
 
     static gc(): string {
@@ -169,12 +144,11 @@ declare global {
         }
 
         interface ExConsole {
-            help: () => string;
-
             gc: () => string;
 
-            debug: (room: string) => string;
-            stopDebug: (room: string) => string;
+            logLevel: (value: number) => string;
+            logContent: (value: string| undefined) => string;
+            logRooms: (value: string| undefined) => string;
             reset: (room: string) => string;
 
             remote: (room: string, value: string | undefined) => string;

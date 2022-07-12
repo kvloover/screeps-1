@@ -26,6 +26,7 @@ interface RoomVisual {
   connectRoads(opts?: LineStyle): RoomVisual;
   speech(text: string, x: number, y: number, opts?: SpeechStyle): RoomVisual;
   animatedPosition(x: number, y: number, opts?: AnimatedStyle): RoomVisual;
+  costMatrix(matrix: CostMatrix, opts?: AnimatedStyle): RoomVisual;
   test(): RoomVisual;
 }
 
@@ -611,3 +612,22 @@ RoomVisual.prototype.animatedPosition = function (x, y, opts = {}) {
 
   return this;
 };
+
+/** *
+ * for x,y draw text of value at position with color gradient from 0 to 255 from green to red (limit to 255)
+ * */
+RoomVisual.prototype.costMatrix = function (matrix, opts = {}) {
+  for (let x = 0; x < 50; x++) {
+    for (let y = 0; y < 50; y++) {
+      const value = matrix.get(x, y);
+      if (value > 0) {
+        const color = `hsl(${((1 - Math.min(255,value)/255) * 120)}, 100%, 50%)`;
+        this.text(value.toString(), x, y, {
+          color: color,
+          opacity: opts.opacity || 0.5,
+        });
+      }
+    }
+  }
+  return this;
+}

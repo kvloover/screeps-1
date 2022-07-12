@@ -131,7 +131,7 @@ export abstract class BaseRepo<T extends Task> implements TaskRepo<T>{
     }
 
     public registerTask(creep: Creep, task: Task, key: string): void {
-        this.log.debug(creep.room, `registering task on ${creep.name}: ${key} - ${task.id}`);
+        this.log.debug(creep.room.name, `registering task on ${creep.name}: ${key} - ${task.id}`);
         creep.memory.tasks[key] = { repo: this.key, key: key, tick: Game.time, task: task, amount: task.amount };
         this.linkTask(creep.id, task);
         // task.executer = creep.id;
@@ -146,13 +146,13 @@ export abstract class BaseRepo<T extends Task> implements TaskRepo<T>{
     }
 
     public finishTask(creep: Creep, task: Task, key: string): void {
-        this.log.debug(creep.room, `finished task on ${creep.name}: ${key} - ${task.id}`);
+        this.log.debug(creep.room.name, `finished task on ${creep.name}: ${key} - ${task.id}`);
         this.unregisterTask(creep, key);
         this.removeById(task.id);
     }
 
     public unregisterTask(creep: Creep, key: string): void {
-        this.log.debug(creep.room, `unlinking task on ${creep.name}: ${key}`);
+        this.log.debug(creep.room.name, `unlinking task on ${creep.name}: ${key}`);
         creep.memory.tasks[key] = undefined;
     }
 

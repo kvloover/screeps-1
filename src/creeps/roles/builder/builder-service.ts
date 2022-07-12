@@ -30,12 +30,12 @@ export class BuilderSourceRole extends BuilderRole {
     }
 
     protected consume(creep: Creep): void {
-        this.log.debug(creep.room, `${creep.name} harvesting`);
+        this.log.debug(creep.room.name, `${creep.name} harvesting`);
         this.harvesting.Action(creep);
     }
 
     public run(creep: Creep): void {
-        this.log.debug(creep.room, `Running builder source`);
+        this.log.debug(creep.room.name, `Running builder source`);
         super.run(creep);
     }
 
@@ -66,7 +66,7 @@ export class BuilderStorageRole extends BuilderRole {
     }
 
     public run(creep: Creep): void {
-        this.log.debug(creep.room, `Running builder storage`);
+        this.log.debug(creep.room.name, `Running builder storage`);
         super.run(creep);
     }
 
@@ -101,7 +101,7 @@ export class RemoteBuilderSourceRole extends BuilderSourceRole {
 
 
     public run(creep: Creep): void {
-        this.log.debug(creep.room, `Running remote builder source`);
+        this.log.debug(creep.room.name, `Running remote builder source`);
         super.run(creep);
     }
 
@@ -135,7 +135,7 @@ export class RemoteBuilderStorageRole extends BuilderStorageRole {
     }
 
     public run(creep: Creep): void {
-        this.log.debug(creep.room, `Running remote builder storage`);
+        this.log.debug(creep.room.name, `Running remote builder storage`);
         super.run(creep);
     }
 

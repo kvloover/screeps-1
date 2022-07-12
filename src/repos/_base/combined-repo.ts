@@ -86,7 +86,7 @@ export class CombinedRepo implements TaskRepo<Task> {
         }
     }
     unregisterTask(creep: Creep, key: string): void {
-        this.log.debug(creep.room, `unlinking task on ${creep.name}: ${key}`);
+        this.log.debug(creep.room.name, `unlinking task on ${creep.name}: ${key}`);
         creep.memory.tasks[key] = undefined;
     }
     setAmount(id: string, amount:number):void {

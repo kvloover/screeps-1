@@ -40,7 +40,7 @@ export class LinkController implements Controller {
                             const amount = current.reduce((p, c) => p + (c.amount ?? 0), 0);
                             if (amount < used) {
                                 this.providerRepo.add(new ProviderTask(struct.room.name, 1, used - amount, RESOURCE_ENERGY, mem.id, undefined, mem.pos));
-                                this.log.debug(room, `${mem.pos}: added link provider task`);
+                                this.log.debug(room.name, `${mem.pos}: added link provider task`);
                             }
                         }
                     } else if (mem.supply) {
@@ -50,7 +50,7 @@ export class LinkController implements Controller {
                             const amount = current.reduce((p, c) => p + (c.amount ?? 0), 0);
                             if (amount < used) {
                                 this.utilityRepo.add(new UtilityTask(struct.room.name, 1, used - amount, RESOURCE_ENERGY, mem.id, undefined, mem.pos));
-                                this.log.debug(room, `${mem.pos}: added link utility task`);
+                                this.log.debug(room.name, `${mem.pos}: added link utility task`);
                             }
                         }
                     } else {
@@ -60,7 +60,7 @@ export class LinkController implements Controller {
                             const amount = current.reduce((p, c) => p + (c?.amount ?? 0), 0);
                             if (amount < free) {
                                 this.transferRepo.add(new MidstreamTask(struct.room.name, 1, free - amount, RESOURCE_ENERGY, mem.id, undefined, mem.pos));
-                                this.log.debug(room, `${mem.pos}: added link midstream task`);
+                                this.log.debug(room.name, `${mem.pos}: added link midstream task`);
                             }
                         }
                     }

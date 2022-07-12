@@ -60,7 +60,7 @@ export class EmergencyController implements Controller {
     }
 
     private notifySafe(room: Room, hostiles: number, friendly: number): void {
-        this.log.important(`room ${room.name} in emergency SAFE MODE ${room.controller?.safeMode ?? 0} ticks left`);
+        this.log.critical(room.name, `room ${room.name} in emergency SAFE MODE ${room.controller?.safeMode ?? 0} ticks left`);
         if (!room.memory.emergency.notified) {
             Game.notify(`SAFE MODE ENABLED
             Emergency triggered in room ${room.name}
@@ -71,7 +71,7 @@ export class EmergencyController implements Controller {
     }
 
     private notifyUnsafe(room: Room, hostiles: number, friendly: number): void {
-        this.log.critical(`room ${room.name} in emergency NOT SAFE`);
+        this.log.critical(room.name, `room ${room.name} in emergency NOT SAFE`);
         if (!room.memory.emergency.notified) {
             room.memory.emergency.active = true;
             Game.notify(`NO SAFE MODE

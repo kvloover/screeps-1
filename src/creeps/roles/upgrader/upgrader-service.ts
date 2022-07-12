@@ -30,7 +30,7 @@ export class UpgraderSourceRole extends UpgraderRole {
     }
 
     public run(creep: Creep): void {
-        this.log.debug(creep.room, `Running upgrader source`);
+        this.log.debug(creep.room.name, `Running upgrader source`);
         super.run(creep);
     }
 }
@@ -58,7 +58,7 @@ export class UpgraderStorageRole extends UpgraderRole {
     }
 
     public run(creep: Creep): void {
-        this.log.debug(creep.room, `Running upgrader storage`);
+        this.log.debug(creep.room.name, `Running upgrader storage`);
         super.run(creep);
     }
 
@@ -89,7 +89,7 @@ export class UpgraderSupplyRole extends UpgraderRole {
     }
 
     public run(creep: Creep): void {
-        this.log.debug(creep.room, `Running upgrader storage`);
+        this.log.debug(creep.room.name, `Running upgrader storage`);
         super.run(creep);
     }
 

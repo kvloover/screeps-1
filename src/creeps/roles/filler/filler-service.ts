@@ -28,7 +28,7 @@ export class FillerSupplierRole extends FillerRole {
     ) { super(log, pathing, providers, demands); }
 
     public run(creep: Creep): void {
-        this.log.debug(creep.room, `Running filler supplier`);
+        this.log.debug(creep.room.name, `Running filler supplier`);
         super.run(creep);
     }
 }
@@ -49,7 +49,7 @@ export class FillerStorageRole extends FillerRole {
     ) { super(log, pathing, providers, demands); }
 
     public run(creep: Creep): void {
-        this.log.debug(creep.room, `Running filler storage`);
+        this.log.debug(creep.room.name, `Running filler storage`);
         // supplyRepo: storage + container | storageRepo : storage => avoid supplying to storage from storage
         if (!creep.memory.tasks_blacklist)
             creep.memory.tasks_blacklist = {};
@@ -80,7 +80,7 @@ export class FillerLinkRole extends FillerRole {
     ) { super(log, pathing, providers, demands); }
 
     public run(creep: Creep): void {
-        this.log.debug(creep.room, `Running filler link`);
+        this.log.debug(creep.room.name, `Running filler link`);
         super.run(creep);
     }
 }

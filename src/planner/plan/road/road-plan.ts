@@ -1,3 +1,4 @@
+import { Logger } from 'logger';
 import { singleton } from 'tsyringe';
 
 import { IPlan, PlanCreateFn, PlanKey, StructurePlan } from '../../entities/plan';
@@ -7,9 +8,12 @@ import { BUILDING_MAP } from '../../util/constants';
 export class RoadPlan implements IPlan {
     name: PlanKey = 'road';
 
-    constructor() { }
+    constructor(private log: Logger) { }
 
     create: PlanCreateFn = (roomName, poi, terrain): StructurePlan[][] => {
+
+        this.log.info(roomName, 'Planning main roads');
+
         const planned: StructurePlan[][] = [];
         const visual = new RoomVisual(roomName);
 
@@ -20,13 +24,16 @@ export class RoadPlan implements IPlan {
         // substitute roadValue in matrix with 0
         for (let x = 0; x < 50; x++) {
             for (let y = 0; y < 50; y++) {
-                if (matrix.get(x, y) == roadValue) {
+                const value = matrix.get(x, y);
+                if (value == roadValue) {
                     matrix.set(x, y, 0);
+                } else if (value > roadValue) {
+                    matrix.set(x, y, 255); // buildings
                 }
             }
         }
 
-        // this.visualizeTerrainMatrix(room, matrix);
+        visual.costMatrix(matrix);
 
         // plot roads to seed locations
         const anchor = poi['anchor']?.[0];

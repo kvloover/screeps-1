@@ -65,11 +65,19 @@ export class ClaimerRole implements Role {
                     }
                     if (creep.memory.state === CreepState.claim) {
                         if (!obj.my) {
-                            creep.claimController(obj);
+                            if (obj.owner) {
+                                creep.attackController(obj);
+                            } else {
+                                creep.claimController(obj);
+                            }
                         }
                     } else if (creep.memory.state === CreepState.reserve) {
                         if (!obj.my) {
-                            creep.reserveController(obj);
+                            if (obj.owner) {
+                                creep.attackController(obj);
+                            } else {
+                                creep.reserveController(obj);
+                            }
                         }
                     }
                 }

@@ -40,7 +40,7 @@ export abstract class HaulerRole extends TransferRole implements Role {
     protected consume(creep: Creep): void {
         const supplyTask = creep.memory.tasks['supply'];
         if (!supplyTask || !supplyTask.task) {
-            this.log.critical(`${creep.name}: consume exited premature`);
+            this.log.critical(creep.room.name, `${creep.name}: consume exited premature`);
             return;
         }
 
@@ -64,7 +64,7 @@ export abstract class HaulerRole extends TransferRole implements Role {
     }
 
     protected findHaulSupply(creep: Creep, room: string | undefined = undefined): boolean {
-        this.log.debug(creep.room, `${creep.name}: searching for supply`);
+        this.log.debug(creep.room.name, `${creep.name}: searching for supply`);
         // check if we can find anything to supply and register it on the creep for use
         let task = this.findAndRegisterTask(creep, this.demands, 'supply', creep.store.getCapacity(), undefined, room);
         return isDefined(task);
@@ -75,7 +75,7 @@ export abstract class HaulerRole extends TransferRole implements Role {
         if (!task) {
             const supply = creep.memory.tasks['supply'];
             if (supply && Game.time - supply.tick > 5) {
-                this.log.debug(creep.room, `${creep.name} - timeout supply task`)
+                this.log.debug(creep.room.name, `${creep.name} - timeout supply task`)
                 this.unlinkSupply(creep);
                 this.setState(creep, CreepState.idle);
                 return false;
@@ -96,18 +96,18 @@ export abstract class HaulerRole extends TransferRole implements Role {
 
     protected override continueSupply(creep: Creep): boolean {
         const supplyTask = creep.memory.tasks['supply'];
-        this.log.debug(creep.room, `${creep.name}: continuing supply`)
+        this.log.debug(creep.room.name, `${creep.name}: continuing supply`)
         return isDefined(supplyTask);
     }
 
     protected override blacklistFor(creep: Creep, key: string): string[] | undefined {
         if (key === 'supply') return undefined;
 
-        this.log.debug(creep.room, `${creep.name}: blacklist - checking supply task`)
+        this.log.debug(creep.room.name, `${creep.name}: blacklist - checking supply task`)
         // Avoid consuming from the task we are supplying
         const supplyTask = creep.memory.tasks['supply'];
         if (supplyTask && supplyTask.task.requester) {
-            this.log.debug(creep.room, `${creep.name}: blacklisting supply request`)
+            this.log.debug(creep.room.name, `${creep.name}: blacklisting supply request`)
 
             const refs = global.refs ? global.refs[creep.room.name]?.objects : undefined;
 

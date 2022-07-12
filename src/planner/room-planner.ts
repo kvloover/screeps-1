@@ -79,6 +79,8 @@ export class RoomPlanner {
             );
         }
 
+        if (visualize) { new RoomVisual(roomName).costMatrix(terrain); }
+
         if (planned.length == 0)
             return;
         else
@@ -88,7 +90,7 @@ export class RoomPlanner {
     private planSequence(name: string): number {
         switch (name) {
             case 'core': return 0;
-            case 'labs': return 1;
+            case 'lab': return 1;
             case 'extensions': return 2;
             default: return 99;
         }
