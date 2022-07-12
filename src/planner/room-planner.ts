@@ -5,6 +5,7 @@ import { PlanConverter } from "./util/plan-converter";
 import { Plans } from "./ioc/plan-service";
 import { VisualWrapper } from "./util/visual-wrapper";
 import { ExecutablePlan } from "./entities/executable-plan";
+import { RESERVED_LOCATION } from "./util/constants";
 
 @singleton()
 export class RoomPlanner {
@@ -36,7 +37,7 @@ export class RoomPlanner {
             for (let x = loc.x - 1; x <= loc.x + 1; x++) {
                 for (let y = loc.y - 1; y <= loc.y + 1; y++) {
                     if (costs.get(x, y) < 255) {
-                        costs.set(x, y, 250);
+                        costs.set(x, y, RESERVED_LOCATION);
                     }
                 }
             }

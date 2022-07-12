@@ -91,6 +91,11 @@ export class Logger {
         }
     }
 
+    private labelForLevel(level: LogLevel): string {
+        const label = LogLevel[level].toLowerCase();
+        return `[${label}]:`.padEnd(10, ' ');
+    }
+
     private log(message: LogMessage, roomName: string | undefined, level: LogLevel): void {
         if (level > Logger.settings.level) {
             return;
@@ -99,24 +104,18 @@ export class Logger {
         if (filter && filter.rooms && roomName && !filter.rooms.includes(roomName)) {
             return;
         }
+        const msg = typeof message === 'function' ? message() : message;
+        if (filter && filter.content && !msg.toLowerCase().includes(filter.content.toLowerCase())) {
+            return;
+        }
 
-        const color = this.colorForLevel(level);
-
-        let output = '';
-        output += `[${Game.time}] `;
-        output += LogLevel[level].toLowerCase();
-        output += `: `;
-
+        let output = `[${Game.time}] ${this.labelForLevel(level)}`;
         if (roomName) {
             output += `<a href="#!/room/${Game.shard.name}/${roomName}">${roomName}</a>`;
             output += ` - `;
         }
-        output += typeof message === 'function' ? message() : message;
 
-
-        if (filter && filter.content && !output.includes(filter.content)) {
-            return;
-        }
-        console.log(`<span style="color:${color}">${output}</span>`);
+        output += msg;
+        console.log(`<span style="color:${this.colorForLevel(level)}">${output}</span>`);
     }
 }

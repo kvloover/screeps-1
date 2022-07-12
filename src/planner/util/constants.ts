@@ -1,3 +1,5 @@
+export const RESERVED_LOCATION = 250;
+
 export const BUILDING_MAP = new Map<BuildableStructureConstant, number>(
     [
         [STRUCTURE_ROAD, 201],
