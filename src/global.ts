@@ -41,8 +41,6 @@ declare global {
         request: boolean;
 
         reset?: boolean;
-
-        visuals: { [key: string]: string };
     }
 
 
@@ -74,6 +72,7 @@ declare global {
         interface Global {
             repair?: RepairTask[];
             timingOffset?: { [key in TimingKey]?: { [key: string]: number } }; // random stored in global for reuse
+            visuals?: { [key: string]: { [key: string]: string } };
         }
     }
 }

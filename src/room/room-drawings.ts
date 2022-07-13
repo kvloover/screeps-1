@@ -5,24 +5,24 @@ export class RoomDrawings {
     constructor() { }
 
     persist(key: string, visual: RoomVisual) {
-        const roomMem = Memory.rooms[visual.roomName];
+        if (!global.visuals) { global.visuals = {}; }
+        const roomMem = global.visuals[visual.roomName];
+        if (!roomMem) { global.visuals[visual.roomName] = {}; }
+
         if (roomMem) {
             const data = visual.export();
-            roomMem.visuals = roomMem.visuals || {};
-            roomMem.visuals[key] = data;
+            roomMem[key] = data;
         }
     }
 
     restore(roomName: string) {
-        const roomMem = Memory.rooms[roomName];
+
+        const roomMem = global.visuals?.[roomName];
         if (roomMem) {
-            const visuals = roomMem.visuals;
-            if (visuals) {
-                for (const key in visuals) {
-                    const data = visuals[key];
-                    const visual = new RoomVisual(roomName);
-                    visual.import(data);
-                }
+            const visual = new RoomVisual(roomName);
+            for (const key in roomMem) {
+                const data = roomMem[key];
+                visual.import(data);
             }
         }
     }
