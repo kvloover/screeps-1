@@ -36,20 +36,20 @@ export class StructuresController implements Controller {
     // Rampart: decays 300 hits each 100 ticks (0.1% lvl2 - 0.0001% lvl8) -> ~ every 10.000 ticks = target 60k
     // ! rampart to be repaired on constructing
 
-    private NONPRIO = 50000;
-    private NON_PRIO_UNDER_EMERGENCY = 50000;
+    private NONPRIO = 1000;
+    private NON_PRIO_UNDER_EMERGENCY = 500;
 
     private _config = new Map<StructureConstant | ObjectConstant, RepairConfig>([
         // Main
         [STRUCTURE_SPAWN, { prio: 1, check: this.NONPRIO, under_emergency: this.NON_PRIO_UNDER_EMERGENCY, target: 1.00, emergency: 0.50, max: 1.00 }],
         // Decay & Defense:
         [STRUCTURE_TOWER, { prio: 2, check: this.NONPRIO, under_emergency: 20, target: 1.00, emergency: 0.10, max: 1.00 }],
-        [STRUCTURE_RAMPART, { prio: 3, check: 5000, under_emergency: 5, target: 0.05, emergency: 0.01, max: 1.00 }],
+        [STRUCTURE_RAMPART, { prio: 3, check: 1000, under_emergency: 5, target: 0.05, emergency: 0.01, max: 1.00 }],
         [STRUCTURE_STORAGE, { prio: 3, check: this.NONPRIO, under_emergency: this.NON_PRIO_UNDER_EMERGENCY, target: 1.00, emergency: 0.50, max: 1.00 }],
-        [STRUCTURE_CONTAINER, { prio: 4, check: 2500, under_emergency: 10000, target: 0.80, emergency: 0.20, max: 1.00 }],
+        [STRUCTURE_CONTAINER, { prio: 4, check: 750, under_emergency: 500, target: 0.80, emergency: 0.20, max: 1.00 }],
         [STRUCTURE_EXTENSION, { prio: 4, check: this.NONPRIO, under_emergency: this.NON_PRIO_UNDER_EMERGENCY, target: 1.00, emergency: 0.0, max: 1.00 }],
         [STRUCTURE_ROAD, { prio: 5, check: 1000, under_emergency: 1000, target: 0.80, emergency: 0.20, max: 1.00 }],
-        [STRUCTURE_WALL, { prio: 6, check: 5000, under_emergency: 5, target: 0.0004, emergency: 0.0002, max: 1.00 }],
+        [STRUCTURE_WALL, { prio: 6, check: 500, under_emergency: 5, target: 0.0004, emergency: 0.0002, max: 1.00 }],
         // Other loss: (TODO during emergency)
         [STRUCTURE_LINK, { prio: 6, check: this.NONPRIO, under_emergency: this.NON_PRIO_UNDER_EMERGENCY, target: 1.00, emergency: 0.0, max: 1.00 }],
         [STRUCTURE_TERMINAL, { prio: 7, check: this.NONPRIO, under_emergency: this.NON_PRIO_UNDER_EMERGENCY, target: 1.00, emergency: 0.50, max: 1.00 }],
