@@ -1,6 +1,6 @@
 import { injectAll, singleton } from "tsyringe";
 import { SOURCE } from "utils/custom-types";
-import { IPlan, IPostPlan, Poi, StructurePlan } from "./entities/plan";
+import { IPlan, IPostPlan, PlanKey, Poi, PostPlanKey, StructurePlan } from "./entities/plan";
 import { PlanConverter } from "./util/plan-converter";
 import { Plans } from "./ioc/plan-service";
 import { VisualWrapper } from "./util/visual-wrapper";
@@ -88,7 +88,7 @@ export class RoomPlanner {
             return PlanConverter.convert(planned);
     }
 
-    private planSequence(name: string): number {
+    private planSequence(name: PlanKey): number {
         switch (name) {
             case 'core': return 0;
             case 'lab': return 1;
@@ -97,7 +97,7 @@ export class RoomPlanner {
         }
     }
 
-    private postPlanSequence(name: string): number {
+    private postPlanSequence(name: PostPlanKey): number {
         switch (name) {
             case 'perimeter': return 0;
             default: return 99;

@@ -1,6 +1,6 @@
 export type PoiKey = 'source' | 'controller' | 'anchor';
 export type PlanKey = 'core' | 'lab' | 'extensions' | 'road';
-export type PostPlanKey = 'perimeter' | 'links';
+export type PostPlanKey = 'perimeter' | 'links' | 'containers';
 export type PlannedKey = PlanKey | PostPlanKey;
 
 export interface IPlan {
