@@ -30,6 +30,7 @@ export class PlanManager implements Manager {
 
             // todo split planning over multiple ticks and skip timings check & re-enter planner
             global.plans[room.name] = this.planner.planRoom(room.name, false);
+            this.cleanPlan(room);
         }
 
         if (global.plans[room.name]) {
@@ -49,7 +50,7 @@ export class PlanManager implements Manager {
         }
     }
 
-    public static showPlan(room: Room, rcl: number | undefined = undefined): void {
+    public showPlan(room: Room, rcl: number | undefined = undefined): void {
         if (!isMyRoom(room)) return;
         if (room.memory.manual) return;
 
@@ -63,6 +64,41 @@ export class PlanManager implements Manager {
                 room.visual.structure(structure.pos.x, structure.pos.y, structure.structureType, { opacity: 0.5 });
             }
         }
+    }
+
+    public cleanPlan(room: Room): void {
+        if (!isMyRoom(room)) return;
+        if (room.memory.manual) return;
+
+        const plan = global.plans?.[room.name];
+        if (!plan) return;
+
+        const limit = 8;
+        const structures: PlannedStructure[] = [];
+        for (let i = 0; i <= limit; i++) {
+            const rclPlan = plan.plan[i];
+            for (let structure of rclPlan.structures) {
+                structures.push(structure);
+            }
+        }
+
+        room.find(FIND_STRUCTURES)
+            .forEach(s => {
+                if (s.structureType == STRUCTURE_CONTROLLER)
+                    return;
+                const planned = structures.find(p => p.structureType == s.structureType && p.pos.x == s.pos.x && p.pos.y == s.pos.y);
+                if (!planned) {
+                    s.destroy();
+                }
+            });
+
+        room.find(FIND_CONSTRUCTION_SITES)
+            .forEach(s => {
+                const planned = structures.find(p => p.structureType == s.structureType && p.pos.x == s.pos.x && p.pos.y == s.pos.y);
+                if (!planned) {
+                    s.remove();
+                }
+            });
     }
 
     // get current rcl

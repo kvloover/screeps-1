@@ -5,6 +5,7 @@ import { container } from "tsyringe";
 import { relativeExitTo } from "../utils/utils";
 import util_mincut, { Rect } from "../utils/mincut";
 import { PlanManager } from "planner/plan-manager";
+import { RoomManager } from "room";
 
 export class TestConsole {
 
@@ -18,6 +19,7 @@ export class TestConsole {
             plan: TestConsole.plan,
             mincut: TestConsole.mincut,
             showPlan: TestConsole.showPlan,
+            cleanRoom: TestConsole.cleanRoom
         }
     }
 
@@ -77,7 +79,7 @@ export class TestConsole {
     }
 
     static plan(roomName: string): string {
-        Memory.rooms[roomName].visuals = {};
+        if (global.visuals) global.visuals[roomName] = {};
         container.resolve(RoomPlanner).planRoom(roomName, true);
         return `Planned ${roomName}.`;
     }
@@ -90,8 +92,17 @@ export class TestConsole {
     static showPlan(roomName: string, rcl: number | undefined = undefined): string {
         if (Game.rooms.hasOwnProperty(roomName)) {
             const room = Game.rooms[roomName];
-            PlanManager.showPlan(room, rcl);
-            return `room sources init for ${roomName}.`;
+            container.resolve(PlanManager).showPlan(room, rcl);
+            return `room plan shown for ${roomName}.`;
+        }
+        return `Room not known: ${roomName}`
+    }
+
+    static cleanRoom(roomName: string): string {
+        if (Game.rooms.hasOwnProperty(roomName)) {
+            const room = Game.rooms[roomName];
+            container.resolve(PlanManager).cleanPlan(room);
+            return `room plan cleaned ${roomName}.`;
         }
         return `Room not known: ${roomName}`
     }
@@ -122,6 +133,7 @@ declare global {
             plan: (room: string) => string;
             mincut(roomName: string, rect: Rect): string;
             showPlan: (room: string, rcl: number | undefined) => string;
+            cleanRoom: (room: string) => string;
         }
     }
 }
