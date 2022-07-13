@@ -47,7 +47,22 @@ export class PlanManager implements Manager {
                 }
             }
         }
+    }
 
+    public static showPlan(room: Room, rcl: number | undefined = undefined): void {
+        if (!isMyRoom(room)) return;
+        if (room.memory.manual) return;
+
+        const plan = global.plans?.[room.name];
+        if (!plan) return;
+
+        const limit = rcl || room.controller?.level || 0;
+        for (let i = 0; i <= limit; i++) {
+            const rclPlan = plan.plan[i];
+            for (let structure of rclPlan.structures) {
+                room.visual.structure(structure.pos.x, structure.pos.y, structure.structureType, { opacity: 0.5 });
+            }
+        }
     }
 
     // get current rcl
@@ -57,7 +72,7 @@ export class PlanManager implements Manager {
         const structures: PlannedStructure[] = [];
 
         for (let i = 0; i <= rcl; i++) {
-            const rclPlan = plan.plan[rcl];
+            const rclPlan = plan.plan[i];
             for (let structure of rclPlan.structures) {
                 const type = structure.structureType;
                 const ref = this.findObjectRef(refs, type, structure.pos);

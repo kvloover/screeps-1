@@ -4,6 +4,7 @@ import { Persistency, Persistent } from "repos/persistent";
 import { container } from "tsyringe";
 import { relativeExitTo } from "../utils/utils";
 import util_mincut, { Rect } from "../utils/mincut";
+import { PlanManager } from "planner/plan-manager";
 
 export class TestConsole {
 
@@ -15,7 +16,8 @@ export class TestConsole {
             memory: TestConsole.memory,
             remove: TestConsole.remove,
             plan: TestConsole.plan,
-            mincut: TestConsole.mincut
+            mincut: TestConsole.mincut,
+            showPlan: TestConsole.showPlan,
         }
     }
 
@@ -85,6 +87,15 @@ export class TestConsole {
         return `Mincut run for ${roomName}.`;
     }
 
+    static showPlan(roomName: string, rcl: number | undefined = undefined): string {
+        if (Game.rooms.hasOwnProperty(roomName)) {
+            const room = Game.rooms[roomName];
+            PlanManager.showPlan(room, rcl);
+            return `room sources init for ${roomName}.`;
+        }
+        return `Room not known: ${roomName}`
+    }
+
 }
 
 const countCpu = (fn: () => void): number => {
@@ -110,6 +121,7 @@ declare global {
 
             plan: (room: string) => string;
             mincut(roomName: string, rect: Rect): string;
+            showPlan: (room: string, rcl: number | undefined) => string;
         }
     }
 }
