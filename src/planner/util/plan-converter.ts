@@ -26,7 +26,7 @@ export class PlanConverter {
 
         for (const stamp of plan) {
             const postProcess: StructurePlan[] = [];
-            let lowestRcl = 8;
+            let lowestRcl = 9;
             for (const structure of stamp) {
                 const count = (summary[structure.type] || 0) + 1;
                 summary[structure.type] = count;
@@ -44,6 +44,9 @@ export class PlanConverter {
                     rclPlan.structures.push(new PlannedStructure(structure.pos, structure.type));
                 }
             }
+
+            // if no RCL provided: add to 0
+            if (lowestRcl === 9) { lowestRcl = 0; }
 
             for (const structure of postProcess) {
                 const rclPlan = planRcl[lowestRcl];
