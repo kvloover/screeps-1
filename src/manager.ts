@@ -1,5 +1,6 @@
 import { registry } from "tsyringe";
 
+import { PlanManager } from "planner/plan-manager";
 import { RoomManager } from "room";
 import { CreepsManager } from "creeps";
 import {
@@ -20,6 +21,7 @@ export interface Manager {
     { token: Managers.token, useToken: TowerManager },
     { token: Managers.token, useToken: LinkManager },
     { token: Managers.token, useToken: TerminalManager },
+    { token: Managers.token, useToken: PlanManager },
 ])
 export abstract class Managers {
     static readonly token = Symbol('Manager');

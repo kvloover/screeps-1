@@ -65,7 +65,7 @@ export class ClaimerRole implements Role {
                     }
                     if (creep.memory.state === CreepState.claim) {
                         if (!obj.my) {
-                            if (obj.owner) {
+                            if (obj.owner || (obj.reservation && obj.reservation.username != whoAmI())) {
                                 creep.attackController(obj);
                             } else {
                                 creep.claimController(obj);
@@ -73,7 +73,7 @@ export class ClaimerRole implements Role {
                         }
                     } else if (creep.memory.state === CreepState.reserve) {
                         if (!obj.my) {
-                            if (obj.owner) {
+                            if (obj.owner || (obj.reservation && obj.reservation.username != whoAmI())) {
                                 creep.attackController(obj);
                             } else {
                                 creep.reserveController(obj);

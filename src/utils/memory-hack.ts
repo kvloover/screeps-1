@@ -1,29 +1,37 @@
-declare const global: { Memory?: Memory };
+declare global {
+  namespace NodeJS {
+    interface Global {
+      Memory?: Memory
+    }
+  }
 
-// there are two ways of saving Memory with different advantages and disadvantages
-// 1. RawMemory.set(JSON.stringify(Memory));
-// + ability to use custom serialization method
-// - you have to pay for serialization
-// - unable to edit Memory via Memory watcher or console
-// 2. RawMemory._parsed = Memory;
-// - undocumented functionality, could get removed at any time
-// + the server will take care of serialization, it doesn't cost any CPU on your site
-// + maintain full functionality including Memory watcher and console
+  interface RawMemory {
+    _parsed: any;
+  }
+}
 
-// this implementation uses the official way of saving Memory
+// Usage:
+// At top of main: import MemHack from './MemHack'
+// At top of loop(): MemHack.pretick()
+// Thats it!
+const MemHack = {
+  memory: undefined as (Memory | undefined),
+  parseTime: -1,
+  register() {
+    const start = Game.cpu.getUsed()
+    this.memory = Memory
+    const end = Game.cpu.getUsed()
+    this.parseTime = end - start
+    this.memory = RawMemory._parsed
+  },
+  pretick() {
+    if (this.memory) {
+      delete global.Memory
+      global.Memory = this.memory
+      RawMemory._parsed = this.memory
+    }
+  },
+}
+MemHack.register()
 
-// https://github.com/Jomik/screeps-ai/blob/7b8ca87028df257471f43dc9b13b9ee362bf7f30/packages/bot/src/utils/memory-hack.ts
-// Adapted from https://github.com/screepers/screeps-snippets/blob/8b557a3fcb82cb734fca155b07d5a48622f9da60/src/misc/JavaScript/Memory%20Cache.js
-
-export const wrapMemory = (fn: () => void) => {
-  const memory = Memory;
-
-  return () => {
-    delete global.Memory;
-    global.Memory = memory;
-
-    fn();
-
-    RawMemory.set(JSON.stringify(Memory));
-  };
-};
+export default MemHack

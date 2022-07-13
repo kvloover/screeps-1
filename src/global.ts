@@ -20,6 +20,7 @@ declare global {
 
     interface RoomMemory {
         stage: number;
+        manual: boolean;
 
         remote: string | undefined;
         attack: string | undefined;
@@ -72,7 +73,12 @@ declare global {
     namespace NodeJS {
         interface Global {
             repair?: RepairTask[];
+            timingOffset?: { [key in TimingKey]?: { [key: string]: number } }; // random stored in global for reuse
         }
     }
 }
 
+export type TimingKey = 'plan';
+export const TIMINGS_MAIN: { [key in TimingKey]: number } = {
+    plan: 30
+}

@@ -2,7 +2,7 @@ import "reflect-metadata";
 import { container } from "tsyringe";
 
 import { ErrorMapper } from "utils/error-mapper";
-import { wrapMemory } from "utils/memory-hack";
+import MemHack from "utils/memory-hack";
 import { exportStats } from "utils/stats";
 
 import "traveller/traveler";
@@ -26,12 +26,11 @@ MigrateConsole.init();
 
 export const loop =
   ErrorMapper.wrapLoop(
-    wrapMemory(
       () => {
+        MemHack.pretick();
         profiler.wrap(function () {
           container.resolve(GameWorld).run();
           exportStats();
         });
       }
-    )
   );

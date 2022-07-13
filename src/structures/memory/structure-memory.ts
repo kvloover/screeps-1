@@ -32,9 +32,13 @@ declare global {
 
     // Persistent
     interface RoomMemory {
-        objects?: { [T in StructureConstant | ObjectConstant]?: RoomObjectMemory<T>[] }
-        constructions?: { [T in BuildableStructureConstant]?: RoomObjectMemory<T>[] }
+        objects?: RoomObjectMap;
+        constructions?: RoomConstructionMap;
     }
+
+    type RoomConstructionMap = RoomObjectMemoryMap<BuildableStructureConstant>;
+    type RoomObjectMap = RoomObjectMemoryMap<StructureConstant | ObjectConstant>;
+    type RoomObjectMemoryMap<C extends StructureConstant | ObjectConstant> = { [T in C]?: RoomObjectMemory<T>[] }
 
     interface RoomObjectMemory<T extends StructureConstant | ObjectConstant> {
         id: Id<_HasId>;
@@ -75,7 +79,11 @@ declare global {
 
     interface RoomRef {
         name: string;
-        objects?: { [T in StructureConstant | ObjectConstant]?: ObjectRef<T>[] };
+        objects?: ObjectRefMap;
+    }
+
+    type ObjectRefMap = {
+        [T in StructureConstant | ObjectConstant]?: ObjectRef<T>[]
     }
 
     interface ObjectRef<T extends StructureConstant | ObjectConstant> {
