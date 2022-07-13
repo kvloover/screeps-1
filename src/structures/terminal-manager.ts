@@ -75,7 +75,7 @@ export class TerminalManager implements Manager {
                 ? Math.floor(0.99 * useable / (1 + roomRelCost))
                 : order.amount;
 
-            console.log(`useable ${useable} - remainder ${remainder} - sending ${sending} - relCost ${roomRelCost}`);
+            this.log.debug(room.name, `useable ${useable} - remainder ${remainder} - sending ${sending} - relCost ${roomRelCost}`);
 
             // const sending = order.amount - remainder;
             if (sending > 0) {
@@ -88,11 +88,11 @@ export class TerminalManager implements Manager {
                     linkedTasks.forEach(tsk => this.exchange.removeById(tsk.id));
                     this.request.removeById(order.id);
 
-                    console.log(`sent ${sending}`);
+                    this.log.trace(room.name, `sent ${sending}`);
                     return;
                 }
 
-                console.log(`couldn't send ${sending}`);
+                this.log.critical(room.name,`couldn't send ${sending}`);
 
                 // just unlink and retry next time | other terminal
                 this.request.unlinkTask(order);
