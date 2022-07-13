@@ -4,7 +4,7 @@ import { IPlan, PlanCreateFn, PlanKey, StructurePlan } from '../../entities/plan
 import { BUILDING_MAP } from '../../util/constants';
 import { StampCollection } from '../../entities/stamp';
 
-import { conditionalFloodFill, distanceTransform, distanceType, Point } from 'utils/distance-util';
+import { findPointFor, distanceTransform, distanceType, Point } from 'utils/distance-util';
 
 import stamps from "./lab-stamps.json";
 
@@ -29,7 +29,7 @@ export class LabPlan implements IPlan {
         let center: Point | undefined = undefined;
         for (let plan of data.plans) {
             const size = Math.max(Math.ceil((plan.size.x + 1) / 2), Math.ceil((plan.size.y + 1) / 2));
-            center = conditionalFloodFill(roomName, dt, poi['anchor'] || [], n => n >= size, true, false, 220);
+            center = findPointFor(roomName, dt, poi['anchor'] || [], n => n >= size, true, false, 220);
             if (!center) { continue; }
 
             // add buildings in plan to matrix

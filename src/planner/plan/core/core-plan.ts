@@ -4,7 +4,7 @@ import { IPlan, PlanCreateFn, PlanKey, StructurePlan } from '../../entities/plan
 import { BUILDING_MAP } from '../../util/constants';
 import { StampCollection } from '../../entities/stamp';
 
-import { conditionalFloodFill, distanceTransform, distanceType, Point } from 'utils/distance-util';
+import { findPointFor, distanceTransform, distanceType, Point } from 'utils/distance-util';
 
 import stamps from "./core-stamps.json";
 
@@ -33,7 +33,7 @@ export class CorePlan implements IPlan {
             const size = Math.max(Math.ceil((plan.size.x + 1) / 2), Math.ceil((plan.size.y + 1) / 2));
             // run flood fill from seeds and exit as soon as we find a point hit by all
             const seeds = locs.map(pos => { return { x: pos.x, y: pos.y } });
-            anchor = conditionalFloodFill(roomName, distMatrix, seeds, n => n >= size, true);
+            anchor = findPointFor(roomName, distMatrix, seeds, n => n >= size, true);
             if (!anchor) { continue; }
 
             // add buildings in plan to matrix

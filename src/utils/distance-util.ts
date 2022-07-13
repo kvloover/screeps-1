@@ -217,7 +217,7 @@ export const distanceTransform =
 //         return floodCM
 //     }
 
-export const conditionalFloodFill =
+export const findPointFor =
     function (roomName: string, searchMatrix: CostMatrix, seeds: Point[],
         check: (v: number) => boolean, hitByAllSeeds: boolean = false, enableVisuals: boolean = false, cutOff: number = 255)
         : Point | undefined {
@@ -301,4 +301,75 @@ export const conditionalFloodFill =
         }
 
         return undefined
+    }
+
+export const outerPerimeter =
+    function (roomName: string, searchMatrix: CostMatrix, seeds: Point[],
+        enableVisuals: boolean = false, cutOff: number = 0)
+        : Point[] {
+
+        const visual = enableVisuals ? new RoomVisual(roomName) : undefined;
+
+        // Construct a cost matrix for visited tiles and add seeds to it
+
+        // array of costmatrix with new constmatrix for each seed
+        const visitedCM: CostMatrix = new PathFinder.CostMatrix();
+
+        // Construct values for the flood
+        let depth = 0;
+        let lastGeneration: Point[] = seeds;
+        let thisGeneration: Point[] = seeds;
+        let nextGeneration: Point[] = [];
+
+        // Loop through positions of seeds
+        for (const pos of seeds) {
+            // Record the seedsPos as visited
+            visitedCM.set(pos.x, pos.y, 1);
+        }
+
+        // So long as there are positions in this gen
+        while (thisGeneration.length) {
+            // Reset next gen
+            nextGeneration = [];
+
+            // Iterate through positions of this gen
+            for (const pos of thisGeneration) {
+
+                // If the depth isn't 0
+                if (depth != 0) {
+                    const value = searchMatrix.get(pos.x, pos.y);
+                    // Iterate if the terrain is to be avoided
+                    if (value == 255) { continue; }
+                    if (value < cutOff) { continue; }
+                    // If visuals are enabled, show the depth on the pos
+                    if (visual && Memory.roomVisuals) {
+                        visual.rect(pos.x - 0.5, pos.y - 0.5, 1, 1, {
+                            fill: 'hsl(' + 200 + depth * 2 + ', 100%, 60%)',
+                            opacity: 0.4,
+                        });
+                    }
+                }
+
+                // Construct a rect and get the positions in a range of 1
+                const adjacentPositions = findPositionsInsideRect({ x1: pos.x - 1, y1: pos.y - 1, x2: pos.x + 1, y2: pos.y + 1 });
+
+                // Loop through adjacent positions
+                for (const adjacentPos of adjacentPositions) {
+                    // Iterate if the adjacent pos has been visited or isn't a tile
+                    if (visitedCM.get(adjacentPos.x, adjacentPos.y) == 1) { continue; }
+                    // Otherwise record that it has been visited
+                    visitedCM.set(adjacentPos.x, adjacentPos.y, 1);
+                    // Add it to the next gen
+                    nextGeneration.push({ x: adjacentPos.x, y: adjacentPos.y});
+                }
+            }
+
+            // Set this gen to next gen
+            lastGeneration = thisGeneration;
+            thisGeneration = nextGeneration;
+            // Increment depth
+            depth++;
+        }
+
+        return lastGeneration
     }

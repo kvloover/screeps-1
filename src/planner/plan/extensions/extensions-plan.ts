@@ -1,18 +1,19 @@
 import { singleton } from 'tsyringe';
 
 import { IPlan, PlanCreateFn, PlanKey, StructurePlan } from '../../entities/plan';
-import { BUILDING_MAP } from '../../util/constants';
+import { BUILDING_MAP, CUTOFF_WALKABLE } from '../../util/constants';
 import { StampCollection } from '../../entities/stamp';
 
-import { conditionalFloodFill, distanceTransform, distanceType, Point } from 'utils/distance-util';
+import { findPointFor, distanceTransform, distanceType, Point, outerPerimeter } from 'utils/distance-util';
 
 import stamps from "./extension-stamps.json";
+import { Logger } from 'logger';
 
 @singleton()
 export class ExtensionsPlan implements IPlan {
-    name: PlanKey  = 'extensions';
+    name: PlanKey = 'extensions';
 
-    constructor() { }
+    constructor(private log: Logger) { }
 
     public getStamps(): StampCollection {
         return stamps as StampCollection;
@@ -24,6 +25,10 @@ export class ExtensionsPlan implements IPlan {
         const data = this.getStamps();
 
         if (!('anchor' in poi)) { return planned; }
+
+        // get initial seeds as outer side of anchor stamp
+        const seeds = outerPerimeter(roomName, terrain, poi.anchor?.map(i => { return { x: i.x, y: i.y } }) || [], false, CUTOFF_WALKABLE);
+        this.log.debug(roomName, `ExtensionPlan: anchor seeds: ${seeds.map(x => `${x.x},${x.y}`).join(';')}`);
 
         const sorted = data.plans.sort((a, b) => a.priority - b.priority);
         let extensions = 0;
@@ -37,8 +42,13 @@ export class ExtensionsPlan implements IPlan {
                 index++;
 
                 const size = Math.max(Math.ceil((plan.size.x + 1) / 2), Math.ceil((plan.size.y + 1) / 2));
-                center = conditionalFloodFill(roomName, dt, poi['anchor'] || [], n => n >= size, true, false, 220);
+                center = findPointFor(roomName, dt, seeds, n => n >= size, false, false, CUTOFF_WALKABLE);
                 if (!center) { continue; }
+
+                // update seeds for next plan
+                const borderStamps = this.borderStamp(center, size);
+                this.log.debug(roomName, `ExtensionPlan: border seeds for center ${center.x},${center.y}: ${borderStamps.map(x => `${x.x},${x.y}`).join(';')}`);
+                borderStamps.forEach(p => seeds.push(p));
 
                 // add buildings in plan to matrix
                 const structures: StructurePlan[] = [];
@@ -70,6 +80,21 @@ export class ExtensionsPlan implements IPlan {
         }
 
         return planned;
+    }
+
+    private borderStamp(center: Point, size: number): Point[] {
+        // consider currently using a diamond stamp
+        const points: Point[] = [];
+        if (size = 1) return [center];
+
+        for (let i = 0; i < size; i++) {
+            points.push({ x: center.x + i, y: center.y + size - i });
+            points.push({ x: center.x + i, y: center.y - size + i });
+            points.push({ x: center.x - i, y: center.y + size - i });
+            points.push({ x: center.x - i, y: center.y - size + i });
+        }
+
+        return points;
     }
 
 }

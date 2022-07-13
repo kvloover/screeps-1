@@ -1,4 +1,5 @@
 export const RESERVED_LOCATION = 250;
+export const CUTOFF_WALKABLE = 220;
 
 export const BUILDING_MAP = new Map<BuildableStructureConstant, number>(
     [
