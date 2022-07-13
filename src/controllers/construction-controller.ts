@@ -121,10 +121,10 @@ export class ConstructionController implements Controller {
                     }
 
                     // Set initial memory in Memory.room
-                    console.log(`constructed ${key}`)
+                    this.log.info(room.name, `constructed ${key}`)
                     const initial = this.initalizers.find(i => i.type == key);
                     if (initial) {
-                        console.log(`initializing ${key}`)
+                        this.log.debug(room.name, `initializing ${key}`)
                         initObjectMemory(room.memory, key);
                         const mem = initial.create(room, res.structure);
                         if (mem && room.memory.objects) { room.memory.objects[key]?.push(mem as any); }
