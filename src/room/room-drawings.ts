@@ -6,8 +6,10 @@ export class RoomDrawings {
 
     persist(key: string, visual: RoomVisual) {
         if (!global.visuals) { global.visuals = {}; }
-        const roomMem = global.visuals[visual.roomName];
-        if (!roomMem) { global.visuals[visual.roomName] = {}; }
+        let roomMem = global.visuals[visual.roomName];
+        if (!roomMem) {
+            roomMem = global.visuals[visual.roomName] = {};
+        }
 
         if (roomMem) {
             const data = visual.export();
