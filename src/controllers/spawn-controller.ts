@@ -44,6 +44,11 @@ export class SpawnController implements Controller {
                 if (amount < free) {
                     this.demands.add(new DemandTask(s.room.name, 1, free - amount, RESOURCE_ENERGY, s.id, undefined, s.pos));
                     this.log.debug(s.room.name, `${s.pos}: added supply task`);
+                } else if (free == 0) {
+                    tasks.forEach(tsk => {
+                        this.demands.unlinkTask(tsk);
+                        this.demands.removeById(tsk.id);
+                    });
                 }
             }
         });
