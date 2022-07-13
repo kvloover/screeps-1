@@ -29,6 +29,20 @@ export class GarbageCollector {
                         i => removeIds.some(r => r == i.id));
                 });
             }
+            const globalRefs = global.refs?.[name]?.objects;
+            if (globalRefs) {
+                Object.entries(globalRefs).forEach(([key, value]) => {
+                    const removeIds: Id<_HasId>[] = [];
+                    value.forEach(v => {
+                        if (!Game.getObjectById(v.id)) {
+                            removeIds.push(v.id);
+                        }
+                    })
+                    _.remove(
+                        value as ObjectRef<StructureConstant>[],
+                        i => removeIds.some(r => r == i.id));
+                });
+            }
         }
     }
 
