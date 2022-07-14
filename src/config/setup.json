@@ -910,9 +910,9 @@
                 "count": 1,
                 "condition": "remote_builder",
                 "template": {
-                    "carry": 10,
-                    "work": 6,
-                    "move": 8
+                    "carry": 15,
+                    "work": 10,
+                    "move": 25
                 }
             },
             {
