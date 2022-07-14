@@ -4,6 +4,7 @@ import { ContainerController } from "./container-controller";
 import { DropsController } from "./drops-controller";
 
 import { EmergencyController } from "./emergency-controller";
+import { EnergyController } from "./energy-controller";
 import { LinkController } from "./link-controller";
 import { SourceController } from "./source-controller";
 import { SpawnController } from "./spawn-controller";
@@ -28,6 +29,7 @@ export interface Controller {
     { token: Controllers.token, useToken: ConstructionController },
     { token: Controllers.token, useToken: StructuresController },
     { token: Controllers.token, useToken: TerminalController },
+    { token: Controllers.token, useToken: EnergyController },
 ])
 export abstract class Controllers {
     static readonly token = Symbol('Controller');
