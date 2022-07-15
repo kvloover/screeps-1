@@ -21,7 +21,7 @@ export class EnergyController implements Controller {
         const energy = room.storage.store.getUsedCapacity(RESOURCE_ENERGY)
             + room.terminal.store.getUsedCapacity(RESOURCE_ENERGY);
 
-        if (energy > 150000) {
+        if (energy > 100000) {
             this.log.debug(room.name, `Room energy supplying`);
             room.memory.request = false;
             room.memory.supply = true;
