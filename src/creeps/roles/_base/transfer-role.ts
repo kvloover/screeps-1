@@ -5,6 +5,7 @@ import { CreepState } from 'utils/creep-state';
 import { TaskRepo } from "repos/_base/task-repo";
 import { Task } from "repos/task";
 import { isStoreStructure, isTombStone, isRuin, isResource, isDefined, isResourceConstant, isConstruction, isHasPos, isStructure } from "utils/utils";
+import { CREEP_AMOUNT_PER_ENERGY, CREEP_ENERGY_PER_PART, CREEP_RANGE } from "utils/constants";
 
 export abstract class TransferRole {
 
@@ -140,6 +141,10 @@ export abstract class TransferRole {
         if (memTask) {
             this.log.debug(creep.room.name, `${creep.name}: consuming for ${key} task ${memTask.id}`);
             const dest = memTask.requester ? Game.getObjectById(memTask.requester) : null;
+
+            const cont = this.beforeConsumeFrom(dest, creep);
+            if (!cont) { return; }
+
             const res = this.tryConsumeForTask(dest, stored.repo, key, creep, memTask);
             if (res.error || (res.executed && this.completed(stored, repo, res.amount, creep.store.getFreeCapacity(memTask.type)))) {
                 repo.finishTask(creep, memTask, key);
@@ -147,6 +152,7 @@ export abstract class TransferRole {
             }
         }
     }
+
 
     protected supplyToRepo(creep: Creep, repo: TaskRepo<Task>, key: string, type?: ResourceConstant, room?: string, rangeLimit?: number) {
 
@@ -163,6 +169,10 @@ export abstract class TransferRole {
         if (memTask) {
             this.log.debug(creep.room.name, `${creep.name}: supplying for ${key} task ${memTask.id}`);
             const dest = memTask.requester ? Game.getObjectById(memTask.requester) : null;
+
+            const cont = this.beforeSupplyTo(dest, creep);
+            if (!cont) { return; }
+
             const res = this.trySupplyForTask(dest, stored.repo, key, creep, memTask);
             if (res.error || (res.executed && this.completed(stored, repo, res.amount, creep.store.getUsedCapacity(memTask.type)))) {
                 repo.finishTask(creep, memTask, key);
@@ -170,6 +180,10 @@ export abstract class TransferRole {
             }
         }
     }
+
+    protected beforeConsumeFrom(dest: _HasId | null, creep: Creep): boolean { return true; }
+
+    protected beforeSupplyTo(dest: _HasId | null, creep: Creep): boolean { return true; }
 
     protected tryConsumeForTask(dest: _HasId | null, repo: string, key: string, creep: Creep, task: Task): { executed: boolean, error: boolean, type?: ResourceConstant, amount: number } {
         if (dest) {
@@ -275,24 +289,24 @@ export abstract class TransferRole {
 
     private rangeTo(repoKey: string): number {
         switch (repoKey) {
-            case 'construction': return 3;
-            case 'repair': return 3;
+            case 'construction': return CREEP_RANGE.get('build') || 1;
+            case 'repair': return CREEP_RANGE.get('repair') || 1;
             default: return 1;
         }
     }
 
     private amountPerEnergy(repoKey: string): number {
         switch (repoKey) {
-            case 'construction': return 1
-            case 'repair': return 100
+            case 'construction': return CREEP_AMOUNT_PER_ENERGY.get('build') || 1
+            case 'repair': return CREEP_AMOUNT_PER_ENERGY.get('repair') || 1
             default: return 1; // full amount - see amount per part
         }
     }
 
     private energyPerTick(repoKey: string, taskKey: string, creep: Creep, task: Task, type?: ResourceConstant): number {
         switch (repoKey) {
-            case 'construction': return creep.getActiveBodyparts(WORK) * 5;
-            case 'repair': return creep.getActiveBodyparts(WORK);
+            case 'construction': return creep.getActiveBodyparts(WORK) * (CREEP_ENERGY_PER_PART.get('build') || 1);
+            case 'repair': return creep.getActiveBodyparts(WORK) * (CREEP_ENERGY_PER_PART.get('repair') || 1);
             default: return taskKey === 'consume'
                 ? task.amount ? Math.min(creep.store.getFreeCapacity(type), task.amount) : creep.store.getFreeCapacity(type) ?? 0
                 : task.amount ? Math.min(creep.store.getUsedCapacity(type), task.amount) : creep.store.getUsedCapacity(type) ?? 0;

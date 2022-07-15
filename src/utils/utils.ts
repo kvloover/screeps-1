@@ -16,9 +16,6 @@ export const isResource =
 export const isResourceConstant =
   (item: any): item is ResourceConstant => isDefined((item as ResourceConstant))
 
-export const isController =
-  (item: any): item is StructureController => item instanceof StructureController
-
 export const isStructure =
   (item: any): item is Structure => isDefined((item as Structure)?.structureType)
 
@@ -39,6 +36,12 @@ export const isTower =
 
 export const isTerminal =
   (item: any): item is StructureTerminal => isDefined((item as StructureTerminal)?.my);
+
+export const isController =
+  (item: any): item is StructureController => item instanceof StructureController;
+
+export const isContainer =
+  (item: any): item is StructureContainer => item instanceof StructureContainer;
 
 export const isHasPos =
   (item: any): item is HasPos => isDefined((item as HasPos)?.pos);
@@ -63,7 +66,7 @@ export const parseRoomName =
     const yDir = match[3] === 'S' ? 1 : -1;;
     const y = Number(match[4]);
 
-    return { x: xDir*x, y: yDir*y }
+    return { x: xDir * x, y: yDir * y }
   }
 
 export const relativeExitTo =
