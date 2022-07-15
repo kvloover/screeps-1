@@ -42,7 +42,7 @@ export class TowerManager implements Manager {
 
         if (!memTask) {
             const pos = new RoomPosition(memory.pos.x, memory.pos.y, memory.pos.roomName);
-            const closest = this.repairs.closestTask(pos, RESOURCE_ENERGY, room.name);
+            const closest = this.repairs.closestTask(pos, RESOURCE_ENERGY, room.name, undefined, 10);
             if (closest) { this.registerTask(memory, closest, pos); }
             memTask = memory.tasks['repair'];
             // todo split
