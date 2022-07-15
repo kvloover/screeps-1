@@ -57,7 +57,7 @@ export class ClaimerRole implements Role {
         if (creep.memory.targetId) {
             const obj = Game.getObjectById(creep.memory.targetId);
             if (isController(obj)) {
-                this.pathing.moveTo(creep, obj.pos);
+                this.pathing.moveTo(creep, obj.pos, undefined, 1);
 
                 if (obj.room.name == creep.room.name && creep.pos.inRangeTo(obj, 1)) {
                     if (!obj.sign || obj.sign.username !== whoAmI()) {
@@ -84,7 +84,7 @@ export class ClaimerRole implements Role {
             } else {
                 if (creep.memory.target) {
                     const pos = new RoomPosition(creep.memory.target.x, creep.memory.target.y, creep.memory.target.roomName);
-                    this.pathing.moveTo(creep, pos);
+                    this.pathing.moveTo(creep, pos, undefined, 1);
                 } else {
                     creep.memory.targetId = undefined; // clear
                 }

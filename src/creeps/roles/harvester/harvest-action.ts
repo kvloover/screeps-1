@@ -22,7 +22,7 @@ export class HarvestAction {
             if (creep.memory.tasks.hasOwnProperty(this.key)) {
                 const task = creep.memory.tasks[this.key]?.task;
                 if (isDefined(task) && task.pos) {
-                    this.pathing.moveTo(creep, new RoomPosition(task.pos.x, task.pos.y, task.pos.roomName));
+                    this.pathing.moveTo(creep, new RoomPosition(task.pos.x, task.pos.y, task.pos.roomName), undefined, 1);
                 } else {
                     this.harvests.unregisterTask(creep, this.key);
                     this.pathing.scoutRoom(creep, room);
@@ -77,7 +77,7 @@ export class HarvestAction {
             if (src) {
                 this.log.debug(creep.room.name, `${creep.name}: targetId locked`);
                 if (src.pos && !creep.pos.inRangeTo(src.pos, 1)) {
-                    this.pathing.moveTo(creep, src.pos);
+                    this.pathing.moveTo(creep, src.pos, undefined, 1);
                 } else {
                     creep.harvest(src)
                 }

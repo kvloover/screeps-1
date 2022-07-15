@@ -23,8 +23,8 @@ export class Pathing {
         return closest as S;
     }
 
-    public moveTo(creep: Creep, pos: RoomPosition, allowHostile: boolean = false) {
-        creep.travelTo(pos, { allowHostile: allowHostile });
+    public moveTo(creep: Creep, pos: RoomPosition, allowHostile: boolean = false, range: number = 0) {
+        creep.travelTo(pos, { allowHostile: allowHostile, range: range });
         /*
         const options: PathFinderOpts = this.opt.optimalFinder();
         const pathing = PathFinder.search(creep.pos, { pos: pos, range: 1 }, options);

@@ -19,7 +19,7 @@ export abstract class UpgraderRole extends TransferRole implements Role {
 
     protected supply(creep: Creep): void {
         if (creep.room.controller && creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
-            this.pathing.moveTo(creep, creep.room.controller.pos);
+            this.pathing.moveTo(creep,  creep.room.controller.pos, undefined, 3);
         }
     }
 
