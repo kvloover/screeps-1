@@ -66,6 +66,15 @@ export class RemoteHarvesterRole extends TransferRole implements Role {
             if (creep.memory.target) {
                 this.log.debug(creep.room.name, `${creep.name} - Creating container for ${JSON.stringify(creep.memory.target)}`);
                 const pos = new RoomPosition(creep.memory.target.x, creep.memory.target.y, creep.memory.target.roomName);
+
+                const container = creep.room.lookForAtArea(LOOK_STRUCTURES, pos.y - 1, pos.x - 1, pos.y + 1, pos.x + 1, true)
+                    .find(s => s.structure && s.structure.structureType == STRUCTURE_CONTAINER);
+                if (container && container.structure) {
+                    creep.memory.memoryId = container.structure.id;
+                    creep.memory.memoryPos = container.structure.pos;
+                    return false;
+                }
+
                 const sitePos = creep.pos;
                 if (sitePos.getRangeTo(pos) == 1) {
                     // check for construction - takes a tick to be created
