@@ -6,7 +6,7 @@ import { Logger } from "logger";
 
 import { MidstreamTaskRepo } from "repos/midstream-task-repo";
 import { SupplyTaskRepo } from "repos/supply-task-repo";
-import { isMyRoom, isResourceConstant } from "utils/utils";
+import { isMyRoom, isRemote, isResourceConstant } from "utils/utils";
 
 import profiler from "screeps-profiler";
 
@@ -19,7 +19,7 @@ export class ContainerController implements Controller {
     }
 
     public monitor(room: Room): void {
-        if (!isMyRoom(room))
+        if (!isMyRoom(room) && !isRemote(room))
             return;
 
         const items =
