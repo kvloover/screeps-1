@@ -56,6 +56,9 @@ declare global {
         targetId: undefined | Id<_HasId>;
         target: undefined | RoomPosition;
 
+        memoryId: undefined | Id<_HasId>; // to store useful Id in memory
+        memoryPos: undefined | RoomPosition; // to store useful pos in memory
+
         tasks: { [key: string]: CreepTask | undefined };
         tasks_blacklist: { [key: string]: string[] }; // ignore specific requesters for the given type
     }

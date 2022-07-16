@@ -66,6 +66,7 @@ export class HarvestAction {
             if (isDefined(task)) {
                 // Only lock on in room
                 creep.memory.targetId = task.requester;
+                creep.memory.target = task.pos;
             } else {
                 this.harvests.unregisterTask(creep, this.key);
             }
@@ -75,15 +76,19 @@ export class HarvestAction {
             this.log.debug(creep.room.name, `${creep.name}: locking on targetId`);
             const src = Game.getObjectById(creep.memory.targetId as Id<Source>);
             if (src) {
+                if (!creep.memory.target) { creep.memory.target = src.pos; }
+
                 this.log.debug(creep.room.name, `${creep.name}: targetId locked`);
                 if (src.pos && !creep.pos.inRangeTo(src.pos, 1)) {
                     this.pathing.moveTo(creep, src.pos, undefined, 1);
                 } else {
                     creep.harvest(src)
                 }
+
             } else {
                 this.log.debug(creep.room.name, `${creep.name}: targetId couldn't be locked`);
                 creep.memory.targetId = undefined;
+                creep.memory.target = undefined;
             }
         }
     }

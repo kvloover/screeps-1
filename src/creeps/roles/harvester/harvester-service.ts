@@ -7,10 +7,10 @@ import { HarvesterRole } from "./harvester-role";
 
 import { DemandTaskRepo } from "repos/demand-task-repo";
 import { MidstreamTaskRepo } from "repos/midstream-task-repo";
-import { RemoteHarvesterRole } from "./remote-harvester-role";
 import { HarvestAction } from "./harvest-action";
 
 import profiler from "screeps-profiler";
+
 
 @singleton()
 export class HarvestSupplierRole extends HarvesterRole {
@@ -30,6 +30,8 @@ export class HarvestSupplierRole extends HarvesterRole {
         super.run(creep);
     }
 }
+
+profiler.registerClass(HarvestSupplierRole, 'HarvestSupplierRole');
 
 @singleton()
 export class HarvestMidstreamRole extends HarvesterRole {
@@ -51,24 +53,3 @@ export class HarvestMidstreamRole extends HarvesterRole {
 }
 
 profiler.registerClass(HarvestMidstreamRole, 'HarvestMidstreamRole');
-
-@singleton()
-export class RemoteHarvestMidstreamRole extends RemoteHarvesterRole {
-
-    phase = {
-        start: 1,
-        end: 9
-    };
-
-    constructor(log: Logger, pathing: Pathing,
-        supply: MidstreamTaskRepo, action: HarvestAction) {
-        super(log, pathing, supply, action)
-    }
-
-    public run(creep: Creep): void {
-        this.log.debug(creep.room.name, `Running remote harvester midstream`);
-        super.run(creep);
-    }
-}
-
-profiler.registerClass(RemoteHarvestMidstreamRole, 'RemoteHarvestMidstreamRole');

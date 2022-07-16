@@ -7,10 +7,12 @@ import {
     ClaimerRole,
 } from ".";
 
-import { HarvestMidstreamRole, HarvestSupplierRole, RemoteHarvestMidstreamRole } from "./harvester/harvester-service";
+import { HarvestMidstreamRole, HarvestSupplierRole } from "./harvester/harvester-service";
+import { RemoteHarvestMidstreamRole } from "./harvester/remote-harvester-service";
 import { UpgraderSourceRole, UpgraderStorageRole, UpgraderSupplyRole } from "./upgrader/upgrader-service";
 import { BuilderSourceRole, BuilderStorageRole, RemoteBuilderSourceRole, RemoteBuilderStorageRole } from "./builder/builder-service";
-import { HaulerDropsRole, HaulerMidstreamRole, HaulerStorageRole, RemoteHaulerStorageRole } from "./hauler/hauler-service";
+import { HaulerDropsRole, HaulerMidstreamRole, HaulerStorageRole } from "./hauler/hauler-service";
+import { RemoteHaulerStorageRole } from "./hauler/remote-hauler-service";
 import { FillerLinkRole, FillerStorageRole, FillerSupplierRole } from "./filler/filler-service";
 import { DrainRole } from "./attacker/drain-role";
 import { HealerRole } from "./attacker/healer-role";

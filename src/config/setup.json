@@ -265,6 +265,26 @@
                 "priority": 10,
                 "condition": "upgrading",
                 "count": 4
+            },
+            {
+                "role": "remote-hauler",
+                "priority": 9,
+                "count": 1,
+                "condition": "remote_hauler",
+                "template": {
+                    "carry": 8,
+                    "move": 8
+                }
+            },
+            {
+                "role": "remote-hauler",
+                "priority": 9,
+                "count": 1,
+                "condition": "remote_mining",
+                "template": {
+                    "carry": 8,
+                    "move": 8
+                }
             }
         ]
     },
@@ -396,6 +416,26 @@
                 "priority": 9,
                 "count": 3,
                 "condition": "upgrading"
+            },
+            {
+                "role": "remote-hauler",
+                "priority": 9,
+                "count": 1,
+                "condition": "remote_hauler",
+                "template": {
+                    "carry": 12,
+                    "move": 12
+                }
+            },
+            {
+                "role": "remote-hauler",
+                "priority": 9,
+                "count": 1,
+                "condition": "remote_mining",
+                "template": {
+                    "carry": 12,
+                    "move": 12
+                }
             }
         ]
     },
@@ -567,6 +607,26 @@
                     "carry": 10,
                     "work": 6,
                     "move": 8
+                }
+            },
+            {
+                "role": "remote-hauler",
+                "priority": 9,
+                "count": 1,
+                "condition": "remote_hauler",
+                "template": {
+                    "carry": 18,
+                    "move": 18
+                }
+            },
+            {
+                "role": "remote-hauler",
+                "priority": 9,
+                "count": 1,
+                "condition": "remote_mining",
+                "template": {
+                    "carry": 18,
+                    "move": 18
                 }
             }
         ]
@@ -751,6 +811,16 @@
                     "carry": 20,
                     "move": 20
                 }
+            },
+            {
+                "role": "remote-hauler",
+                "priority": 9,
+                "count": 1,
+                "condition": "remote_mining",
+                "template": {
+                    "carry": 20,
+                    "move": 20
+                }
             }
         ]
     },
@@ -920,6 +990,16 @@
                 "priority": 9,
                 "count": 1,
                 "condition": "remote_hauler",
+                "template": {
+                    "carry": 20,
+                    "move": 20
+                }
+            },
+            {
+                "role": "remote-hauler",
+                "priority": 9,
+                "count": 1,
+                "condition": "remote_mining",
                 "template": {
                     "carry": 20,
                     "move": 20
