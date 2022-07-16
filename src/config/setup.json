@@ -815,7 +815,7 @@
             {
                 "role": "remote-hauler",
                 "priority": 9,
-                "count": 1,
+                "count": 2,
                 "condition": "remote_mining",
                 "template": {
                     "carry": 20,
@@ -998,7 +998,7 @@
             {
                 "role": "remote-hauler",
                 "priority": 9,
-                "count": 1,
+                "count": 2,
                 "condition": "remote_mining",
                 "template": {
                     "carry": 20,
