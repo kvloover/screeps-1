@@ -52,7 +52,7 @@ export class RemoteHarvesterRole extends TransferRole implements Role {
         if (!memTask) {
             const creating = this.createContainer(creep);
 
-            const buildTask = this.findAndRegisterTask(creep, this.buildTasks, key, creep.store.getUsedCapacity(RESOURCE_ENERGY), RESOURCE_ENERGY, creep.room.name, 1);
+            const buildTask = this.findAndRegisterTask(creep, this.buildTasks, key, creep.store.getUsedCapacity(RESOURCE_ENERGY), RESOURCE_ENERGY, creep.room.name, 3);
             const repo = buildTask || creating ? this.buildTasks : this.demands;
             this.supplyToRepo(creep, repo, key, RESOURCE_ENERGY, creep.room.name, 5);
         } else {
