@@ -38,13 +38,13 @@ export abstract class HaulerRole extends TransferRole implements Role {
     protected abstract unlinkSupply(creep: Creep): void;
 
     protected consume(creep: Creep): void {
-        const supplyTask = creep.memory.tasks['supply'];
-        if (!supplyTask || !supplyTask.task) {
+        const Task = creep.memory.tasks['supply'];
+        if (!Task || !Task.task) {
             this.log.critical(creep.room.name, `${creep.name}: consume exited premature`);
             return;
         }
 
-        const type = supplyTask.task.type;
+        const type = Task.task.type;
         // will look for a new consume task
         if (!creep.memory.tasks['consume']) {
             if (!this.findConsume(creep, type)) {
@@ -87,17 +87,17 @@ export abstract class HaulerRole extends TransferRole implements Role {
     }
 
     protected override getStoreCheckType(creep: Creep): ResourceConstant | undefined {
-        const supplyTask = creep.memory.tasks['supply'];
-        if (supplyTask && supplyTask.task)
-            return supplyTask.task.type;
+        const Task = creep.memory.tasks['supply'];
+        if (Task && Task.task)
+            return Task.task.type;
         else
             return undefined; // shouldn't happen in this flow
     }
 
     protected override continueSupply(creep: Creep): boolean {
-        const supplyTask = creep.memory.tasks['supply'];
+        const Task = creep.memory.tasks['supply'];
         this.log.debug(creep.room.name, `${creep.name}: continuing supply`)
-        return isDefined(supplyTask);
+        return isDefined(Task);
     }
 
     protected override blacklistFor(creep: Creep, key: string): string[] | undefined {
@@ -105,18 +105,18 @@ export abstract class HaulerRole extends TransferRole implements Role {
 
         this.log.debug(creep.room.name, `${creep.name}: blacklist - checking supply task`)
         // Avoid consuming from the task we are supplying
-        const supplyTask = creep.memory.tasks['supply'];
-        if (supplyTask && supplyTask.task.requester) {
+        const Task = creep.memory.tasks['supply'];
+        if (Task && Task.task.requester) {
             this.log.debug(creep.room.name, `${creep.name}: blacklisting supply request`)
 
             const refs = global.refs ? global.refs[creep.room.name]?.objects : undefined;
 
-            if (refs && refs.storage?.some(i => i.id == supplyTask.task.requester)) {
+            if (refs && refs.storage?.some(i => i.id == Task.task.requester)) {
                 if (refs.terminal && refs.terminal.length > 0) {
-                    return [supplyTask.task.requester, refs.terminal[0].id] // avoid emptying terminal just to fill storage
+                    return [Task.task.requester, refs.terminal[0].id] // avoid emptying terminal just to fill storage
                 }
             }
-            return [supplyTask.task.requester]
+            return [Task.task.requester]
         }
         else {
             return undefined;

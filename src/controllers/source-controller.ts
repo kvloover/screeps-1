@@ -1,7 +1,7 @@
 import { injectable } from "tsyringe";
 
-import { HarvestTaskRepo } from "repos/harvest-task-repo";
-import { HarvestTask } from "repos/task";
+import { HarvestTaskRepo } from "repos/source/harvest-task-repo";
+import { Task } from "repos/task";
 import { Controller } from "./controller";
 import { Logger } from "logger";
 
@@ -29,7 +29,7 @@ export class SourceController implements Controller {
             room.memory.objects.source.forEach(src => {
                 const existing = this.harvestRepo.getForRequester(src.id);
                 if (!existing || existing.length == 0) {
-                    this.harvestRepo.add(new HarvestTask(room.name, 1, 10, RESOURCE_ENERGY, src.id, undefined, src.pos));
+                    this.harvestRepo.add(new Task(room.name, 1, 10, RESOURCE_ENERGY, src.id, undefined, src.pos));
                 }
             })
         }

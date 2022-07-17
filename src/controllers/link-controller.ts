@@ -1,23 +1,23 @@
 import { injectable } from "tsyringe";
 
-import { MidstreamTask, ProviderTask, UtilityTask } from "repos/task";
+import { Task } from "repos/task";
 import { Controller } from "./controller";
 import { Logger } from "logger";
 
-import { MidstreamTaskRepo } from "repos/midstream-task-repo";
-import { ProviderTaskRepo } from "repos/provider-task-repo";
+import { LinkDemandTaskRepo } from "repos/link/link-demand-task-repo";
+import { LinkSupplyTaskRepo } from "repos/link/link-supply-task-repo";
 import { isLinkStructure, isMyRoom } from "utils/utils";
 
 import profiler from "screeps-profiler";
-import { UtilityTaskRepo } from "repos/utility-task-repo";
+import { LinkSupplyUtilityTaskRepo } from "repos/link/link-supply-utility-task-repo";
 
 @injectable()
 export class LinkController implements Controller {
 
     constructor(private log: Logger,
-        private transferRepo: MidstreamTaskRepo,
-        private providerRepo: ProviderTaskRepo,
-        private utilityRepo: UtilityTaskRepo,
+        private transferRepo: LinkDemandTaskRepo,
+        private providerRepo: LinkSupplyTaskRepo,
+        private utilityRepo: LinkSupplyUtilityTaskRepo,
     ) {
     }
 
@@ -39,7 +39,7 @@ export class LinkController implements Controller {
                             const current = this.providerRepo.getForRequester(mem.id, RESOURCE_ENERGY);
                             const amount = current.reduce((p, c) => p + (c.amount ?? 0), 0);
                             if (amount < used) {
-                                this.providerRepo.add(new ProviderTask(struct.room.name, 1, used - amount, RESOURCE_ENERGY, mem.id, undefined, mem.pos));
+                                this.providerRepo.add(new Task(struct.room.name, 1, used - amount, RESOURCE_ENERGY, mem.id, undefined, mem.pos));
                                 this.log.debug(room.name, `${mem.pos}: added link provider task`);
                             }
                         }
@@ -49,7 +49,7 @@ export class LinkController implements Controller {
                             const current = this.utilityRepo.getForRequester(mem.id, RESOURCE_ENERGY);
                             const amount = current.reduce((p, c) => p + (c.amount ?? 0), 0);
                             if (amount < used) {
-                                this.utilityRepo.add(new UtilityTask(struct.room.name, 1, used - amount, RESOURCE_ENERGY, mem.id, undefined, mem.pos));
+                                this.utilityRepo.add(new Task(struct.room.name, 1, used - amount, RESOURCE_ENERGY, mem.id, undefined, mem.pos));
                                 this.log.debug(room.name, `${mem.pos}: added link utility task`);
                             }
                         }
@@ -59,7 +59,7 @@ export class LinkController implements Controller {
                             const current = this.transferRepo.getForRequester(mem.id, RESOURCE_ENERGY);
                             const amount = current.reduce((p, c) => p + (c?.amount ?? 0), 0);
                             if (amount < free) {
-                                this.transferRepo.add(new MidstreamTask(struct.room.name, 1, free - amount, RESOURCE_ENERGY, mem.id, undefined, mem.pos));
+                                this.transferRepo.add(new Task(struct.room.name, 1, free - amount, RESOURCE_ENERGY, mem.id, undefined, mem.pos));
                                 this.log.debug(room.name, `${mem.pos}: added link midstream task`);
                             }
                         }

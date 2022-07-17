@@ -12,25 +12,27 @@ import "utils/room-visual";
 
 import { ExConsole } from "consoles/extended-console";
 import { TestConsole } from "consoles/test-console";
-import { MigrateConsole } from "consoles/migrate-console";
 
 import { GameWorld } from "game-world";
 
 import profiler from 'screeps-profiler';
+import { Migrations } from "repos/_migration/migration";
 
 profiler.enable();
 
 ExConsole.init();
 TestConsole.init();
-MigrateConsole.init();
 
 export const loop =
   ErrorMapper.wrapLoop(
-      () => {
-        MemHack.pretick();
-        profiler.wrap(function () {
-          container.resolve(GameWorld).run();
-          exportStats();
-        });
-      }
+    () => {
+      MemHack.pretick();
+
+      Migrations.Migrate();
+
+      profiler.wrap(function () {
+        container.resolve(GameWorld).run();
+        exportStats();
+      });
+    }
   );

@@ -1,17 +1,17 @@
 import { Logger } from "logger";
 import profiler from "screeps-profiler";
 import { Lifecycle, scoped } from "tsyringe";
-import { Persistent } from "./persistent";
-import { ExchangeTask } from "./task";
-import { BaseRepo } from "./_base/task-repo";
+import { Persistent } from "../persistent";
+import { Task } from "../task";
+import { BaseRepo } from "../_base/task-repo";
 
 /**
-* Supply to other rooms
+* Demanding container structure at sources
 **/
 @scoped(Lifecycle.ContainerScoped)
-export class ExchangeTaskRepo extends BaseRepo<ExchangeTask> implements Persistent {
+export class ContainerDemandTaskRepo extends BaseRepo<Task> implements Persistent {
 
-    constructor(log: Logger) { super('exchange', log); }
+    constructor(log: Logger) { super('container_demand', log); }
 
     // Repository
     // Cf. base class TaskRepo
@@ -19,12 +19,12 @@ export class ExchangeTaskRepo extends BaseRepo<ExchangeTask> implements Persiste
     // Persistency
     restore(): void {
         if (Memory.persistency?.hasOwnProperty(this.key))
-            this.tasks = Memory.persistency.exchange;
+            this.tasks = Memory.persistency.container_demand;
     }
 
     save(): void {
         this.mergeEmpty();
-        Memory.persistency = Object.assign(Memory.persistency, { exchange: this.tasks ?? [] });
+        Memory.persistency = Object.assign(Memory.persistency, { container_demand: this.tasks ?? [] });
     }
 
     gc(): void {
@@ -69,9 +69,9 @@ export class ExchangeTaskRepo extends BaseRepo<ExchangeTask> implements Persiste
 
 declare global {
     interface Persistency {
-        exchange: ExchangeTask[];
+        container_demand: Task[];
     }
 }
 
-profiler.registerClass(ExchangeTaskRepo, 'ExchangeTaskRepo');
+profiler.registerClass(ContainerDemandTaskRepo, 'ContainerDemandTaskRepo');
 

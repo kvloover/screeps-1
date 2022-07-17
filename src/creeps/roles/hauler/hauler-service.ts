@@ -4,13 +4,12 @@ import { Pathing } from "../../pathing";
 
 import { HaulerRole } from "./hauler-role";
 
-import { DemandTaskRepo } from "repos/demand-task-repo";
-import { SupplyTaskRepo } from "repos/supply-task-repo";
-import { StorageTaskRepo } from "repos/storage-task-repo";
+import { SpawnDemandTaskRepo } from "repos/spawn/spawn-demand-task-repo";
+import { StorageSupplyTaskRepo } from "repos/storage/storage-supply-task-repo";
+import { ContainerDemandTempTaskRepo } from "repos/container/container-demand-temp-task-repo";
+import { StorageDemandTaskRepo } from "repos/storage/storage-demand-task-repo";
 import { CombinedRepo } from "repos/_base/combined-repo";
-import { isDefined } from "utils/utils";
-import { CreepState } from "utils/creep-state";
-import { MidstreamTaskRepo } from "repos/midstream-task-repo";
+import { LinkDemandTaskRepo } from "repos/link/link-demand-task-repo";
 
 import profiler from "screeps-profiler";
 
@@ -23,8 +22,10 @@ export class HaulerDropsRole extends HaulerRole {
     };
 
     constructor(log: Logger, pathing: Pathing,
-        provider: SupplyTaskRepo, private leftDemands: DemandTaskRepo, private rightDemands: MidstreamTaskRepo) {
-        super(log, pathing, provider, new CombinedRepo(leftDemands, rightDemands, 3, 'combined', log))
+        provider: StorageSupplyTaskRepo, containers: ContainerDemandTempTaskRepo, private leftDemands: SpawnDemandTaskRepo, private rightDemands: LinkDemandTaskRepo) {
+        super(log, pathing,
+            new CombinedRepo(provider, containers, 3, 'combined-supply', log),
+            new CombinedRepo(leftDemands, rightDemands, 3, 'combined', log))
     }
 
     public run(creep: Creep): void {
@@ -50,8 +51,10 @@ export class HaulerMidstreamRole extends HaulerRole {
     };
 
     constructor(log: Logger, pathing: Pathing,
-        provider: SupplyTaskRepo, demands: DemandTaskRepo) {
-        super(log, pathing, provider, demands)
+        provider: StorageSupplyTaskRepo, containers: ContainerDemandTempTaskRepo, demands: SpawnDemandTaskRepo) {
+        super(log, pathing,
+            new CombinedRepo(provider, containers, 3, 'combined-supply', log),
+            demands)
     }
 
     public run(creep: Creep): void {
@@ -91,8 +94,10 @@ export class HaulerStorageRole extends HaulerRole {
     };
 
     constructor(log: Logger, pathing: Pathing,
-        provider: SupplyTaskRepo, private leftDemands: DemandTaskRepo, private rightDemands: StorageTaskRepo) {
-        super(log, pathing, provider, new CombinedRepo(leftDemands, rightDemands, 3, 'combined', log))
+        provider: StorageSupplyTaskRepo, containers: ContainerDemandTempTaskRepo, private leftDemands: SpawnDemandTaskRepo, private rightDemands: StorageDemandTaskRepo) {
+        super(log, pathing,
+            new CombinedRepo(provider, containers, 3, 'combined-supply', log),
+            new CombinedRepo(leftDemands, rightDemands, 3, 'combined', log))
     }
 
     public run(creep: Creep): void {

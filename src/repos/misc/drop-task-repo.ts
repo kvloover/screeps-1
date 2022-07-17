@@ -1,17 +1,17 @@
 import { Logger } from "logger";
 import profiler from "screeps-profiler";
 import { Lifecycle, scoped } from "tsyringe";
-import { Persistent } from "./persistent";
-import { SupplyTask } from "./task";
-import { BaseRepo } from "./_base/task-repo";
+import { Persistent } from "../persistent";
+import { Task } from "../task";
+import { BaseRepo } from "../_base/task-repo";
 
 /**
-* Storage provide
+* Dropped resources or tombstones
 **/
 @scoped(Lifecycle.ContainerScoped)
-export class SupplyTaskRepo extends BaseRepo<SupplyTask> implements Persistent {
+export class DropTaskRepo extends BaseRepo<Task> implements Persistent {
 
-    constructor(log: Logger) { super('supply', log); }
+    constructor(log: Logger) { super('drop', log); }
 
     // Repository
     // Cf. base class TaskRepo
@@ -19,12 +19,12 @@ export class SupplyTaskRepo extends BaseRepo<SupplyTask> implements Persistent {
     // Persistency
     restore(): void {
         if (Memory.persistency?.hasOwnProperty(this.key))
-            this.tasks = Memory.persistency.supply;
+            this.tasks = Memory.persistency.drop;
     }
 
     save(): void {
         this.mergeEmpty();
-        Memory.persistency = Object.assign(Memory.persistency, { supply: this.tasks ?? [] });
+        Memory.persistency = Object.assign(Memory.persistency, { drop: this.tasks ?? [] });
     }
 
     gc(): void {
@@ -69,8 +69,9 @@ export class SupplyTaskRepo extends BaseRepo<SupplyTask> implements Persistent {
 
 declare global {
     interface Persistency {
-        supply: SupplyTask[];
+        drop: Task[];
     }
 }
 
-profiler.registerClass(SupplyTaskRepo, 'SupplyTaskRepo');
+profiler.registerClass(DropTaskRepo, 'DropTaskRepo');
+

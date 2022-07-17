@@ -1,11 +1,11 @@
 import { injectable } from "tsyringe";
 
-import { SupplyTask, StorageTask } from "repos/task";
+import { Task } from "repos/task";
 import { Controller } from "./controller";
 import { Logger } from "logger";
 
-import { SupplyTaskRepo } from "repos/supply-task-repo";
-import { StorageTaskRepo } from "repos/storage-task-repo";
+import { StorageSupplyTaskRepo } from "repos/storage/storage-supply-task-repo";
+import { StorageDemandTaskRepo } from "repos/storage/storage-demand-task-repo";
 import { isMyRoom, isResourceConstant, isStoreStructure } from "utils/utils";
 
 import profiler from "screeps-profiler";
@@ -20,8 +20,8 @@ export class StorageController implements Controller {
     ]
 
     constructor(private log: Logger,
-        private demandRepo: StorageTaskRepo,
-        private providerRepo: SupplyTaskRepo) {
+        private demandRepo: StorageDemandTaskRepo,
+        private providerRepo: StorageSupplyTaskRepo) {
     }
 
     public monitor(room: Room): void {
@@ -48,7 +48,7 @@ export class StorageController implements Controller {
                             const current = allReq.filter(req => !req.type && req.prio == prio.prio);
                             const amount = current.reduce((p, c) => p + (c.amount ?? 0), 0);
                             if (amount < fill) {
-                                this.demandRepo.add(new StorageTask(struct.room.name, prio.prio, fill - amount, undefined, struct.id, undefined, struct.pos));
+                                this.demandRepo.add(new Task(struct.room.name, prio.prio, fill - amount, undefined, struct.id, undefined, struct.pos));
                                 this.demandRepo.mergeEmpty();
                                 this.log.debug(room.name, `${struct.pos}: added storage demand task`);
                             }
@@ -65,7 +65,7 @@ export class StorageController implements Controller {
                             const current = this.providerRepo.getForRequester(struct.id, type);
                             const amount = current.reduce((p, c) => p + (c.amount ?? 0), 0);
                             if (amount < stored) {
-                                this.providerRepo.add(new SupplyTask(struct.room.name, 2, stored - amount, type, struct.id, undefined, struct.pos));
+                                this.providerRepo.add(new Task(struct.room.name, 2, stored - amount, type, struct.id, undefined, struct.pos));
                                 this.providerRepo.mergeEmpty();
                                 this.log.debug(room.name, `${struct.pos}: added storage provider task`);
                             }

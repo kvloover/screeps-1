@@ -6,7 +6,7 @@ import { isMyRoom, isStructure, isTower } from "utils/utils";
 
 import profiler from "screeps-profiler";
 import { initObjectMemory } from "structures/memory/structure-memory";
-import { RepairTaskRepo } from "repos/repair-task-repo";
+import { RepairTaskRepo } from "repos/structures/repair-task-repo";
 import { threadId } from "worker_threads";
 import { Task } from "repos/task";
 

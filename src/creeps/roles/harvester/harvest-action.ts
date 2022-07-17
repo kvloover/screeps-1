@@ -3,7 +3,7 @@ import { singleton } from "tsyringe";
 import { Logger } from "logger";
 import { Pathing } from "creeps/pathing";
 import { isDefined } from "utils/utils";
-import { HarvestTaskRepo } from "repos/harvest-task-repo";
+import { HarvestTaskRepo } from "repos/source/harvest-task-repo";
 
 @singleton()
 export class HarvestAction {

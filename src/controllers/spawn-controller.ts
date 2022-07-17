@@ -1,8 +1,8 @@
 import { injectable } from "tsyringe";
 
-import { DemandTaskRepo } from "repos/demand-task-repo";
+import { SpawnDemandTaskRepo } from "repos/spawn/spawn-demand-task-repo";
 import { Controller } from "./controller";
-import { DemandTask } from "repos/task";
+import { Task } from "repos/task";
 import { Logger } from "logger";
 import { isDefined, isMyRoom, isStoreStructure } from "utils/utils";
 
@@ -11,7 +11,7 @@ import profiler from "screeps-profiler";
 @injectable()
 export class SpawnController implements Controller {
 
-    constructor(private log: Logger, private demands: DemandTaskRepo) {
+    constructor(private log: Logger, private demands: SpawnDemandTaskRepo) {
     }
 
     /// Monitor the spawn supplies: spawn + extensions for required demand
@@ -42,7 +42,7 @@ export class SpawnController implements Controller {
                 const tasks = this.demands.getForRequester(s.id, RESOURCE_ENERGY);
                 const amount = tasks.reduce((p, c) => p + (c?.amount ?? 0), 0);
                 if (amount < free) {
-                    this.demands.add(new DemandTask(s.room.name, 1, free - amount, RESOURCE_ENERGY, s.id, undefined, s.pos));
+                    this.demands.add(new Task(s.room.name, 1, free - amount, RESOURCE_ENERGY, s.id, undefined, s.pos));
                     this.log.debug(s.room.name, `${s.pos}: added supply task`);
                 } else if (free == 0) {
                     tasks.forEach(tsk => {

@@ -1,25 +1,26 @@
 import { injectable } from "tsyringe";
 
-import { RequestTask, ExchangeTask, SupplyTask, DemandTask, StorageTask } from "repos/task";
+import { Task } from "repos/task";
 import { Controller } from "./controller";
 import { Logger } from "logger";
 
-import { ExchangeTaskRepo } from "repos/exchange-task-repo";
-import { RequestTaskRepo } from "repos/request-task-repo";
-import { SupplyTaskRepo } from "repos/supply-task-repo";
-import { StorageTaskRepo } from "repos/storage-task-repo";
+import { ExchangeTaskRepo } from "repos/terminal/exchange-task-repo";
+import { RequestTaskRepo } from "repos/terminal/request-task-repo";
+import { TerminalSupplyTaskRepo } from "repos/terminal/terminal-supply-task-repo";
+import { TerminalDemandTaskRepo } from "repos/terminal/terminal-demand-task-repo";
 
 import { isMyRoom, isStoreStructure } from "utils/utils";
 
 import profiler from "screeps-profiler";
 
 
+
 @injectable()
 export class TerminalController implements Controller {
 
     constructor(private log: Logger,
-        private providerRepo: SupplyTaskRepo,
-        private demandRepo: StorageTaskRepo,
+        private providerRepo: TerminalSupplyTaskRepo,
+        private demandRepo: TerminalDemandTaskRepo,
         private exchange: ExchangeTaskRepo,
         private request: RequestTaskRepo) {
     }
@@ -56,7 +57,7 @@ export class TerminalController implements Controller {
             const allTasks = this.request.getForRequester(struct.id);
             const amount = allTasks.reduce((p, c) => p + (c.amount ?? 0), 0);
             if (amount < requestAmount) {
-                this.request.add(new RequestTask(struct.room.name, 2, requestAmount - amount, RESOURCE_ENERGY, struct.id, undefined, struct.pos));
+                this.request.add(new Task(struct.room.name, 2, requestAmount - amount, RESOURCE_ENERGY, struct.id, undefined, struct.pos));
                 this.request.mergeEmpty();
                 this.log.debug(struct.room.name, `${struct.pos}: added request task`);
             }
@@ -67,7 +68,7 @@ export class TerminalController implements Controller {
             const allProvides = this.providerRepo.getForRequester(struct.id);
             const amount = allProvides.reduce((p, c) => p + (c.amount ?? 0), 0);
             if (amount < usedCapcity) {
-                this.providerRepo.add(new SupplyTask(struct.room.name, 3, usedCapcity - amount, RESOURCE_ENERGY, struct.id, undefined, struct.pos));
+                this.providerRepo.add(new Task(struct.room.name, 3, usedCapcity - amount, RESOURCE_ENERGY, struct.id, undefined, struct.pos));
                 this.providerRepo.mergeEmpty();
                 this.log.debug(struct.room.name, `${struct.pos}: added supply task`);
             }
@@ -84,7 +85,7 @@ export class TerminalController implements Controller {
             const allTasks = this.demandRepo.getForRequester(struct.id);
             const amount = allTasks.reduce((p, c) => p + (c.amount ?? 0), 0);
             if (amount < requestAmount) {
-                this.demandRepo.add(new StorageTask(struct.room.name, 3, requestAmount - amount, RESOURCE_ENERGY, struct.id, undefined, struct.pos));
+                this.demandRepo.add(new Task(struct.room.name, 3, requestAmount - amount, RESOURCE_ENERGY, struct.id, undefined, struct.pos));
                 this.demandRepo.mergeEmpty();
                 this.log.debug(struct.room.name, `${struct.pos}: added storage task`);
             }
@@ -95,7 +96,7 @@ export class TerminalController implements Controller {
             const allProvides = this.exchange.getForRequester(struct.id);
             const amount = allProvides.reduce((p, c) => p + (c.amount ?? 0), 0);
             if (amount < usedCapcity) {
-                this.exchange.add(new ExchangeTask(struct.room.name, 2, usedCapcity - amount, RESOURCE_ENERGY, struct.id, undefined, struct.pos));
+                this.exchange.add(new Task(struct.room.name, 2, usedCapcity - amount, RESOURCE_ENERGY, struct.id, undefined, struct.pos));
                 this.exchange.mergeEmpty();
                 this.log.debug(struct.room.name, `${struct.pos}: added exchange task`);
             }

@@ -2,9 +2,10 @@ import { singleton } from "tsyringe";
 import { Logger } from "logger";
 import { Pathing } from "../../pathing";
 import { HaulerRole } from "./hauler-role";
-import { DemandTaskRepo } from "repos/demand-task-repo";
-import { SupplyTaskRepo } from "repos/supply-task-repo";
-import { StorageTaskRepo } from "repos/storage-task-repo";
+import { SpawnDemandTaskRepo } from "repos/spawn/spawn-demand-task-repo";
+import { StorageSupplyTaskRepo } from "repos/storage/storage-supply-task-repo";
+import { StorageDemandTaskRepo } from "repos/storage/storage-demand-task-repo";
+import { ContainerDemandTempTaskRepo } from "repos/container/container-demand-temp-task-repo";
 import { CombinedRepo } from "repos/_base/combined-repo";
 
 import profiler from "screeps-profiler";
@@ -17,8 +18,10 @@ export class RemoteHaulerStorageRole extends HaulerRole {
 
 
     constructor(log: Logger, pathing: Pathing,
-        provider: SupplyTaskRepo, private leftDemands: DemandTaskRepo, private rightDemands: StorageTaskRepo) {
-        super(log, pathing, provider, new CombinedRepo(leftDemands, rightDemands, 3, 'combined', log));
+        provider: StorageSupplyTaskRepo, containers: ContainerDemandTempTaskRepo, private leftDemands: SpawnDemandTaskRepo, private rightDemands: StorageDemandTaskRepo) {
+        super(log, pathing,
+            new CombinedRepo(containers, provider, 3, 'combined', log),
+            new CombinedRepo(leftDemands, rightDemands, 3, 'combined', log));
     }
 
     public run(creep: Creep): void {

@@ -1,10 +1,10 @@
 import { injectable } from "tsyringe";
 
-import { SupplyTask } from "repos/task";
+import { Task } from "repos/task";
 import { Controller } from "./controller";
 import { Logger } from "logger";
 
-import { SupplyTaskRepo } from "repos/supply-task-repo";
+import { DropTaskRepo } from "repos/misc/drop-task-repo";
 import { isMyRoom, isRemote, isResourceConstant } from "utils/utils";
 
 import profiler from "screeps-profiler";
@@ -13,7 +13,7 @@ import profiler from "screeps-profiler";
 export class DropsController implements Controller {
 
     constructor(private log: Logger,
-        private supplyRepo: SupplyTaskRepo) {
+        private supplyRepo: DropTaskRepo) {
     }
 
     public monitor(room: Room): void {
@@ -37,7 +37,7 @@ export class DropsController implements Controller {
                         const current = this.supplyRepo.getForRequester(i.id, type);
                         const amount = current.reduce((p, c) => p + (c.amount ?? 0), 0);
                         if (amount < stored && i.room) {
-                            this.supplyRepo.add(new SupplyTask(i.room.name, 1, stored - amount, type, i.id, undefined, i.pos));
+                            this.supplyRepo.add(new Task(i.room.name, 1, stored - amount, type, i.id, undefined, i.pos));
                             this.log.debug(room.name, `${i.pos}: added tomb supply task`);
                         }
                     }
@@ -56,7 +56,7 @@ export class DropsController implements Controller {
                 const current = this.supplyRepo.getForRequester(i.id, i.resourceType);
                 const amount = current.reduce((p, c) => p + (c.amount ?? 0), 0);
                 if (amount < stored && i.room) {
-                    this.supplyRepo.add(new SupplyTask(i.room.name, 1, stored - amount, i.resourceType, i.id, undefined, i.pos));
+                    this.supplyRepo.add(new Task(i.room.name, 1, stored - amount, i.resourceType, i.id, undefined, i.pos));
                     this.log.debug(room.name, `${i.pos}: added dropped supply task`);
                 }
             }

@@ -4,12 +4,11 @@ import { Manager } from "manager";
 import { Logger } from "logger";
 import { isTerminal, isMyRoom } from "utils/utils";
 
-import { initObjectMemory } from "structures/memory/structure-memory";
-import { ExchangeTaskRepo } from "repos/exchange-task-repo";
-import { RequestTaskRepo } from "repos/request-task-repo";
+import { ExchangeTaskRepo } from "repos/terminal/exchange-task-repo";
+import { RequestTaskRepo } from "repos/terminal/request-task-repo";
 
 import profiler from "screeps-profiler";
-import { ExchangeTask } from "repos/task";
+import { Task } from "repos/task";
 
 // TODO move outside room based managers
 // TODO other resource types ! cost energy
@@ -51,7 +50,7 @@ export class TerminalManager implements Manager {
             if (totalAvail < 5000)
                 return;
 
-            const linkedTasks: ExchangeTask[] = [];
+            const linkedTasks: Task[] = [];
             let remainder = order.amount + cost;
             let useable = 0;
             for (const free of avail) {

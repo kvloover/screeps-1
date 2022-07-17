@@ -1,46 +1,30 @@
 import { Logger } from "logger";
 import profiler from "screeps-profiler";
 import { Lifecycle, scoped } from "tsyringe";
-import { Persistent } from "./persistent";
-import { RepairTask } from "./task";
-import { BaseRepo } from "./_base/task-repo";
-
-let visuals: { [room: string]: RoomVisual };
+import { Persistent } from "../persistent";
+import { Task } from "../task";
+import { BaseRepo } from "../_base/task-repo";
 
 /**
-* Construction sites
+* Supply to other rooms
 **/
 @scoped(Lifecycle.ContainerScoped)
-export class RepairTaskRepo extends BaseRepo<RepairTask> implements Persistent {
+export class ExchangeTaskRepo extends BaseRepo<Task> implements Persistent {
 
-    constructor(log: Logger) { super('repair', log); }
-
-    private visual(room: string): RoomVisual {
-        if (!visuals) visuals = {};
-        return visuals[room] ?? (visuals[room] = new RoomVisual(room));
-    }
+    constructor(log: Logger) { super('exchange', log); }
 
     // Repository
     // Cf. base class TaskRepo
 
-    public override add(task: RepairTask): void {
-        if (task.pos) this.visual(task.room).circle(task.pos.x, task.pos.y, { stroke: "#CC0000" });
-        super.add(task);
-    }
-
     // Persistency
     restore(): void {
         if (Memory.persistency?.hasOwnProperty(this.key))
-            this.tasks = global.repair ?? []; //Memory.persistency.repair;
-
-        this.tasks.forEach(t => {
-            if (t.pos) { this.visual(t.room).circle(t.pos.x, t.pos.y, { stroke: "#00CC00" }); }
-        })
+            this.tasks = Memory.persistency.exchange;
     }
 
     save(): void {
         this.mergeEmpty();
-        global.repair = Object.assign(global.repair ?? [], this.tasks);
+        Memory.persistency = Object.assign(Memory.persistency, { exchange: this.tasks ?? [] });
     }
 
     gc(): void {
@@ -85,9 +69,9 @@ export class RepairTaskRepo extends BaseRepo<RepairTask> implements Persistent {
 
 declare global {
     interface Persistency {
-        repair: RepairTask[];
+        exchange: Task[];
     }
 }
 
-profiler.registerClass(RepairTaskRepo, 'RepairTaskRepo');
+profiler.registerClass(ExchangeTaskRepo, 'ExchangeTaskRepo');
 

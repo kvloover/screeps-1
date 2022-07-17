@@ -1,13 +1,13 @@
 import { injectable } from "tsyringe";
 
-import { RepairTask } from "repos/task";
+import { Task } from "repos/task";
 import { Controller } from "./controller";
 import { Logger } from "logger";
 
 import profiler from "screeps-profiler";
 import { initHeapMemory } from "structures/memory/structure-memory";
 import { ObjectConstant } from "utils/custom-types";
-import { RepairTaskRepo } from "repos/repair-task-repo";
+import { RepairTaskRepo } from "repos/structures/repair-task-repo";
 
 // let structures: { [room: string]: { id: Id<_HasId>, pos: RoomPosition }[] };
 
@@ -106,7 +106,7 @@ export class StructuresController implements Controller {
                                 // make tasks to next check level
                                 if (struct.hits < cfg.emergency * struct.hitsMax) {
                                     this.tryAddTaskToRepo(
-                                        new RepairTask(room.name,
+                                        new Task(room.name,
                                             cfg.prio,
                                             (Math.min(cfg.target, 2 * cfg.emergency) * struct.hitsMax) - struct.hits,
                                             RESOURCE_ENERGY,
@@ -115,7 +115,7 @@ export class StructuresController implements Controller {
                                             struct.pos));
                                 } else if (struct.hits < 0.8 * (cfg.target * struct.hitsMax)) {
                                     // this.tryAddTaskToRepo(
-                                    //     new RepairTask(room.name,
+                                    //     new Task(room.name,
                                     //         50 + cfg.prio,
                                     //         (cfg.max * struct.hitsMax) - struct.hits,
                                     //         RESOURCE_ENERGY,
@@ -145,7 +145,7 @@ export class StructuresController implements Controller {
         };
     }
 
-    private tryAddTaskToRepo(task: RepairTask): void {
+    private tryAddTaskToRepo(task: Task): void {
         // getTaskForRequester from repair, if not found, add to repo
         // if multiple found, remove all but the lowest prio
         // if new task is lower prio, remove old and add new

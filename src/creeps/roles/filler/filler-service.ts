@@ -6,10 +6,13 @@ import { Pathing } from "../../pathing";
 
 import { FillerRole } from "./filler-role";
 
-import { DemandTaskRepo } from "repos/demand-task-repo";
-import { SupplyTaskRepo } from "repos/supply-task-repo";
-import { ProviderTaskRepo } from "repos/provider-task-repo";
-import { StorageTaskRepo } from "repos/storage-task-repo";
+import { SpawnDemandTaskRepo } from "repos/spawn/spawn-demand-task-repo";
+import { StorageSupplyTaskRepo } from "repos/storage/storage-supply-task-repo";
+import { LinkSupplyTaskRepo } from "repos/link/link-supply-task-repo";
+import { StorageDemandTaskRepo } from "repos/storage/storage-demand-task-repo";
+import { ContainerDemandTempTaskRepo } from "repos/container/container-demand-temp-task-repo";
+import { CombinedRepo } from "repos/_base/combined-repo";
+
 import profiler from "screeps-profiler";
 
 /**
@@ -24,8 +27,12 @@ export class FillerSupplierRole extends FillerRole {
     };
 
     constructor(log: Logger, pathing: Pathing,
-        providers: SupplyTaskRepo, demands: DemandTaskRepo
-    ) { super(log, pathing, providers, demands); }
+        provider: StorageSupplyTaskRepo, containers: ContainerDemandTempTaskRepo,
+        demands: SpawnDemandTaskRepo) {
+        super(log, pathing,
+            new CombinedRepo(provider, containers, 3, 'combined-supply', log),
+            demands);
+    }
 
     public run(creep: Creep): void {
         this.log.debug(creep.room.name, `Running filler supplier`);
@@ -45,8 +52,12 @@ export class FillerStorageRole extends FillerRole {
     };
 
     constructor(log: Logger, pathing: Pathing,
-        providers: SupplyTaskRepo, demands: StorageTaskRepo
-    ) { super(log, pathing, providers, demands); }
+        provider: StorageSupplyTaskRepo, containers: ContainerDemandTempTaskRepo,
+        demands: StorageDemandTaskRepo) {
+        super(log, pathing,
+            new CombinedRepo(provider, containers, 3, 'combined-supply', log),
+            demands);
+    }
 
     public run(creep: Creep): void {
         this.log.debug(creep.room.name, `Running filler storage`);
@@ -76,8 +87,10 @@ export class FillerLinkRole extends FillerRole {
     };
 
     constructor(log: Logger, pathing: Pathing,
-        providers: ProviderTaskRepo, demands: StorageTaskRepo
-    ) { super(log, pathing, providers, demands); }
+        providers: LinkSupplyTaskRepo,
+        demands: StorageDemandTaskRepo) {
+        super(log, pathing, providers, demands);
+    }
 
     public run(creep: Creep): void {
         this.log.debug(creep.room.name, `Running filler link`);

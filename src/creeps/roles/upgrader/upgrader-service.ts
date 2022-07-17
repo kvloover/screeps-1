@@ -4,13 +4,15 @@ import { Pathing } from "../../pathing";
 
 import { UpgraderRole } from "./upgrader-role";
 
-import { SupplyTaskRepo } from "repos/supply-task-repo";
+import { StorageSupplyTaskRepo } from "repos/storage/storage-supply-task-repo";
 import profiler from "screeps-profiler";
 import { HarvestAction } from "../harvester/harvest-action";
-import { UtilityTaskRepo } from "repos/utility-task-repo";
+import { LinkSupplyUtilityTaskRepo } from "repos/link/link-supply-utility-task-repo";
 import { TaskRepo } from "repos/_base/task-repo";
 import { Task } from "repos/task";
 import { CombinedRepo } from "repos/_base/combined-repo";
+import { ContainerSupplyTaskRepo } from "repos/container/container-supply-task-repo";
+import { ContainerDemandTempTaskRepo } from "repos/container/container-demand-temp-task-repo";
 
 @singleton()
 export class UpgraderSourceRole extends UpgraderRole {
@@ -38,19 +40,52 @@ export class UpgraderSourceRole extends UpgraderRole {
 profiler.registerClass(UpgraderSourceRole, 'UpgraderSourceRole');
 
 @singleton()
-export class UpgraderStorageRole extends UpgraderRole {
+export class UpgraderContainerRole extends UpgraderRole {
 
     private combined: TaskRepo<Task>;
 
     phase = {
         start: 2,
+        end: 3
+    };
+
+    constructor(log: Logger, pathing: Pathing,
+        supply: ContainerDemandTempTaskRepo, containers: ContainerSupplyTaskRepo, utility: LinkSupplyUtilityTaskRepo) {
+        super(log, pathing)
+        this.combined = new CombinedRepo(utility,
+            new CombinedRepo(containers, supply, 10, 'combined-backup', log),
+            10, 'combined-utility', log);
+    }
+
+    protected consume(creep: Creep): void {
+        this.consumeFromRepo(creep, this.combined, 'consume', RESOURCE_ENERGY);
+    }
+
+    public run(creep: Creep): void {
+        this.log.debug(creep.room.name, `Running upgrader container`);
+        super.run(creep);
+    }
+
+}
+
+profiler.registerClass(UpgraderContainerRole, 'UpgraderContainerRole');
+
+@singleton()
+export class UpgraderStorageRole extends UpgraderRole {
+
+    private combined: TaskRepo<Task>;
+
+    phase = {
+        start: 4,
         end: 4
     };
 
     constructor(log: Logger, pathing: Pathing,
-        supply: SupplyTaskRepo, utility: UtilityTaskRepo) {
+        supply: StorageSupplyTaskRepo, containers: ContainerSupplyTaskRepo, utility: LinkSupplyUtilityTaskRepo) {
         super(log, pathing)
-        this.combined = new CombinedRepo(utility, supply, 10, 'combined-utility', log);
+        this.combined = new CombinedRepo(utility,
+            new CombinedRepo(containers, supply, 10, 'combined-backup', log),
+            10, 'combined-utility', log);
     }
 
     protected consume(creep: Creep): void {
@@ -77,9 +112,11 @@ export class UpgraderSupplyRole extends UpgraderRole {
     };
 
     constructor(log: Logger, pathing: Pathing,
-        supply: SupplyTaskRepo, utility: UtilityTaskRepo) {
+        supply: StorageSupplyTaskRepo, containers: ContainerSupplyTaskRepo, utility: LinkSupplyUtilityTaskRepo) {
         super(log, pathing)
-        this.combined = new CombinedRepo(utility, supply, 10, 'combined-utility', log);
+        this.combined = new CombinedRepo(utility,
+            new CombinedRepo(containers, supply, 10, 'combined-backup', log),
+            10, 'combined-utility', log);
     }
 
     protected consume(creep: Creep): void {

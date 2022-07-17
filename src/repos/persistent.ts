@@ -1,16 +1,16 @@
 import { registry } from "tsyringe";
 
-import { MidstreamTaskRepo } from "./midstream-task-repo";
-import { HarvestTaskRepo } from "./harvest-task-repo";
-import { DemandTaskRepo } from "./demand-task-repo";
-import { ProviderTaskRepo } from "./provider-task-repo";
-import { SupplyTaskRepo } from "./supply-task-repo";
-import { StorageTaskRepo } from "./storage-task-repo";
-import { ConstructionTaskRepo } from "./construction-task-repo";
-import { RepairTaskRepo } from "./repair-task-repo";
-import { UtilityTaskRepo } from "./utility-task-repo";
-import { RequestTaskRepo } from "./request-task-repo";
-import { ExchangeTaskRepo } from "./exchange-task-repo";
+import { LinkDemandTaskRepo } from "./link/link-demand-task-repo";
+import { HarvestTaskRepo } from "./source/harvest-task-repo";
+import { SpawnDemandTaskRepo } from "./spawn/spawn-demand-task-repo";
+import { LinkSupplyTaskRepo } from "./link/link-supply-task-repo";
+import { StorageSupplyTaskRepo } from "./storage/storage-supply-task-repo";
+import { StorageDemandTaskRepo } from "./storage/storage-demand-task-repo";
+import { ConstructionTaskRepo } from "./structures/construction-task-repo";
+import { RepairTaskRepo } from "./structures/repair-task-repo";
+import { LinkSupplyUtilityTaskRepo } from "./link/link-supply-utility-task-repo";
+import { RequestTaskRepo } from "./terminal/request-task-repo";
+import { ExchangeTaskRepo } from "./terminal/exchange-task-repo";
 
 export interface Persistent {
     restore(): void;
@@ -20,23 +20,16 @@ export interface Persistent {
     clearRoomRef(roomName: string): void;
 }
 
-// HarvestTaskRepo      : Split sources till 10 energy/tick
-// MidstreamTaskRepo    : midstream demand (supplied by harvester)
-// DemandTaskRepo       : Demands for spawning etc
-// ProvidorTaskRepo     : Available energy to take out (include midstream)
-// StorageTaskRepo      : Demands for storage
-// BatteryTaskRepo      : Provide from storage
-
 @registry([
     { token: Persistency.token, useToken: HarvestTaskRepo },
-    { token: Persistency.token, useToken: MidstreamTaskRepo },
-    { token: Persistency.token, useToken: DemandTaskRepo },
-    { token: Persistency.token, useToken: ProviderTaskRepo },
-    { token: Persistency.token, useToken: SupplyTaskRepo },
-    { token: Persistency.token, useToken: StorageTaskRepo },
+    { token: Persistency.token, useToken: LinkDemandTaskRepo },
+    { token: Persistency.token, useToken: SpawnDemandTaskRepo },
+    { token: Persistency.token, useToken: LinkSupplyTaskRepo },
+    { token: Persistency.token, useToken: StorageSupplyTaskRepo },
+    { token: Persistency.token, useToken: StorageDemandTaskRepo },
     { token: Persistency.token, useToken: ConstructionTaskRepo },
     { token: Persistency.token, useToken: RepairTaskRepo },
-    { token: Persistency.token, useToken: UtilityTaskRepo },
+    { token: Persistency.token, useToken: LinkSupplyUtilityTaskRepo },
     { token: Persistency.token, useToken: RequestTaskRepo },
     { token: Persistency.token, useToken: ExchangeTaskRepo },
 ])

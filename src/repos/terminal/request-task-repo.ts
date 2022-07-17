@@ -1,17 +1,17 @@
 import { Logger } from "logger";
 import profiler from "screeps-profiler";
 import { Lifecycle, scoped } from "tsyringe";
-import { Persistent } from "./persistent";
-import { MidstreamTask } from "./task";
-import { BaseRepo } from "./_base/task-repo";
+import { Persistent } from "../persistent";
+import { Task } from "../task";
+import { BaseRepo } from "../_base/task-repo";
 
 /**
-* midstream demand
+* Request from other rooms
 **/
 @scoped(Lifecycle.ContainerScoped)
-export class MidstreamTaskRepo extends BaseRepo<MidstreamTask> implements Persistent {
+export class RequestTaskRepo extends BaseRepo<Task> implements Persistent {
 
-    constructor(log: Logger) { super('midstream', log); }
+    constructor(log: Logger) { super('request', log); }
 
     // Repository
     // Cf. base class TaskRepo
@@ -19,12 +19,12 @@ export class MidstreamTaskRepo extends BaseRepo<MidstreamTask> implements Persis
     // Persistency
     restore(): void {
         if (Memory.persistency?.hasOwnProperty(this.key))
-            this.tasks = Memory.persistency.midstream;
+            this.tasks = Memory.persistency.request;
     }
 
     save(): void {
         this.mergeEmpty();
-        Memory.persistency = Object.assign(Memory.persistency, { midstream: this.tasks ?? [] });
+        Memory.persistency = Object.assign(Memory.persistency, { request: this.tasks ?? [] });
     }
 
     gc(): void {
@@ -69,8 +69,9 @@ export class MidstreamTaskRepo extends BaseRepo<MidstreamTask> implements Persis
 
 declare global {
     interface Persistency {
-        midstream: MidstreamTask[];
+        request: Task[];
     }
 }
 
-profiler.registerClass(MidstreamTaskRepo, 'MidstreamTaskRepo');
+profiler.registerClass(RequestTaskRepo, 'RequestTaskRepo');
+

@@ -6,9 +6,9 @@ import { CreepState } from "utils/creep-state";
 import { HarvestAction } from "../harvester/harvest-action";
 import { BuilderRole } from "./builder-role";
 
-import { SupplyTaskRepo } from "repos/supply-task-repo";
-import { RepairTaskRepo } from "repos/repair-task-repo";
-import { ConstructionTaskRepo } from "repos/construction-task-repo";
+import { StorageSupplyTaskRepo } from "repos/storage/storage-supply-task-repo";
+import { RepairTaskRepo } from "repos/structures/repair-task-repo";
+import { ConstructionTaskRepo } from "repos/structures/construction-task-repo";
 import { CombinedRepo } from "repos/_base/combined-repo";
 
 import profiler from "screeps-profiler";
@@ -56,7 +56,7 @@ export class BuilderStorageRole extends BuilderRole {
     };
 
     constructor(log: Logger, pathing: Pathing,
-        protected provider: SupplyTaskRepo,
+        protected provider: StorageSupplyTaskRepo,
         protected prioBuild: RepairTaskRepo, protected midBuild: ConstructionTaskRepo) {
         super(log, pathing, new CombinedRepo(prioBuild, midBuild, 15, 'combined', log))
     }
@@ -115,7 +115,7 @@ export class RemoteBuilderStorageRole extends BuilderStorageRole {
     name: string = 'remote-builder'
 
     constructor(log: Logger, pathing: Pathing,
-        provider: SupplyTaskRepo,
+        provider: StorageSupplyTaskRepo,
         prioBuild: RepairTaskRepo, midBuild: ConstructionTaskRepo) {
         super(log, pathing, provider, prioBuild, midBuild);
     }

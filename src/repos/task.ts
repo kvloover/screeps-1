@@ -13,21 +13,3 @@ export class Task {
     ) { }
 }
 
-export class AttackTask extends Task {}
-export class ClaimTask extends Task {}
-// RangedAttack, RangedHeal, RangedMassAttack, Pull,
-
-export class ConstructionTask extends Task {}
-export class RepairTask extends Task {}
-
-export class HarvestTask extends Task {}
-export class DemandTask extends Task {}
-export class MidstreamTask extends Task {}
-export class ProviderTask extends Task {}
-export class StorageTask extends Task {}
-export class SupplyTask extends Task {}
-export class UtilityTask extends Task {}
-
-export class ExchangeTask extends Task {}
-export class RequestTask extends Task {}
-

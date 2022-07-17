@@ -1,17 +1,17 @@
 import { Logger } from "logger";
 import profiler from "screeps-profiler";
 import { Lifecycle, scoped } from "tsyringe";
-import { Persistent } from "./persistent";
-import { ProviderTask } from "./task";
-import { BaseRepo } from "./_base/task-repo";
+import { Persistent } from "../persistent";
+import { Task } from "../task";
+import { BaseRepo } from "../_base/task-repo";
 
 /**
-* Midstream providing
+* Construction sites
 **/
 @scoped(Lifecycle.ContainerScoped)
-export class ProviderTaskRepo extends BaseRepo<ProviderTask> implements Persistent {
+export class ConstructionTaskRepo extends BaseRepo<Task> implements Persistent {
 
-    constructor(log: Logger) { super('provider', log); }
+    constructor(log: Logger) { super('construction', log); }
 
     // Repository
     // Cf. base class TaskRepo
@@ -19,12 +19,12 @@ export class ProviderTaskRepo extends BaseRepo<ProviderTask> implements Persiste
     // Persistency
     restore(): void {
         if (Memory.persistency?.hasOwnProperty(this.key))
-            this.tasks = Memory.persistency.provider;
+            this.tasks = Memory.persistency.construction;
     }
 
     save(): void {
         this.mergeEmpty();
-        Memory.persistency = Object.assign(Memory.persistency, { provider: this.tasks ?? [] });
+        Memory.persistency = Object.assign(Memory.persistency, { construction: this.tasks ?? [] });
     }
 
     gc(): void {
@@ -69,9 +69,9 @@ export class ProviderTaskRepo extends BaseRepo<ProviderTask> implements Persiste
 
 declare global {
     interface Persistency {
-        provider: ProviderTask[];
+        construction: Task[];
     }
 }
 
-profiler.registerClass(ProviderTaskRepo, 'ProviderTaskRepo');
+profiler.registerClass(Task, 'Task');
 

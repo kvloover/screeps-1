@@ -1,5 +1,5 @@
 import { LogFilter, LogLevel } from "logger";
-import { RepairTask, Task } from "repos/task";
+import { Task } from "repos/task";
 import { CreepState } from "./utils/creep-state";
 
 export { };
@@ -73,7 +73,7 @@ declare global {
 
     namespace NodeJS {
         interface Global {
-            repair?: RepairTask[];
+            repair?: Task[];
             timingOffset?: { [key in TimingKey]?: { [key: string]: number } }; // random stored in global for reuse
             visuals?: { [key: string]: { [key: string]: string } };
         }

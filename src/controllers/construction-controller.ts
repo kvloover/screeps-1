@@ -1,8 +1,8 @@
 import { injectable, injectAll } from "tsyringe";
 
 import { initConstructionMemory, initHeapMemory, initObjectMemory } from "structures/memory/structure-memory";
-import { ConstructionTask } from "repos/task";
-import { ConstructionTaskRepo } from "repos/construction-task-repo";
+import { Task } from "repos/task";
+import { ConstructionTaskRepo } from "repos/structures/construction-task-repo";
 import { Controller } from "./controller";
 import { Logger } from "logger";
 
@@ -73,7 +73,7 @@ export class ConstructionController implements Controller {
                 const amount = current.reduce((p, c) => p + (c.amount ?? 0), 0);
                 if (amount < left) {
                     const prio = this._config.get(i.structureType);
-                    this.conRepo.add(new ConstructionTask(room.name, prio ?? 20, left - amount, RESOURCE_ENERGY, i.id, undefined, i.pos));
+                    this.conRepo.add(new Task(room.name, prio ?? 20, left - amount, RESOURCE_ENERGY, i.id, undefined, i.pos));
                     this.log.debug(room.name, `${i.pos}: added construction task`);
                 }
             }

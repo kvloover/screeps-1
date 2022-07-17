@@ -4,7 +4,7 @@ import { Pathing } from "creeps/pathing";
 
 import { Role } from "../role-registry";
 
-import { ConstructionTask, Task } from "repos/task";
+import { Task } from "repos/task";
 import { TaskRepo } from "repos/_base/task-repo";
 import { TransferRole } from "../_base/transfer-role";
 import { HarvestAction } from "./harvest-action";
@@ -109,7 +109,7 @@ export class RemoteHarvesterRole extends TransferRole implements Role {
 
     protected addConstructionTask(site: ConstructionSite) {
         // override if using combined repo (Eg: repair)
-        this.buildTasks.add(new ConstructionTask(site.pos.roomName, 1, site.progressTotal - site.progress, RESOURCE_ENERGY, site.id, undefined, site.pos));
+        this.buildTasks.add(new Task(site.pos.roomName, 1, site.progressTotal - site.progress, RESOURCE_ENERGY, site.id, undefined, site.pos));
     }
 }
 
