@@ -24,9 +24,7 @@ export class BuilderSourceRole extends BuilderRole {
     constructor(log: Logger, pathing: Pathing,
         protected harvesting: HarvestAction,
         protected prioBuild: RepairTaskRepo, protected midBuild: ConstructionTaskRepo) {
-        // construction: 1-20
-        // repair: emergency: 1, normal : 50, filler: 80
-        super(log, pathing, new CombinedRepo(prioBuild, midBuild, 10, 'combined', log));
+        super(log, pathing, new CombinedRepo('combined', log, [{ offset: 0, repo: prioBuild }, { offset: 15, repo: midBuild }]));
     }
 
     protected consume(creep: Creep): void {
@@ -58,7 +56,7 @@ export class BuilderStorageRole extends BuilderRole {
     constructor(log: Logger, pathing: Pathing,
         protected provider: StorageSupplyTaskRepo,
         protected prioBuild: RepairTaskRepo, protected midBuild: ConstructionTaskRepo) {
-        super(log, pathing, new CombinedRepo(prioBuild, midBuild, 15, 'combined', log))
+        super(log, pathing, new CombinedRepo('combined', log, [{ offset: 0, repo: prioBuild }, { offset: 15, repo: midBuild }]))
     }
 
     protected consume(creep: Creep): void {

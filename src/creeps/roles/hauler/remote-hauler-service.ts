@@ -20,8 +20,9 @@ export class RemoteHaulerStorageRole extends HaulerRole {
     constructor(log: Logger, pathing: Pathing,
         provider: StorageSupplyTaskRepo, containers: ContainerDemandTempTaskRepo, private leftDemands: SpawnDemandTaskRepo, private rightDemands: StorageDemandTaskRepo) {
         super(log, pathing,
-            new CombinedRepo(containers, provider, 3, 'combined', log),
-            new CombinedRepo(leftDemands, rightDemands, 3, 'combined', log));
+            new CombinedRepo('combined-supply', log, [{ offset: 0, repo: containers }, { offset: 3, repo: provider }]),
+            new CombinedRepo('combined', log, [{ offset: 0, repo: leftDemands }, { offset: 3, repo: rightDemands }])
+        );
     }
 
     public run(creep: Creep): void {

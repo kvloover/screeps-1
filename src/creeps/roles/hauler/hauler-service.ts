@@ -24,8 +24,8 @@ export class HaulerDropsRole extends HaulerRole {
     constructor(log: Logger, pathing: Pathing,
         provider: StorageSupplyTaskRepo, containers: ContainerDemandTempTaskRepo, private leftDemands: SpawnDemandTaskRepo, private rightDemands: LinkDemandTaskRepo) {
         super(log, pathing,
-            new CombinedRepo(provider, containers, 3, 'combined-supply', log),
-            new CombinedRepo(leftDemands, rightDemands, 3, 'combined', log))
+            new CombinedRepo('combined-supply', log, [{ offset: 0, repo: provider }, { offset: 3, repo: containers }]),
+            new CombinedRepo('combined', log, [{ offset: 0, repo: leftDemands }, { offset: 3, repo: rightDemands }]))
     }
 
     public run(creep: Creep): void {
@@ -53,7 +53,7 @@ export class HaulerMidstreamRole extends HaulerRole {
     constructor(log: Logger, pathing: Pathing,
         provider: StorageSupplyTaskRepo, containers: ContainerDemandTempTaskRepo, demands: SpawnDemandTaskRepo) {
         super(log, pathing,
-            new CombinedRepo(provider, containers, 3, 'combined-supply', log),
+            new CombinedRepo('combined-supply', log, [{ offset: 0, repo: provider }, { offset: 3, repo: containers }]),
             demands)
     }
 
@@ -96,8 +96,8 @@ export class HaulerStorageRole extends HaulerRole {
     constructor(log: Logger, pathing: Pathing,
         provider: StorageSupplyTaskRepo, containers: ContainerDemandTempTaskRepo, private leftDemands: SpawnDemandTaskRepo, private rightDemands: StorageDemandTaskRepo) {
         super(log, pathing,
-            new CombinedRepo(provider, containers, 3, 'combined-supply', log),
-            new CombinedRepo(leftDemands, rightDemands, 3, 'combined', log))
+            new CombinedRepo('combined-supply', log, [{ offset: 0, repo: provider }, { offset: 3, repo: containers }]),
+            new CombinedRepo('combined', log, [{ offset: 0, repo: leftDemands }, { offset: 3, repo: rightDemands }]))
     }
 
     public run(creep: Creep): void {

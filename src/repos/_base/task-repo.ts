@@ -12,8 +12,8 @@ export interface TaskRepo<T extends Task> {
     getById(id: string): T | undefined;
     list(room?: string): T[];
     add(task: T): void;
-    removeById(id: string): void;
-    remove(task: T): void;
+    removeById(id: string): boolean;
+    remove(task: T): boolean;
     getForRequester(id: string, type?: ResourceConstant): T[];
     closestTask(pos: RoomPosition, type?: ResourceConstant, room?: string, blacklist?: string[], limitrange?: number): Task;
     trySplitTask(task: Task, amount: number, opt?: (task: Task) => T): boolean;
@@ -23,15 +23,10 @@ export interface TaskRepo<T extends Task> {
     registerTask(creep: Creep, task: Task, key: string): void;
     unregisterTask(creep: Creep, key: string): void;
     finishTask(creep: Creep, task: Task, key: string): void;
-    setAmount(id: string, amount: number): void;
+    setAmount(id: string, amount: number): boolean;
 }
 
 export abstract class BaseRepo<T extends Task> implements TaskRepo<T>{
-    // getById(id: string): T | undefined;
-    // list(): T[];
-    // add(task: T): void;
-    // removeById(id: string): void;
-    // remove(task: T): void;
 
     constructor(public key: string, protected log: Logger) { }
 
@@ -53,17 +48,17 @@ export abstract class BaseRepo<T extends Task> implements TaskRepo<T>{
         this.tasks.push(task);
     }
 
-    public removeById(id: string): void {
-        // this.log.critical(`removing ${id} on ${this.key}`)
+    public removeById(id: string): boolean {
         const task = this.tasks.find(i => i.id === id);
         if (task) {
-            // this.log.critical(`remove: task found ${id}`);
             _.remove(this.tasks, task);
+            return true;
         }
+        return false;
     }
 
-    public remove(task: T): void {
-        this.removeById(task.id);
+    public remove(task: T): boolean {
+        return this.removeById(task.id);
     }
 
     public getForRequester(id: string, type?: ResourceConstant): T[] {
@@ -156,8 +151,10 @@ export abstract class BaseRepo<T extends Task> implements TaskRepo<T>{
         creep.memory.tasks[key] = undefined;
     }
 
-    public setAmount(id: string, amount: number): void {
-        this.tasks.filter(i => i.id == id).forEach(i => i.amount = amount);
+    public setAmount(id: string, amount: number): boolean {
+        const filtered = this.tasks.filter(i => i.id == id);
+        filtered.forEach(i => i.amount = amount);
+        return filtered.length > 0;
     }
 
 }

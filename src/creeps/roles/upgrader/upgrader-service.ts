@@ -52,9 +52,11 @@ export class UpgraderContainerRole extends UpgraderRole {
     constructor(log: Logger, pathing: Pathing,
         supply: ContainerDemandTempTaskRepo, containers: ContainerSupplyTaskRepo, utility: LinkSupplyUtilityTaskRepo) {
         super(log, pathing)
-        this.combined = new CombinedRepo(utility,
-            new CombinedRepo(containers, supply, 10, 'combined-backup', log),
-            10, 'combined-utility', log);
+        this.combined = new CombinedRepo('combined-utility', log, [
+            { offset: 0, repo: utility },
+            { offset: 10, repo: containers },
+            { offset: 20, repo: supply }
+        ]);
     }
 
     protected consume(creep: Creep): void {
@@ -83,9 +85,11 @@ export class UpgraderStorageRole extends UpgraderRole {
     constructor(log: Logger, pathing: Pathing,
         supply: StorageSupplyTaskRepo, containers: ContainerSupplyTaskRepo, utility: LinkSupplyUtilityTaskRepo) {
         super(log, pathing)
-        this.combined = new CombinedRepo(utility,
-            new CombinedRepo(containers, supply, 10, 'combined-backup', log),
-            10, 'combined-utility', log);
+        this.combined = new CombinedRepo('combined-utility', log, [
+            { offset: 0, repo: utility },
+            { offset: 10, repo: containers },
+            { offset: 20, repo: supply }
+        ]);
     }
 
     protected consume(creep: Creep): void {
@@ -114,9 +118,11 @@ export class UpgraderSupplyRole extends UpgraderRole {
     constructor(log: Logger, pathing: Pathing,
         supply: StorageSupplyTaskRepo, containers: ContainerSupplyTaskRepo, utility: LinkSupplyUtilityTaskRepo) {
         super(log, pathing)
-        this.combined = new CombinedRepo(utility,
-            new CombinedRepo(containers, supply, 10, 'combined-backup', log),
-            10, 'combined-utility', log);
+        this.combined = new CombinedRepo('combined-utility', log, [
+            { offset: 0, repo: utility },
+            { offset: 10, repo: containers },
+            { offset: 20, repo: supply }
+        ]);
     }
 
     protected consume(creep: Creep): void {

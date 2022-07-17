@@ -5,36 +5,55 @@ import { Logger } from "logger";
 export class CombinedRepo implements TaskRepo<Task> {
 
     constructor(
-        protected leftRepo: TaskRepo<Task>,
-        protected rightRepo: TaskRepo<Task>,
-        protected offset: number,
         public key: string,
-        protected log: Logger
+        protected log: Logger,
+        private repos: { offset: number, repo: TaskRepo<Task> }[],
     ) { }
 
     getById(id: string): Task | undefined {
-        return this.leftRepo.getById(id)
-            ?? this.rightRepo.getById(id);
+        for (const set of this.repos) {
+            const task = set.repo.getById(id);
+            if (task) return task;
+        }
+        return undefined;
     }
+
     list(room?: string): Task[] {
-        return this.leftRepo.list(room)
-            .concat(this.rightRepo.list(room).map(i => { return { ...i, prio: i.prio + this.offset } }));
+        return this.repos.reduce((acc, cur) =>
+            acc.concat(
+                cur.repo.list(room)
+                    .map(i => { return { ...i, prio: i.prio + cur.offset } })
+            ), [] as Task[]);
     }
+
     add(task: Task): void {
         throw new Error(`Can't add on a combined repo: ${this.key}`);
     }
-    removeById(id: string): void {
-        this.leftRepo.removeById(id);
-        this.rightRepo.removeById(id);
+
+    removeById(id: string): boolean {
+        for (const set of this.repos) {
+            const ret = set.repo.removeById(id);
+            if (ret) return true;
+        }
+        return false;
     }
-    remove(task: Task): void {
-        this.leftRepo.remove(task);
-        this.rightRepo.remove(task);
+
+    remove(task: Task): boolean {
+        for (const set of this.repos) {
+            const ret = set.repo.remove(task);
+            if (ret) return true;
+        }
+        return false;
     }
+
     getForRequester(id: string, type?: ResourceConstant): Task[] {
-        return this.leftRepo.getForRequester(id, type)
-            .concat(this.rightRepo.getForRequester(id, type));
+        return this.repos.reduce((acc, cur) =>
+            acc.concat(
+                cur.repo.getForRequester(id, type)
+                    .map(i => { return { ...i, prio: i.prio + cur.offset } })
+            ), [] as Task[]);
     }
+
     closestTask(pos: RoomPosition, type?: ResourceConstant, room?: string, blacklist?: string[], limitrange?: number): Task {
         const roomTasks = this.list(room);
         return _(roomTasks)
@@ -47,58 +66,66 @@ export class CombinedRepo implements TaskRepo<Task> {
             .map(i => i.task)
             .first();
     }
+
     trySplitTask(task: Task, amount: number, opt?: (task: Task) => Task): boolean {
-        const repo = this.repoForTask(task);
-        if (repo) {
-            if (repo.key == this.rightRepo.key) {
-                return repo.trySplitTask({ ...task, prio: task.prio - this.offset }, amount, opt);
-            } else {
-                return repo.trySplitTask(task, amount, opt);
-            }
-        }
-        else
+        const set = this.repoForTask(task);
+        if (set) {
+            return set.repo.trySplitTask({ ...task, prio: task.prio - set.offset }, amount, opt);
+        } else {
             return false;
+        }
     }
+
     mergeEmpty(): void {
-        this.leftRepo.mergeEmpty();
-        this.rightRepo.mergeEmpty();
+        for (const set of this.repos) {
+            set.repo.mergeEmpty();
+        }
     }
+
     registerTask(creep: Creep, task: Task, key: string): void {
-        const repo = this.repoForTask(task);
-        if (repo) { repo.registerTask(creep, task, key); }
+        const set = this.repoForTask(task);
+        if (set) { set.repo.registerTask(creep, task, key); }
     }
+
     linkTask(executer: Id<_HasId>, task: Task): void {
-        const repo = this.repoForTask(task);
-        if (repo) { repo.linkTask(executer, task); }
+        const set = this.repoForTask(task);
+        if (set) { set.repo.linkTask(executer, task); }
     }
+
     unlinkTask(task: Task): void {
-        const repo = this.repoForTask(task);
-        if (repo) { repo.unlinkTask(task); }
+        const set = this.repoForTask(task);
+        if (set) { set.repo.unlinkTask(task); }
     }
+
     finishTask(creep: Creep, task: Task, key: string): void {
-        const repo = this.repoForTask(task);
-        if (repo) {
+        const set = this.repoForTask(task);
+        if (set) {
             // will also unlink
-            repo.finishTask(creep, task, key);
+            set.repo.finishTask(creep, task, key);
         } else {
             // ghost task
             this.unregisterTask(creep, key);
         }
     }
+
     unregisterTask(creep: Creep, key: string): void {
         this.log.debug(creep.room.name, `unlinking task on ${creep.name}: ${key}`);
         creep.memory.tasks[key] = undefined;
     }
-    setAmount(id: string, amount:number):void {
-        this.leftRepo.setAmount(id, amount);
-        this.rightRepo.setAmount(id, amount);
+
+    setAmount(id: string, amount: number): boolean {
+        for (const set of this.repos) {
+            const found = set.repo.setAmount(id, amount);
+            if (found) return true;
+        }
+        return false;
     }
 
-    private repoForTask(task: Task): TaskRepo<Task> | undefined {
-        const foundLeft = this.leftRepo.getById(task.id);
-        if (foundLeft) return this.leftRepo;
-        const foundRight = this.rightRepo.getById(task.id);
-        if (foundRight) return this.rightRepo;
+    private repoForTask(task: Task): { offset: number, repo: TaskRepo<Task> } | undefined {
+        for (const set of this.repos) {
+            const found = set.repo.getById(task.id);
+            if (found) return set;
+        }
         return undefined;
     }
 

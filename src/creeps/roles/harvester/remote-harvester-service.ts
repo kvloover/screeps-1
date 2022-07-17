@@ -21,7 +21,10 @@ export class RemoteHarvestMidstreamRole extends RemoteHarvesterRole {
 
     constructor(log: Logger, pathing: Pathing,
         supply: LinkDemandTaskRepo, repairs: RepairTaskRepo, private builds: ConstructionTaskRepo, action: HarvestAction) {
-        super(log, pathing, supply, new CombinedRepo(repairs, builds, 15, 'combined', log), action);
+        super(log, pathing,
+            supply,
+            new CombinedRepo('combined', log, [{ offset: 0, repo: repairs }, { offset: 15, repo: builds }]),
+            action);
     }
 
     public run(creep: Creep): void {
