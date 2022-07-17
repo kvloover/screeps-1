@@ -6,9 +6,7 @@ import { HaulerRole } from "./hauler-role";
 
 import { SpawnDemandTaskRepo } from "repos/spawn/spawn-demand-task-repo";
 import { StorageSupplyTaskRepo } from "repos/storage/storage-supply-task-repo";
-import { ContainerDemandTempTaskRepo } from "repos/container/container-demand-temp-task-repo";
 import { StorageDemandTaskRepo } from "repos/storage/storage-demand-task-repo";
-import { LinkDemandTaskRepo } from "repos/link/link-demand-task-repo";
 import { DropTaskRepo } from "repos/misc/drop-task-repo";
 import { CombinedRepo } from "repos/_base/combined-repo";
 
