@@ -14,10 +14,14 @@ export abstract class Migrations {
 
     public static Migrate(): void {
         const migrations = container.resolveAll<Migration>(Migrations.token);
-        migrations
+        const executing = migrations
             .filter(m => m.index > (Memory.persistency.migration || 0))
-            .sort((a, b) => a.index - b.index)
-            .forEach(m => m.migrate());
+            .sort((a, b) => a.index - b.index);
+
+        for (let migration of executing) {
+            migration.migrate();
+            Memory.persistency.migration = Math.max(Memory.persistency.migration || 0, migration.index);
+        }
     }
 }
 
@@ -26,5 +30,3 @@ declare global {
         migration: number | undefined;
     }
 }
-
-

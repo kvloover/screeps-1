@@ -31,5 +31,14 @@ export class repo_renames {
         Memory.persistency.terminal_demand = storage.filter(x => x.prio == 3);
         Memory.persistency.terminal_supply = supply.filter(x => x.prio == 3);
 
+
+        (Memory.persistency as any)['midstream'] = undefined;
+        (Memory.persistency as any)['provider'] = undefined;
+        (Memory.persistency as any)['utility'] = undefined;
+        (Memory.persistency as any)['demand'] = undefined;
+        (Memory.persistency as any)['supply'] = undefined;
+        (Memory.persistency as any)['storage'] = undefined;
+
+        console.log(`Repo renames migration complete`);
     }
 }
