@@ -1,7 +1,7 @@
 import { singleton } from "tsyringe";
 import { Logger } from "logger";
 import { Pathing } from "../../pathing";
-import { LinkDemandTaskRepo } from "repos/link/link-demand-task-repo";
+import { ContainerDemandTaskRepo } from "repos/container/container-demand-task-repo";
 import { RemoteHarvesterRole } from "./remote-harvester-role";
 import { HarvestAction } from "./harvest-action";
 import { ConstructionTaskRepo } from "repos/structures/construction-task-repo";
@@ -20,7 +20,7 @@ export class RemoteHarvestMidstreamRole extends RemoteHarvesterRole {
     };
 
     constructor(log: Logger, pathing: Pathing,
-        supply: LinkDemandTaskRepo, repairs: RepairTaskRepo, private builds: ConstructionTaskRepo, action: HarvestAction) {
+        supply: ContainerDemandTaskRepo, repairs: RepairTaskRepo, private builds: ConstructionTaskRepo, action: HarvestAction) {
         super(log, pathing,
             supply,
             new CombinedRepo('combined', log, [{ offset: 0, repo: repairs }, { offset: 15, repo: builds }]),
