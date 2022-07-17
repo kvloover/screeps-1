@@ -4,15 +4,15 @@ import { Pathing } from "../../pathing";
 
 import { UpgraderRole } from "./upgrader-role";
 
-import { StorageSupplyTaskRepo } from "repos/storage/storage-supply-task-repo";
-import profiler from "screeps-profiler";
 import { HarvestAction } from "../harvester/harvest-action";
-import { LinkSupplyUtilityTaskRepo } from "repos/link/link-supply-utility-task-repo";
 import { TaskRepo } from "repos/_base/task-repo";
 import { Task } from "repos/task";
-import { CombinedRepo } from "repos/_base/combined-repo";
+import { StorageSupplyTaskRepo } from "repos/storage/storage-supply-task-repo";
+import { LinkSupplyUtilityTaskRepo } from "repos/link/link-supply-utility-task-repo";
 import { ContainerSupplyTaskRepo } from "repos/container/container-supply-task-repo";
-import { ContainerDemandTempTaskRepo } from "repos/container/container-demand-temp-task-repo";
+import { CombinedRepo } from "repos/_base/combined-repo";
+
+import profiler from "screeps-profiler";
 
 @singleton()
 export class UpgraderSourceRole extends UpgraderRole {
@@ -42,25 +42,18 @@ profiler.registerClass(UpgraderSourceRole, 'UpgraderSourceRole');
 @singleton()
 export class UpgraderContainerRole extends UpgraderRole {
 
-    private combined: TaskRepo<Task>;
-
     phase = {
-        start: 2,
-        end: 3
+        start: 2, // container
+        end: 2
     };
 
     constructor(log: Logger, pathing: Pathing,
-        supply: ContainerDemandTempTaskRepo, containers: ContainerSupplyTaskRepo, utility: LinkSupplyUtilityTaskRepo) {
-        super(log, pathing)
-        this.combined = new CombinedRepo('combined-utility', log, [
-            { offset: 0, repo: utility },
-            { offset: 10, repo: containers },
-            { offset: 20, repo: supply }
-        ]);
+        private containers: ContainerSupplyTaskRepo) {
+        super(log, pathing);
     }
 
     protected consume(creep: Creep): void {
-        this.consumeFromRepo(creep, this.combined, 'consume', RESOURCE_ENERGY);
+        this.consumeFromRepo(creep, this.containers, 'consume', RESOURCE_ENERGY);
     }
 
     public run(creep: Creep): void {
@@ -78,17 +71,17 @@ export class UpgraderStorageRole extends UpgraderRole {
     private combined: TaskRepo<Task>;
 
     phase = {
-        start: 4,
-        end: 4
+        start: 3, // storage
+        end: 3
     };
 
     constructor(log: Logger, pathing: Pathing,
-        supply: StorageSupplyTaskRepo, containers: ContainerSupplyTaskRepo, utility: LinkSupplyUtilityTaskRepo) {
+        supply: StorageSupplyTaskRepo,
+        containers: ContainerSupplyTaskRepo) {
         super(log, pathing)
         this.combined = new CombinedRepo('combined-utility', log, [
-            { offset: 0, repo: utility },
-            { offset: 10, repo: containers },
-            { offset: 20, repo: supply }
+            { offset: 0, repo: containers },
+            { offset: 0, repo: supply }
         ]);
     }
 
@@ -111,17 +104,19 @@ export class UpgraderSupplyRole extends UpgraderRole {
     private combined: TaskRepo<Task>;
 
     phase = {
-        start: 5,
+        start: 4, // links
         end: 9
     };
 
     constructor(log: Logger, pathing: Pathing,
-        supply: StorageSupplyTaskRepo, containers: ContainerSupplyTaskRepo, utility: LinkSupplyUtilityTaskRepo) {
+        supply: StorageSupplyTaskRepo,
+        containers: ContainerSupplyTaskRepo,
+        utility: LinkSupplyUtilityTaskRepo) {
         super(log, pathing)
         this.combined = new CombinedRepo('combined-utility', log, [
             { offset: 0, repo: utility },
             { offset: 10, repo: containers },
-            { offset: 20, repo: supply }
+            { offset: 10, repo: supply }
         ]);
     }
 

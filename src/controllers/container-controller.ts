@@ -4,20 +4,19 @@ import { Task } from "repos/task";
 import { Controller } from "./controller";
 import { Logger } from "logger";
 
-import { LinkDemandTaskRepo } from "repos/link/link-demand-task-repo";
-import { StorageSupplyTaskRepo } from "repos/storage/storage-supply-task-repo";
 import { isMyRoom, isRemote, isResourceConstant } from "utils/utils";
+import { ContainerDemandTaskRepo } from "repos/container/container-demand-task-repo";
+import { ContainerSupplyTaskRepo } from "repos/container/container-supply-task-repo";
 
 import profiler from "screeps-profiler";
-import { ContainerDemandTempTaskRepo } from "repos/container/container-demand-temp-task-repo";
-import { ContainerDemandTaskRepo } from "repos/container/container-demand-task-repo";
+
 
 @injectable()
 export class ContainerController implements Controller {
 
     constructor(private log: Logger,
         private depoRepo: ContainerDemandTaskRepo,
-        private tempRepo: ContainerDemandTempTaskRepo) {
+        private supplyRepo: ContainerSupplyTaskRepo) {
     }
 
     public monitor(room: Room): void {
@@ -48,10 +47,10 @@ export class ContainerController implements Controller {
                 if (isResourceConstant(type)) {
                     const stored = struct.store.getUsedCapacity(type);
                     if (stored && stored > 0) {
-                        const current = this.tempRepo.getForRequester(i.id, type);
+                        const current = this.supplyRepo.getForRequester(i.id, type);
                         const amount = current.reduce((p, c) => p + (c.amount ?? 0), 0);
                         if (amount < stored) {
-                            this.tempRepo.add(new Task(struct.room.name, 1, stored - amount, type, i.id, undefined, i.pos));
+                            this.supplyRepo.add(new Task(struct.room.name, 1, stored - amount, type, i.id, undefined, i.pos));
                             this.log.debug(room.name, `${i.pos}: added container supply task`);
                         }
                     }

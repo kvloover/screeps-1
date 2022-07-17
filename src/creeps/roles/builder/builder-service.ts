@@ -12,6 +12,8 @@ import { ConstructionTaskRepo } from "repos/structures/construction-task-repo";
 import { CombinedRepo } from "repos/_base/combined-repo";
 
 import profiler from "screeps-profiler";
+import { ContainerSupplyTaskRepo } from "repos/container/container-supply-task-repo";
+import { RemoteBuilderStorageRole } from "./remote-builder-service";
 
 @singleton()
 export class BuilderSourceRole extends BuilderRole {
@@ -46,10 +48,37 @@ export class BuilderSourceRole extends BuilderRole {
 profiler.registerClass(BuilderSourceRole, 'BuilderSourceRole');
 
 @singleton()
-export class BuilderStorageRole extends BuilderRole {
+export class BuilderContainerRole extends BuilderRole {
 
     phase = {
         start: 2,
+        end: 2
+    };
+
+    constructor(log: Logger, pathing: Pathing,
+        protected provider: ContainerSupplyTaskRepo,
+        protected prioBuild: RepairTaskRepo, protected midBuild: ConstructionTaskRepo) {
+        super(log, pathing, new CombinedRepo('combined', log, [{ offset: 0, repo: prioBuild }, { offset: 15, repo: midBuild }]))
+    }
+
+    protected consume(creep: Creep): void {
+        this.consumeFromRepo(creep, this.provider, 'consume', RESOURCE_ENERGY);
+    }
+
+    public run(creep: Creep): void {
+        this.log.debug(creep.room.name, `Running builder storage`);
+        super.run(creep);
+    }
+
+}
+
+profiler.registerClass(BuilderContainerRole, 'BuilderContainerRole');
+
+@singleton()
+export class BuilderStorageRole extends BuilderRole {
+
+    phase = {
+        start: 3,
         end: 9
     };
 
@@ -71,72 +100,3 @@ export class BuilderStorageRole extends BuilderRole {
 }
 
 profiler.registerClass(BuilderStorageRole, 'BuilderStorageRole');
-
-@singleton()
-export class RemoteBuilderSourceRole extends BuilderSourceRole {
-
-    name: string = 'remote-builder'
-
-    constructor(log: Logger, pathing: Pathing,
-        harvesting: HarvestAction,
-        prioBuild: RepairTaskRepo, midBuild: ConstructionTaskRepo) {
-        super(log, pathing, harvesting, prioBuild, midBuild);
-    }
-
-    protected consume(creep: Creep): void {
-        super.consume(creep);
-    }
-
-    protected supply(creep: Creep): void {
-        if (!creep.memory.targetRoom) {
-            const target = creep.room.memory.conquer ?? creep.room.memory.remote;
-            if (target && creep.room.name != target) {
-                creep.memory.targetRoom = target;
-            }
-        }
-        super.supply(creep);
-    }
-
-
-    public run(creep: Creep): void {
-        this.log.debug(creep.room.name, `Running remote builder source`);
-        super.run(creep);
-    }
-
-}
-
-profiler.registerClass(RemoteBuilderSourceRole, 'RemoteBuilderSourceRole');
-
-@singleton()
-export class RemoteBuilderStorageRole extends BuilderStorageRole {
-
-    name: string = 'remote-builder'
-
-    constructor(log: Logger, pathing: Pathing,
-        provider: StorageSupplyTaskRepo,
-        prioBuild: RepairTaskRepo, midBuild: ConstructionTaskRepo) {
-        super(log, pathing, provider, prioBuild, midBuild);
-    }
-
-    protected consume(creep: Creep): void {
-        super.consume(creep);
-    }
-
-    protected supply(creep: Creep): void {
-        if (!creep.memory.targetRoom) {
-            const target = creep.room.memory.conquer ?? creep.room.memory.remote;
-            if (target && creep.room.name != target) {
-                creep.memory.targetRoom = target;
-            }
-        }
-        super.supply(creep);
-    }
-
-    public run(creep: Creep): void {
-        this.log.debug(creep.room.name, `Running remote builder storage`);
-        super.run(creep);
-    }
-
-}
-
-profiler.registerClass(RemoteBuilderStorageRole, 'RemoteBuilderStorageRole');

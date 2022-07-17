@@ -5,7 +5,7 @@ import { HaulerRole } from "./hauler-role";
 import { SpawnDemandTaskRepo } from "repos/spawn/spawn-demand-task-repo";
 import { StorageSupplyTaskRepo } from "repos/storage/storage-supply-task-repo";
 import { StorageDemandTaskRepo } from "repos/storage/storage-demand-task-repo";
-import { ContainerDemandTempTaskRepo } from "repos/container/container-demand-temp-task-repo";
+import { ContainerSupplyTaskRepo } from "repos/container/container-supply-task-repo";
 import { CombinedRepo } from "repos/_base/combined-repo";
 
 import profiler from "screeps-profiler";
@@ -18,7 +18,10 @@ export class RemoteHaulerStorageRole extends HaulerRole {
 
 
     constructor(log: Logger, pathing: Pathing,
-        provider: StorageSupplyTaskRepo, containers: ContainerDemandTempTaskRepo, private leftDemands: SpawnDemandTaskRepo, private rightDemands: StorageDemandTaskRepo) {
+        provider: StorageSupplyTaskRepo,
+        containers: ContainerSupplyTaskRepo,
+        private leftDemands: SpawnDemandTaskRepo,
+        private rightDemands: StorageDemandTaskRepo) {
         super(log, pathing,
             new CombinedRepo('combined-supply', log, [{ offset: 0, repo: containers }, { offset: 3, repo: provider }]),
             new CombinedRepo('combined', log, [{ offset: 0, repo: leftDemands }, { offset: 3, repo: rightDemands }])
