@@ -7,6 +7,7 @@ import { isMyRoom } from "utils/utils";
 import { ExecutablePlan } from "./entities/executable-plan";
 import { PlannedStructure } from "./entities/planned-structure";
 import { RoomPlanner } from "./room-planner";
+import { BUILD_PRIORITY } from "./util/constants";
 
 @singleton()
 export class PlanManager implements Manager {
@@ -42,7 +43,7 @@ export class PlanManager implements Manager {
             const structures = this.comparePlan(room.controller?.level || 0, plan, refs, constucts);
             if (structures.length > 0) {
                 let counts = room.find(FIND_MY_CONSTRUCTION_SITES).length;
-                for (let struct of structures) {
+                for (let struct of structures.sort((a, b) => (BUILD_PRIORITY.get(a.structureType) || 99) - (BUILD_PRIORITY.get(b.structureType) || 99))) {
                     if (counts >= 20) break; // limit to 20 per room
                     if (struct.structureType == STRUCTURE_SPAWN) {
                         room.createConstructionSite(struct.pos.x, struct.pos.y, struct.structureType, `spawn_${room.name}_${random(1000, 9999)}`);
