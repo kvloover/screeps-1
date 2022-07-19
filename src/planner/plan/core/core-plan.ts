@@ -25,16 +25,39 @@ export class CorePlan implements IPlan {
 
         const distMatrix = distanceTransform(roomName, terrain, distanceType.Chebyshev, false, undefined, { x1: 2, y1: 2, x2: 47, y2: 47 });
 
-        const locs = poi['source']?.concat(poi['controller'] || [])  || [];
+        const locs = poi['source']?.concat(poi['controller'] || []) || [];
+
+        let spawnAnchor: Point | undefined;
+        if (Game.rooms.hasOwnProperty(roomName)) {
+            // initial spawn for room
+            const spawns = Game.rooms[roomName].find(FIND_STRUCTURES, { filter: s => s.structureType == STRUCTURE_SPAWN });
+            if (spawns.length == 1) {
+                spawnAnchor = spawns[0].pos;
+            }
+        }
 
         let anchor: Point | undefined = undefined;
         // for each plan in plan.plans, run conditionalFloodFill and exit if point found for the given size (max x/y)
         for (let plan of data.plans) {
             const size = Math.max(Math.ceil((plan.size.x + 1) / 2), Math.ceil((plan.size.y + 1) / 2));
-            // run flood fill from seeds and exit as soon as we find a point hit by all
-            const seeds = locs.map(pos => { return { x: pos.x, y: pos.y } });
-            anchor = findPointFor(roomName, distMatrix, seeds, n => n >= size, true);
+
+            // check spawnAnchor if present
+            if (spawnAnchor) {
+                for (let building of plan.buildings['spawn']?.pos || []) {
+                    const relAnchor: Point = { x: spawnAnchor.x - building.x, y: spawnAnchor.y - building.y };
+                    const distance = distMatrix.get(relAnchor.x, relAnchor.y);
+                    if (distance >= size) {
+                        anchor = relAnchor;
+                        break;
+                    }
+                }
+            } else {
+                // run flood fill from seeds and exit as soon as we find a point hit by all
+                const seeds = locs.map(pos => { return { x: pos.x, y: pos.y } });
+                anchor = findPointFor(roomName, distMatrix, seeds, n => n >= size, true);
+            }
             if (!anchor) { continue; }
+
 
             // add buildings in plan to matrix
             for (let building of Object.entries(plan.buildings)) {
