@@ -19,7 +19,8 @@ export class TestConsole {
             plan: TestConsole.plan,
             mincut: TestConsole.mincut,
             showPlan: TestConsole.showPlan,
-            cleanRoom: TestConsole.cleanRoom
+            cleanRoom: TestConsole.cleanRoom,
+            emptyRoom: TestConsole.emptyRoom
         }
     }
 
@@ -107,6 +108,15 @@ export class TestConsole {
         return `Room not known: ${roomName}`
     }
 
+    static emptyRoom(roomName: string): string {
+        if (Game.rooms.hasOwnProperty(roomName)) {
+            const room = Game.rooms[roomName];
+            container.resolve(PlanManager).emptyRoom(room);
+            return `room plan emptied ${roomName}.`;
+        }
+        return `Room not known: ${roomName}`
+    }
+
 }
 
 const countCpu = (fn: () => void): number => {
@@ -134,6 +144,7 @@ declare global {
             mincut(roomName: string, rect: Rect): string;
             showPlan: (room: string, rcl: number | undefined) => string;
             cleanRoom: (room: string) => string;
+            emptyRoom: (roomName: string) => string;
         }
     }
 }

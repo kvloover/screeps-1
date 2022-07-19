@@ -8,6 +8,7 @@ import { ExecutablePlan } from "./entities/executable-plan";
 import { PlannedStructure } from "./entities/planned-structure";
 import { RoomPlanner } from "./room-planner";
 import { BUILD_PRIORITY } from "./util/constants";
+import { Logger } from "logger";
 
 @singleton()
 export class PlanManager implements Manager {
@@ -15,7 +16,7 @@ export class PlanManager implements Manager {
     // Keep constructions tasks monitoring seperate from planning to allow easy hook into manual building
     // TODO ignore buildings if already manually placed
 
-    constructor(private planner: RoomPlanner) { }
+    constructor(private log: Logger, private planner: RoomPlanner) { }
 
     run(room: Room): void {
 
@@ -43,8 +44,11 @@ export class PlanManager implements Manager {
             const structures = this.comparePlan(room.controller?.level || 0, plan, refs, constucts);
             if (structures.length > 0) {
                 let counts = room.find(FIND_MY_CONSTRUCTION_SITES).length;
-                for (let struct of structures.sort((a, b) => (BUILD_PRIORITY.get(a.structureType) || 99) - (BUILD_PRIORITY.get(b.structureType) || 99))) {
-                    if (counts >= 20) break; // limit to 20 per room
+                const prio: (type: BuildableStructureConstant) => number = typ => BUILD_PRIORITY.get(typ) || 99
+                const sorted = structures.sort((a, b) => prio(a.structureType) - prio(b.structureType));
+                for (let struct of sorted) {
+                    if (counts >= 30) break; // limit to 20 per room
+                    this.log.debug(room.name, `Planning ${struct.structureType} at ${struct.pos.x},${struct.pos.y}`);
                     if (struct.structureType == STRUCTURE_SPAWN) {
                         room.createConstructionSite(struct.pos.x, struct.pos.y, struct.structureType, `spawn_${room.name}_${random(1000, 9999)}`);
                     } else {
@@ -104,6 +108,23 @@ export class PlanManager implements Manager {
                 if (!planned) {
                     s.remove();
                 }
+            });
+    }
+
+    public emptyRoom(room: Room): void {
+        if (!isMyRoom(room)) return;
+        if (room.memory.manual) return;
+
+        room.find(FIND_STRUCTURES)
+            .forEach(s => {
+                if (s.structureType == STRUCTURE_CONTROLLER)
+                    return;
+                s.destroy();
+            });
+
+        room.find(FIND_CONSTRUCTION_SITES)
+            .forEach(s => {
+                s.remove();
             });
     }
 

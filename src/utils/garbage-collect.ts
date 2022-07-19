@@ -43,6 +43,20 @@ export class GarbageCollector {
                         i => removeIds.some(r => r == i.id));
                 });
             }
+            const constRefs = Memory.rooms[name].constructions;
+            if (constRefs) {
+                Object.entries(constRefs).forEach(([key, value]) => {
+                    const removeIds: Id<_HasId>[] = [];
+                    value.forEach(v => {
+                        if (!Game.getObjectById(v.id)) {
+                            removeIds.push(v.id);
+                        }
+                    })
+                    _.remove(
+                        value as RoomObjectMemory<BuildableStructureConstant>[],
+                        i => removeIds.some(r => r == i.id));
+                });
+            }
         }
     }
 

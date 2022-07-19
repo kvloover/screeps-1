@@ -23,17 +23,17 @@ export const BUILDING_MAP = new Map<BuildableStructureConstant, number>(
 
 export const BUILD_PRIORITY = new Map<StructureConstant, number>([
         // Defense
-        [STRUCTURE_TOWER, 1],
-        [STRUCTURE_RAMPART, 2],
-        [STRUCTURE_WALL, 3],
+        [STRUCTURE_TOWER, 6],
+        [STRUCTURE_RAMPART, 7],
+        [STRUCTURE_WALL, 8],
         // Spawn
-        [STRUCTURE_SPAWN, 4],
-        [STRUCTURE_EXTENSION, 5],
+        [STRUCTURE_SPAWN, 1],
+        [STRUCTURE_EXTENSION, 3],
         // Logistics
-        [STRUCTURE_STORAGE, 6],
-        [STRUCTURE_LINK, 7],
+        [STRUCTURE_STORAGE, 5],
+        [STRUCTURE_LINK, 4],
         // Utility
-        [STRUCTURE_CONTAINER, 8],
+        [STRUCTURE_CONTAINER, 2],
         [STRUCTURE_ROAD, 9],
         // Factory
         [STRUCTURE_TERMINAL, 11],
