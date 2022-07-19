@@ -62,27 +62,26 @@ export class RemoteAttackerRole extends RangedAttackerRole implements Role {
         }
     }
 
-
-
-    protected override attack(creep: Creep, hostile: Creep | AnyOwnedStructure): CreepActionReturnCode {
-        let ret: CreepActionReturnCode;
-        if (isStructure(hostile)) {
-            const range = hostile.pos.getRangeTo(creep.pos);
-            if (range < 3) {
-                creep.rangedMassAttack();
-            }
-            ret = range < 2 ? OK : ERR_NOT_IN_RANGE
-        } else {
-            ret = creep.rangedAttack(hostile);
-        }
-        if (creep.getActiveBodyparts(HEAL) > 0) {
-            const retHeal = creep.heal(creep);
-        }
-        if (creep.getActiveBodyparts(ATTACK) > 0)
-            return creep.attack(hostile);
-        else
-            return ret;
-    }
+    // moved to ranged-attacker-role
+    // protected override attack(creep: Creep, hostile: Creep | AnyOwnedStructure): CreepActionReturnCode {
+    //     let ret: CreepActionReturnCode;
+    //     if (isStructure(hostile)) {
+    //         const range = hostile.pos.getRangeTo(creep.pos);
+    //         if (range < 3) {
+    //             creep.rangedMassAttack();
+    //         }
+    //         ret = range < 2 ? OK : ERR_NOT_IN_RANGE
+    //     } else {
+    //         ret = creep.rangedAttack(hostile);
+    //     }
+    //     if (creep.getActiveBodyparts(HEAL) > 0) {
+    //         const retHeal = creep.heal(creep);
+    //     }
+    //     if (creep.getActiveBodyparts(ATTACK) > 0)
+    //         return creep.attack(hostile);
+    //     else
+    //         return ret;
+    // }
 
     public act(creep: Creep): void {
         if (creep.memory.targetRoom

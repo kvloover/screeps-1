@@ -17,8 +17,8 @@ import { ContainerSupplyTaskRepo } from "repos/container/container-supply-task-r
 export class HaulerDropsRole extends HaulerRole {
 
     phase = {
-        start: 1,
-        end: 1
+        start: 9,
+        end: 9
     };
 
     constructor(log: Logger, pathing: Pathing,
@@ -45,8 +45,8 @@ export class HaulerDropsRole extends HaulerRole {
 export class HaulerMidstreamRole extends HaulerRole {
 
     phase = {
-        start: 2, // container
-        end: 2
+        start: 9, // container
+        end: 9
     };
 
     constructor(log: Logger, pathing: Pathing,
@@ -90,7 +90,7 @@ profiler.registerClass(HaulerMidstreamRole, 'HaulerMidstreamRole');
 export class HaulerStorageRole extends HaulerRole {
 
     phase = {
-        start: 3, // storage, ! to and from storage
+        start: 1, // storage, ! to and from storage
         end: 9
     };
 

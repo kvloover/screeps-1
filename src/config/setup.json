@@ -176,6 +176,17 @@
         },
         "roles": [
             {
+                "role": "ranged",
+                "priority": 1,
+                "count": 2,
+                "emergency": true,
+                "template": {
+                    "tough": 5,
+                    "move": 4,
+                    "ranged_attack": 3
+                }
+            },
+            {
                 "role": "melee",
                 "priority": 1,
                 "emergency": true,
@@ -183,16 +194,6 @@
                 "template": {
                     "attack": 2,
                     "tough": 6,
-                    "move": 4
-                }
-            },
-            {
-                "role": "ranged",
-                "priority": 1,
-                "count": 2,
-                "emergency": true,
-                "template": {
-                    "ranged_attack": 4,
                     "move": 4
                 }
             },
@@ -299,6 +300,18 @@
             "carry": 6
         },
         "roles": [
+            {
+                "role": "ranged",
+                "priority": 1,
+                "count": 2,
+                "emergency": true,
+                "template": {
+                    "tough": 5,
+                    "move": 4,
+                    "ranged_attack": 4,
+                    "heal": 1
+                }
+            },
             {
                 "role": "claimer",
                 "priority": 1,
@@ -454,6 +467,18 @@
                 "template": {
                     "claim": 1,
                     "move": 1
+                }
+            },
+            {
+                "role": "ranged",
+                "priority": 1,
+                "count": 2,
+                "emergency": true,
+                "template": {
+                    "tough": 7,
+                    "move": 7,
+                    "ranged_attack": 4,
+                    "heal": 3
                 }
             },
             {
@@ -649,6 +674,18 @@
                 }
             },
             {
+                "role": "ranged",
+                "priority": 1,
+                "count": 2,
+                "emergency": true,
+                "template": {
+                    "tough": 9,
+                    "move": 9,
+                    "ranged_attack": 5,
+                    "heal": 4
+                }
+            },
+            {
                 "role": "melee",
                 "priority": 1,
                 "emergency": true,
@@ -839,6 +876,18 @@
                 "template": {
                     "claim": 2,
                     "move": 4
+                }
+            },
+            {
+                "role": "ranged",
+                "priority": 1,
+                "count": 2,
+                "emergency": true,
+                "template": {
+                    "tough": 5,
+                    "move": 15,
+                    "ranged_attack": 12,
+                    "heal": 12
                 }
             },
             {
