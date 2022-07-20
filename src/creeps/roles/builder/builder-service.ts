@@ -79,7 +79,7 @@ profiler.registerClass(BuilderContainerRole, 'BuilderContainerRole');
 @singleton()
 export class BuilderStorageRole extends BuilderRole {
 
-    private combinedSupply: TaskRepo<Task>;
+    protected combinedSupply: TaskRepo<Task>;
 
     phase = {
         start: 3,

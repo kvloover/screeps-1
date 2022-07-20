@@ -11,6 +11,10 @@ import { HarvestAction } from "../harvester/harvest-action";
 import { BuilderContainerRole, BuilderSourceRole, BuilderStorageRole } from "./builder-service";
 
 import profiler from "screeps-profiler";
+import { BuilderRole } from "./builder-role";
+import { CombinedRepo } from "repos/_base/combined-repo";
+import { TaskRepo } from "repos/_base/task-repo";
+import { Task } from "repos/task";
 
 @singleton()
 export class RemoteBuilderSourceRole extends BuilderSourceRole {
@@ -48,32 +52,53 @@ export class RemoteBuilderSourceRole extends BuilderSourceRole {
 profiler.registerClass(RemoteBuilderSourceRole, 'RemoteBuilderSourceRole');
 
 @singleton()
-export class RemoteBuilderContainerRole extends BuilderContainerRole {
+export class RemoteBuilderContainerRole extends BuilderRole {
 
     name: string = 'remote-builder';
+    phase = { start: 2, end: 2 };
+
+    protected combinedSupply: TaskRepo<Task>;
 
     constructor(log: Logger, pathing: Pathing,
-        provider: ContainerSupplyTaskRepo,
-        prioBuild: RepairTaskRepo, midBuild: ConstructionTaskRepo) {
-        super(log, pathing, provider, prioBuild, midBuild);
+        protected containers: ContainerSupplyTaskRepo,
+        protected storage: StorageSupplyTaskRepo,
+        protected prioBuild: RepairTaskRepo, protected midBuild: ConstructionTaskRepo) {
+        super(log, pathing,
+            new CombinedRepo('combined', log, [
+                { offset: 0, repo: prioBuild },
+                { offset: 15, repo: midBuild }
+            ]));
+
+        this.combinedSupply = new CombinedRepo('combined-supply', log, [
+            { offset: 0, repo: storage },
+            { offset: 15, repo: containers }
+        ])
     }
 
     protected consume(creep: Creep): void {
-        super.consume(creep);
+        // force move to remote
+        if (creep.memory.targetRoom && creep.room.name == creep.memory.room) {
+            this.pathing.scoutRoom(creep, creep.memory.targetRoom);
+            // this.consumeFromRepo(creep, this.combinedSupply, 'consume', RESOURCE_ENERGY, creep.memory.targetRoom);
+        } else {
+            this.consumeFromRepo(creep, this.combinedSupply, 'consume', RESOURCE_ENERGY);
+        }
     }
 
     protected supply(creep: Creep): void {
+        super.supply(creep);
+    }
+
+    public run(creep: Creep): void {
+        this.log.debug(creep.room.name, `Running remote builder container`);
+
         if (!creep.memory.targetRoom) {
             const target = creep.room.memory.conquer ?? creep.room.memory.remote;
             if (target && creep.room.name != target) {
                 creep.memory.targetRoom = target;
             }
         }
-        super.supply(creep);
-    }
 
-    public run(creep: Creep): void {
-        this.log.debug(creep.room.name, `Running remote builder container`);
         super.run(creep);
     }
 
@@ -82,33 +107,53 @@ export class RemoteBuilderContainerRole extends BuilderContainerRole {
 profiler.registerClass(RemoteBuilderContainerRole, 'RemoteBuilderContainerRole');
 
 @singleton()
-export class RemoteBuilderStorageRole extends BuilderStorageRole {
+export class RemoteBuilderStorageRole extends BuilderRole {
 
     name: string = 'remote-builder';
+    phase = { start: 3, end: 9 };
+
+    protected combinedSupply: TaskRepo<Task>;
 
     constructor(log: Logger, pathing: Pathing,
-        containers: ContainerSupplyTaskRepo,
-        provider: StorageSupplyTaskRepo,
-        prioBuild: RepairTaskRepo, midBuild: ConstructionTaskRepo) {
-        super(log, pathing, containers, provider, prioBuild, midBuild);
+        protected containers: ContainerSupplyTaskRepo,
+        protected storage: StorageSupplyTaskRepo,
+        protected prioBuild: RepairTaskRepo, protected midBuild: ConstructionTaskRepo) {
+        super(log, pathing,
+            new CombinedRepo('combined', log, [
+                { offset: 0, repo: prioBuild },
+                { offset: 15, repo: midBuild }
+            ]));
+
+        this.combinedSupply = new CombinedRepo('combined-supply', log, [
+            { offset: 0, repo: storage },
+            { offset: 15, repo: containers }
+        ])
     }
 
     protected consume(creep: Creep): void {
-        super.consume(creep);
+        // force move to remote if we cant consume in spawning
+        if (creep.memory.targetRoom && creep.ticksToLive && creep.ticksToLive < 1300 && creep.room.name == creep.memory.room) {
+            this.pathing.scoutRoom(creep, creep.memory.targetRoom);
+            // this.consumeFromRepo(creep, this.combinedSupply, 'consume', RESOURCE_ENERGY, creep.memory.targetRoom);
+        } else {
+            this.consumeFromRepo(creep, this.combinedSupply, 'consume', RESOURCE_ENERGY);
+        }
     }
 
     protected supply(creep: Creep): void {
+        super.supply(creep);
+    }
+
+    public run(creep: Creep): void {
+        this.log.debug(creep.room.name, `Running remote builder storage`);
+
         if (!creep.memory.targetRoom) {
             const target = creep.room.memory.conquer ?? creep.room.memory.remote;
             if (target && creep.room.name != target) {
                 creep.memory.targetRoom = target;
             }
         }
-        super.supply(creep);
-    }
 
-    public run(creep: Creep): void {
-        this.log.debug(creep.room.name, `Running remote builder storage`);
         super.run(creep);
     }
 
