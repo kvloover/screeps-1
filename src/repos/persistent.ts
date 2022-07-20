@@ -11,6 +11,13 @@ import { RepairTaskRepo } from "./structures/repair-task-repo";
 import { LinkSupplyUtilityTaskRepo } from "./link/link-supply-utility-task-repo";
 import { RequestTaskRepo } from "./terminal/request-task-repo";
 import { ExchangeTaskRepo } from "./terminal/exchange-task-repo";
+import { ContainerDemandTaskRepo } from "./container/container-demand-task-repo";
+import { ContainerDemandTempTaskRepo } from "./container/container-demand-temp-task-repo";
+import { ContainerSupplyTaskRepo } from "./container/container-supply-task-repo";
+import { DropTaskRepo } from "./misc/drop-task-repo";
+import { TowerDemandTaskRepo } from "./misc/tower-demand-task-repo";
+import { TerminalDemandTaskRepo } from "./terminal/terminal-demand-task-repo";
+import { TerminalSupplyTaskRepo } from "./terminal/terminal-supply-task-repo";
 
 export interface Persistent {
     restore(): void;
@@ -22,16 +29,23 @@ export interface Persistent {
 
 @registry([
     { token: Persistency.token, useToken: HarvestTaskRepo },
-    { token: Persistency.token, useToken: LinkDemandTaskRepo },
-    { token: Persistency.token, useToken: SpawnDemandTaskRepo },
-    { token: Persistency.token, useToken: LinkSupplyTaskRepo },
-    { token: Persistency.token, useToken: StorageSupplyTaskRepo },
-    { token: Persistency.token, useToken: StorageDemandTaskRepo },
     { token: Persistency.token, useToken: ConstructionTaskRepo },
     { token: Persistency.token, useToken: RepairTaskRepo },
+    { token: Persistency.token, useToken: DropTaskRepo },
+    { token: Persistency.token, useToken: TowerDemandTaskRepo },
+    { token: Persistency.token, useToken: SpawnDemandTaskRepo },
+    { token: Persistency.token, useToken: ContainerDemandTaskRepo },
+    { token: Persistency.token, useToken: ContainerDemandTempTaskRepo },
+    { token: Persistency.token, useToken: ContainerSupplyTaskRepo },
+    { token: Persistency.token, useToken: LinkDemandTaskRepo },
+    { token: Persistency.token, useToken: LinkSupplyTaskRepo },
     { token: Persistency.token, useToken: LinkSupplyUtilityTaskRepo },
+    { token: Persistency.token, useToken: StorageSupplyTaskRepo },
+    { token: Persistency.token, useToken: StorageDemandTaskRepo },
     { token: Persistency.token, useToken: RequestTaskRepo },
     { token: Persistency.token, useToken: ExchangeTaskRepo },
+    { token: Persistency.token, useToken: TerminalDemandTaskRepo },
+    { token: Persistency.token, useToken: TerminalSupplyTaskRepo },
 ])
 export abstract class Persistency {
     public static Initialize(): void {

@@ -12,6 +12,9 @@ import { CombinedRepo } from "repos/_base/combined-repo";
 
 import profiler from "screeps-profiler";
 import { ContainerSupplyTaskRepo } from "repos/container/container-supply-task-repo";
+import { TowerDemandTaskRepo } from "repos/misc/tower-demand-task-repo";
+import { TerminalDemandTaskRepo } from "repos/terminal/terminal-demand-task-repo";
+import { TerminalSupplyTaskRepo } from "repos/terminal/terminal-supply-task-repo";
 
 @singleton()
 export class HaulerDropsRole extends HaulerRole {
@@ -98,6 +101,9 @@ export class HaulerStorageRole extends HaulerRole {
         provider: DropTaskRepo,
         containers: ContainerSupplyTaskRepo,
         stockpile: StorageSupplyTaskRepo,
+        terminalOut: TerminalSupplyTaskRepo,
+        private towers: TowerDemandTaskRepo,
+        private terminalIn: TerminalDemandTaskRepo,
         private spawns: SpawnDemandTaskRepo,
         private store: StorageDemandTaskRepo) {
         super(log, pathing,
@@ -105,10 +111,13 @@ export class HaulerStorageRole extends HaulerRole {
                 { offset: 0, repo: provider },
                 { offset: 3, repo: containers },
                 { offset: 6, repo: stockpile },
+                { offset: 9, repo: terminalOut },
             ]),
             new CombinedRepo('combined', log, [
                 { offset: 0, repo: spawns },
-                { offset: 3, repo: store }
+                { offset: 3, repo: store },
+                { offset: 6, repo: towers },
+                { offset: 9, repo: terminalIn }
             ])
         );
     }
@@ -123,6 +132,10 @@ export class HaulerStorageRole extends HaulerRole {
         this.spawns.clearReference(creep.id);
         this.store.unregisterTask(creep, 'supply');
         this.store.clearReference(creep.id);
+        this.towers.unregisterTask(creep, 'supply');
+        this.towers.clearReference(creep.id);
+        this.terminalIn.unregisterTask(creep, 'supply');
+        this.terminalIn.clearReference(creep.id);
     }
 
 }
