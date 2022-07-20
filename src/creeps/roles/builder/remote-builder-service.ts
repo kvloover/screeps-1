@@ -87,9 +87,10 @@ export class RemoteBuilderStorageRole extends BuilderStorageRole {
     name: string = 'remote-builder';
 
     constructor(log: Logger, pathing: Pathing,
+        containers: ContainerSupplyTaskRepo,
         provider: StorageSupplyTaskRepo,
         prioBuild: RepairTaskRepo, midBuild: ConstructionTaskRepo) {
-        super(log, pathing, provider, prioBuild, midBuild);
+        super(log, pathing, containers, provider, prioBuild, midBuild);
     }
 
     protected consume(creep: Creep): void {

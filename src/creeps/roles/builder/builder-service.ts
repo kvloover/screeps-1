@@ -14,6 +14,8 @@ import { CombinedRepo } from "repos/_base/combined-repo";
 import profiler from "screeps-profiler";
 import { ContainerSupplyTaskRepo } from "repos/container/container-supply-task-repo";
 import { RemoteBuilderStorageRole } from "./remote-builder-service";
+import { Task } from "repos/task";
+import { TaskRepo } from "repos/_base/task-repo";
 
 @singleton()
 export class BuilderSourceRole extends BuilderRole {
@@ -77,19 +79,31 @@ profiler.registerClass(BuilderContainerRole, 'BuilderContainerRole');
 @singleton()
 export class BuilderStorageRole extends BuilderRole {
 
+    private combinedSupply: TaskRepo<Task>;
+
     phase = {
         start: 3,
         end: 9
     };
 
     constructor(log: Logger, pathing: Pathing,
-        protected provider: StorageSupplyTaskRepo,
+        protected containers: ContainerSupplyTaskRepo,
+        protected storage: StorageSupplyTaskRepo,
         protected prioBuild: RepairTaskRepo, protected midBuild: ConstructionTaskRepo) {
-        super(log, pathing, new CombinedRepo('combined', log, [{ offset: 0, repo: prioBuild }, { offset: 15, repo: midBuild }]))
+        super(log, pathing,
+            new CombinedRepo('combined', log, [
+                { offset: 0, repo: prioBuild },
+                { offset: 15, repo: midBuild }
+            ]));
+
+        this.combinedSupply = new CombinedRepo('combined-supply', log, [
+            { offset: 0, repo: storage },
+            { offset: 15, repo: containers }
+        ])
     }
 
     protected consume(creep: Creep): void {
-        this.consumeFromRepo(creep, this.provider, 'consume', RESOURCE_ENERGY);
+        this.consumeFromRepo(creep, this.combinedSupply, 'consume', RESOURCE_ENERGY);
     }
 
     public run(creep: Creep): void {
