@@ -42,7 +42,7 @@ export class TowerManager implements Manager {
 
         if (!memTask) {
             const pos = new RoomPosition(memory.pos.x, memory.pos.y, memory.pos.roomName);
-            const closest = this.repairs.closestTask(pos, RESOURCE_ENERGY, room.name, undefined, 10);
+            const closest = this.repairs.closestTask(pos, RESOURCE_ENERGY, room.name, undefined, 20);
             if (closest) { this.registerTask(memory, closest, pos); }
             memTask = memory.tasks['repair'];
             // todo split
@@ -53,7 +53,8 @@ export class TowerManager implements Manager {
             const target = Game.getObjectById(memTask.task.requester)
             // todo clear deleted/destroyed towers
             if (tower && target && isTower(tower) && isStructure(target)) {
-                if (tower.store.getUsedCapacity(RESOURCE_ENERGY) > 10) {
+                if ((memTask.task.prio < 100 && tower.store.getUsedCapacity(RESOURCE_ENERGY) > 10)
+                    || tower.store.getUsedCapacity(RESOURCE_ENERGY) > 500) {
                     const res = tower.repair(target);
                     if (res == OK) {
                         memTask.amount -= memTask.perAction;

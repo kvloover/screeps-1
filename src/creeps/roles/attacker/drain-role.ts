@@ -10,6 +10,7 @@ import { CreepState } from "utils/creep-state";
 export class DrainRole implements Role {
 
     name = 'drain';
+    prio = 2;
     phase = { start: 1, end: 9 };
 
     constructor(private pathing: Pathing) { }

@@ -104,24 +104,43 @@ export class StructuresController implements Controller {
                             const struct = Game.getObjectById(obj.id) as Structure;
                             if (struct) {
                                 // make tasks to next check level
-                                if (struct.hits < cfg.emergency * struct.hitsMax) {
+                                if (struct.hits < 100) {
+                                    // for created structures
                                     this.tryAddTaskToRepo(
                                         new Task(room.name,
                                             cfg.prio,
-                                            (Math.min(cfg.target, 2 * cfg.emergency) * struct.hitsMax) - struct.hits,
+                                            Math.min(struct.hitsMax, 2000) - struct.hits,
+                                            RESOURCE_ENERGY,
+                                            struct.id,
+                                            undefined,
+                                            struct.pos));
+                                } else if (struct.hits < cfg.emergency * struct.hitsMax) {
+                                    this.tryAddTaskToRepo(
+                                        new Task(room.name,
+                                            10 + cfg.prio,
+                                            (Math.min(cfg.target, 1.1 * cfg.emergency) * struct.hitsMax) - struct.hits,
                                             RESOURCE_ENERGY,
                                             struct.id,
                                             undefined,
                                             struct.pos));
                                 } else if (struct.hits < 0.8 * (cfg.target * struct.hitsMax)) {
-                                    // this.tryAddTaskToRepo(
-                                    //     new Task(room.name,
-                                    //         50 + cfg.prio,
-                                    //         (cfg.max * struct.hitsMax) - struct.hits,
-                                    //         RESOURCE_ENERGY,
-                                    //         struct.id,
-                                    //         undefined,
-                                    //         struct.pos));
+                                    this.tryAddTaskToRepo(
+                                        new Task(room.name,
+                                            100 + cfg.prio,
+                                            (Math.min(cfg.max, 1.1 * cfg.target)) - struct.hits,
+                                            RESOURCE_ENERGY,
+                                            struct.id,
+                                            undefined,
+                                            struct.pos));
+                                } else if (struct.hits < 0.8 * (cfg.max * struct.hitsMax)) {
+                                    this.tryAddTaskToRepo(
+                                        new Task(room.name,
+                                            200 + cfg.prio,
+                                            (cfg.max * struct.hitsMax) - struct.hits,
+                                            RESOURCE_ENERGY,
+                                            struct.id,
+                                            undefined,
+                                            struct.pos));
                                 }
                                 obj.visited = Game.time;
                             } else {

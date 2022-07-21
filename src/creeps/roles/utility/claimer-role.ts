@@ -11,6 +11,7 @@ import { CreepState } from "utils/creep-state";
 export class ClaimerRole implements Role {
 
     name: string = 'claimer';
+    prio = 9;
     phase = {
         start: 1,
         end: 9

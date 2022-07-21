@@ -18,24 +18,84 @@
             {
                 "role": "upgrader",
                 "priority": 2,
-                "count": 2
+                "count": 1,
+                "template": {
+                    "carry": 1,
+                    "work": 2,
+                    "move": 2
+                }
             },
             {
                 "role": "builder",
                 "priority": 3,
-                "count": 2
+                "count": 1,
+                "template": {
+                    "carry": 2,
+                    "work": 1,
+                    "move": 2
+                }
+            },
+            {
+                "role": "harvester",
+                "priority": 4,
+                "count": 4
+            },
+            {
+                "role": "upgrader",
+                "priority": 5,
+                "count": 3,
+                "template": {
+                    "carry": 1,
+                    "work": 2,
+                    "move": 2
+                }
+            },
+            {
+                "role": "builder",
+                "priority": 6,
+                "count": 4,
+                "template": {
+                    "carry": 2,
+                    "work": 1,
+                    "move": 2
+                }
+            },
+            {
+                "role": "harvester",
+                "priority": 7,
+                "count": 10
+            },
+            {
+                "role": "upgrader",
+                "priority": 8,
+                "count": 5,
+                "template": {
+                    "carry": 1,
+                    "work": 2,
+                    "move": 2
+                }
+            },
+            {
+                "role": "builder",
+                "priority": 9,
+                "count": 6,
+                "template": {
+                    "carry": 2,
+                    "work": 1,
+                    "move": 2
+                }
             }
         ]
     },
     "stage-2": {
         "order": 2,
-        "energy": 300,
+        "energy": 450,
         "controller": 2,
         "creeps": 1,
         "template": {
-            "work": 1,
-            "move": 1,
-            "carry": 1
+            "work": 2,
+            "move": 3,
+            "carry": 2
         },
         "roles": [
             {
@@ -52,31 +112,17 @@
             {
                 "role": "harvester",
                 "priority": 2,
-                "count": 1,
-                "template": {
-                    "work": 2,
-                    "carry": 1,
-                    "move": 1
-                }
+                "count": 2
             },
             {
                 "role": "hauler",
                 "priority": 3,
-                "count": 1,
-                "template": {
-                    "carry": 3,
-                    "move": 3
-                }
+                "count": 1
             },
             {
                 "role": "harvester",
                 "priority": 4,
-                "count": 2,
-                "template": {
-                    "work": 2,
-                    "carry": 1,
-                    "move": 1
-                }
+                "count": 4
             },
             {
                 "role": "upgrader",
@@ -86,7 +132,22 @@
             {
                 "role": "builder",
                 "priority": 6,
-                "count": 1
+                "count": 2
+            },
+            {
+                "role": "harvester",
+                "priority": 7,
+                "count": 5
+            },
+            {
+                "role": "upgrader",
+                "priority": 8,
+                "count": 3
+            },
+            {
+                "role": "builder",
+                "priority": 9,
+                "count": 5
             }
         ]
     },
@@ -160,7 +221,13 @@
                 "role": "upgrader",
                 "priority": 8,
                 "condition": "upgrading",
-                "count": 6
+                "count": 4
+            },
+            {
+                "role": "builder",
+                "priority": 9,
+                "condition": "building",
+                "count": 4
             }
         ]
     },

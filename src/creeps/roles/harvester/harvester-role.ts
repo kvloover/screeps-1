@@ -19,10 +19,8 @@ import { CREEP_AMOUNT_PER_ENERGY, CREEP_ENERGY_PER_PART, CREEP_RANGE } from "uti
 export abstract class HarvesterRole extends TransferRole implements Role {
 
     name: string = 'harvester'
-    phase = {
-        start: 1,
-        end: 9
-    };
+    prio = 1;
+    phase = { start: 1, end: 9 };
 
     constructor(log: Logger,
         pathing: Pathing,

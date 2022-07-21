@@ -12,10 +12,8 @@ import profiler from "screeps-profiler";
 export class MeleeAttackerRole extends AttackerRole implements Role {
 
     name: string = 'melee';
-    phase = {
-        start: 1,
-        end: 9
-    };
+    prio = 2;
+    phase = { start: 1, end: 9 };
 
     constructor(pathing: Pathing) { super(pathing); }
 

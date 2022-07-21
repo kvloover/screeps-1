@@ -13,10 +13,8 @@ import { isStructure } from "utils/utils";
 export class RemoteAttackerRole extends RangedAttackerRole implements Role {
 
     name: string = 'remote-attacker'
-    phase = {
-        start: 1,
-        end: 9
-    };
+    prio = 2;
+    phase = { start: 1, end: 9 };
 
     constructor(pathing: Pathing) {
         super(pathing);

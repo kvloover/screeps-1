@@ -67,10 +67,10 @@ export class CombinedRepo implements TaskRepo<Task> {
             .first();
     }
 
-    trySplitTask(task: Task, amount: number, opt?: (task: Task) => Task): boolean {
+    trySplitTask(task: Task, amount: number, keepEmpty: boolean = false, opt?: (task: Task) => Task): boolean {
         const set = this.repoForTask(task);
         if (set) {
-            return set.repo.trySplitTask({ ...task, prio: task.prio - set.offset }, amount, opt);
+            return set.repo.trySplitTask({ ...task, prio: task.prio - set.offset }, amount, keepEmpty, opt);
         } else {
             return false;
         }

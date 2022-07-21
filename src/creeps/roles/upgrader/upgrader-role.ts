@@ -8,6 +8,7 @@ import { TransferRole } from "../_base/transfer-role";
 export abstract class UpgraderRole extends TransferRole implements Role {
 
     name: string = 'upgrader'
+    prio = 8;
     phase = {
         start: 1,
         end: 9

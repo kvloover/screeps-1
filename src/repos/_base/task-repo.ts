@@ -16,7 +16,7 @@ export interface TaskRepo<T extends Task> {
     remove(task: T): boolean;
     getForRequester(id: string, type?: ResourceConstant): T[];
     closestTask(pos: RoomPosition, type?: ResourceConstant, room?: string, blacklist?: string[], limitrange?: number): Task;
-    trySplitTask(task: Task, amount: number, opt?: (task: Task) => T): boolean;
+    trySplitTask(task: Task, amount: number, keepEmpty?: boolean, opt?: (task: Task) => T): boolean;
     mergeEmpty(): void;
     linkTask(executer: Id<_HasId>, task: Task): void;
     unlinkTask(task: Task): void;
@@ -86,11 +86,11 @@ export abstract class BaseRepo<T extends Task> implements TaskRepo<T>{
             .first();
     }
 
-    public trySplitTask(task: Task, amount: number, opt?: (task: Task) => T): boolean {
-        if (task.amount && task.amount > amount) {
-            const newTask = new Task(task.room, task.prio, task.amount - amount, task.type, task.requester, undefined, task.pos);
+    public trySplitTask(task: Task, amount: number, keepEmpty: boolean = false, opt?: (task: Task) => T): boolean {
+        if (task.amount != undefined && (task.amount > amount || keepEmpty)) {
+            const newTask = new Task(task.room, task.prio, Math.max(0, task.amount - amount), task.type, task.requester, undefined, task.pos);
             this.add(opt ? opt(newTask) : newTask as T);
-            this.tasks.filter(i => i.id == task.id).forEach(i => i.amount = amount);
+            this.tasks.filter(i => i.id == task.id).forEach(i => i.amount = Math.min(task.amount || 0, amount));
             return true;
         }
         return false;

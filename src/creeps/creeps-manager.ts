@@ -18,6 +18,7 @@ export class CreepsManager implements Manager {
     private performRole(room: Room, phase: number, roles: Role[], creeps: Creep[]): void {
         roles
             .filter(i => i.phase.start <= phase && i.phase.end >= phase)
+            .sort((a, b) => a.prio - b.prio)
             .forEach(role => {
                 _.filter(creeps, crp => crp.memory.role == role.name)
                     .forEach(crp => {

@@ -17,10 +17,8 @@ export abstract class FillerRole extends TransferRole implements Role {
     // TODO dropped and other resources
 
     name: string = 'filler'
-    phase = {
-        start: 2,
-        end: 9
-    };
+    prio = 2;
+    phase = { start: 2, end: 9 };
 
     constructor(log: Logger,
         pathing: Pathing,

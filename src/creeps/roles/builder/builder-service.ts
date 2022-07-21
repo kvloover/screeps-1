@@ -10,12 +10,11 @@ import { StorageSupplyTaskRepo } from "repos/storage/storage-supply-task-repo";
 import { RepairTaskRepo } from "repos/structures/repair-task-repo";
 import { ConstructionTaskRepo } from "repos/structures/construction-task-repo";
 import { CombinedRepo } from "repos/_base/combined-repo";
-
-import profiler from "screeps-profiler";
 import { ContainerSupplyTaskRepo } from "repos/container/container-supply-task-repo";
-import { RemoteBuilderStorageRole } from "./remote-builder-service";
 import { Task } from "repos/task";
 import { TaskRepo } from "repos/_base/task-repo";
+
+import profiler from "screeps-profiler";
 
 @singleton()
 export class BuilderSourceRole extends BuilderRole {
@@ -27,8 +26,13 @@ export class BuilderSourceRole extends BuilderRole {
 
     constructor(log: Logger, pathing: Pathing,
         protected harvesting: HarvestAction,
-        protected prioBuild: RepairTaskRepo, protected midBuild: ConstructionTaskRepo) {
-        super(log, pathing, new CombinedRepo('combined', log, [{ offset: 0, repo: prioBuild }, { offset: 15, repo: midBuild }]));
+        repairs: RepairTaskRepo,
+        constructions: ConstructionTaskRepo) {
+        super(log, pathing,
+            new CombinedRepo('combined', log, [
+                { offset: 0, repo: repairs },
+                { offset: 30, repo: constructions }
+            ]));
     }
 
     protected consume(creep: Creep): void {
@@ -52,19 +56,32 @@ profiler.registerClass(BuilderSourceRole, 'BuilderSourceRole');
 @singleton()
 export class BuilderContainerRole extends BuilderRole {
 
+    protected combinedRepo: CombinedRepo;
+
     phase = {
         start: 2,
         end: 2
     };
 
     constructor(log: Logger, pathing: Pathing,
-        protected provider: ContainerSupplyTaskRepo,
-        protected prioBuild: RepairTaskRepo, protected midBuild: ConstructionTaskRepo) {
-        super(log, pathing, new CombinedRepo('combined', log, [{ offset: 0, repo: prioBuild }, { offset: 15, repo: midBuild }]))
+        containers: ContainerSupplyTaskRepo,
+        storage: StorageSupplyTaskRepo,
+        repairs: RepairTaskRepo,
+        constructions: ConstructionTaskRepo) {
+        super(log, pathing,
+            new CombinedRepo('combined', log, [
+                { offset: 0, repo: repairs },
+                { offset: 30, repo: constructions }
+            ]));
+
+        this.combinedRepo = new CombinedRepo('combined-supply', log, [
+            { offset: 0, repo: containers },
+            { offset: 10, repo: storage },
+        ]);
     }
 
     protected consume(creep: Creep): void {
-        this.consumeFromRepo(creep, this.provider, 'consume', RESOURCE_ENERGY);
+        this.consumeFromRepo(creep, this.combinedRepo, 'consume', RESOURCE_ENERGY);
     }
 
     public run(creep: Creep): void {
@@ -79,7 +96,7 @@ profiler.registerClass(BuilderContainerRole, 'BuilderContainerRole');
 @singleton()
 export class BuilderStorageRole extends BuilderRole {
 
-    protected combinedSupply: TaskRepo<Task>;
+    protected combinedSupply: CombinedRepo;
 
     phase = {
         start: 3,
@@ -87,18 +104,19 @@ export class BuilderStorageRole extends BuilderRole {
     };
 
     constructor(log: Logger, pathing: Pathing,
-        protected containers: ContainerSupplyTaskRepo,
-        protected storage: StorageSupplyTaskRepo,
-        protected prioBuild: RepairTaskRepo, protected midBuild: ConstructionTaskRepo) {
+        containers: ContainerSupplyTaskRepo,
+        storage: StorageSupplyTaskRepo,
+        repairs: RepairTaskRepo,
+        constructions: ConstructionTaskRepo) {
         super(log, pathing,
             new CombinedRepo('combined', log, [
-                { offset: 0, repo: prioBuild },
-                { offset: 15, repo: midBuild }
+                { offset: 0, repo: repairs },
+                { offset: 30, repo: constructions }
             ]));
 
         this.combinedSupply = new CombinedRepo('combined-supply', log, [
             { offset: 0, repo: storage },
-            { offset: 15, repo: containers }
+            { offset: 10, repo: containers }
         ])
     }
 

@@ -9,6 +9,7 @@ import profiler from "screeps-profiler";
 export class HealerRole implements Role {
 
     name = 'healer';
+    prio = 1;
     phase = { start: 1, end: 9 };
 
     constructor(private pathing: Pathing) { }

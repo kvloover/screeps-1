@@ -24,6 +24,7 @@ export interface Role {
         start: number;
         end: number;
     }
+    prio: number;
     run(creep: Creep): void;
 }
 

@@ -15,10 +15,8 @@ import { CreepState } from "utils/creep-state";
 export class RemoteHarvesterRole extends TransferRole implements Role {
 
     name: string = 'remote-harvester'
-    phase = {
-        start: 1,
-        end: 9
-    };
+    prio = 9;
+    phase = { start: 1, end: 9 };
 
     constructor(log: Logger,
         pathing: Pathing,

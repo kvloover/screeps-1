@@ -18,10 +18,8 @@ import { Task } from "repos/task";
 export abstract class HaulerRole extends TransferRole implements Role {
 
     name: string = 'hauler'
-    phase = {
-        start: 2,
-        end: 9
-    };
+    prio = 3;
+    phase = { start: 2, end: 9 };
 
     constructor(log: Logger,
         pathing: Pathing,

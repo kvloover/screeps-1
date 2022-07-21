@@ -106,8 +106,12 @@ export abstract class TransferRole {
         return retVal;
     }
 
+    protected findTask(creep: Creep, repo: TaskRepo<Task>, key: string, type?: ResourceConstant, room?: string, rangeLimit?: number): Task {
+        return repo.closestTask(creep.pos, type, room ?? creep.memory.room ?? creep.room.name, this.blacklist(creep, key), rangeLimit);
+    }
+
     protected findAndRegisterTask(creep: Creep, repo: TaskRepo<Task>, key: string, capacity: number, type?: ResourceConstant, room?: string, rangeLimit?: number): Task | undefined {
-        const task = repo.closestTask(creep.pos, type, room ?? creep.memory.room ?? creep.room.name, this.blacklist(creep, key), rangeLimit);
+        const task = this.findTask(creep, repo, key, type, room, rangeLimit);
         if (task) {
             repo.registerTask(creep, task, key);
             const creepTask = creep.memory.tasks[key];
