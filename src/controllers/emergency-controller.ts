@@ -27,7 +27,10 @@ export class EmergencyController implements Controller {
         }
 
         const hostiles = room.find(FIND_HOSTILE_CREEPS)
-            .map(c => c.body.filter(i => i.type === ATTACK || i.type === RANGED_ATTACK).length)
+            .map(c =>
+                c.body.filter(i => i.type === ATTACK).length
+                + 5 * c.body.filter(i => i.type === RANGED_ATTACK).length
+                + 5 * c.body.filter(i => i.type === HEAL).length)
             .reduce((pv, v) => v + pv, 0);
 
         if (hostiles == 0 && !room.memory.emergency.active)
@@ -37,7 +40,7 @@ export class EmergencyController implements Controller {
             .map(c => c.body.filter(i => i.type === ATTACK || i.type === RANGED_ATTACK).length)
             .reduce((pv, v) => v + pv, 0);
 
-        const towers = room.find(FIND_MY_STRUCTURES, { filter: (struct) => struct.structureType === STRUCTURE_TOWER })
+        const towers = room.find(FIND_MY_STRUCTURES, { filter: (struct) => struct.structureType === STRUCTURE_TOWER && struct.store.getUsedCapacity(RESOURCE_ENERGY) > 0 })
             .length;
 
         const friendly = defenders + 10 * towers;
