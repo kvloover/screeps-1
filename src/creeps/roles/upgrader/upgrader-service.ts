@@ -121,9 +121,7 @@ export class UpgraderSupplyRole extends UpgraderRole {
     }
 
     protected consume(creep: Creep): void {
-        // Force to stick around controller
-        const range = creep.room.controller ? Math.min(15, 2 * creep.pos.getRangeTo(creep.room.controller)) : 15;
-        this.consumeFromRepo(creep, this.combined, 'consume', RESOURCE_ENERGY, undefined, range);
+        this.consumeFromRepo(creep, this.combined, 'consume', RESOURCE_ENERGY, undefined);
     }
 
     public run(creep: Creep): void {
