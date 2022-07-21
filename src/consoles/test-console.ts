@@ -6,6 +6,7 @@ import { relativeExitTo } from "../utils/utils";
 import util_mincut, { Rect } from "../utils/mincut";
 import { PlanManager } from "planner/plan-manager";
 import { RoomManager } from "room";
+import { DefenseManager } from "planner/defense-manager";
 
 export class TestConsole {
 
@@ -20,7 +21,8 @@ export class TestConsole {
             mincut: TestConsole.mincut,
             showPlan: TestConsole.showPlan,
             cleanRoom: TestConsole.cleanRoom,
-            emptyRoom: TestConsole.emptyRoom
+            emptyRoom: TestConsole.emptyRoom,
+            showPatrol: TestConsole.showPatrol
         }
     }
 
@@ -117,6 +119,15 @@ export class TestConsole {
         return `Room not known: ${roomName}`
     }
 
+    static showPatrol(roomName: string): string {
+        if (Game.rooms.hasOwnProperty(roomName)) {
+            const room = Game.rooms[roomName];
+            container.resolve(DefenseManager).showPatrol(room);
+            return `room defense shown ${roomName}.`;
+        }
+        return `Room not known: ${roomName}`
+    }
+
 }
 
 const countCpu = (fn: () => void): number => {
@@ -145,6 +156,7 @@ declare global {
             showPlan: (room: string, rcl: number | undefined) => string;
             cleanRoom: (room: string) => string;
             emptyRoom: (roomName: string) => string;
+            showPatrol: (roomName: string) => string;
         }
     }
 }

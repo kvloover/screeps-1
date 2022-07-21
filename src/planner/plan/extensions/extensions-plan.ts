@@ -27,7 +27,7 @@ export class ExtensionsPlan implements IPlan {
         if (!('anchor' in poi)) { return planned; }
 
         // get initial seeds as outer side of anchor stamp
-        const seeds = outerPerimeter(roomName, terrain, poi.anchor?.map(i => { return { x: i.x, y: i.y } }) || [], false, CUTOFF_WALKABLE);
+        const [seeds, visited, closed] = outerPerimeter(roomName, terrain, poi.anchor?.map(i => { return { x: i.x, y: i.y } }) || [], false, CUTOFF_WALKABLE);
         // const seeds: Point[] = poi.anchor?.map(i => { return { x: i.x, y: i.y } }) || [];
         this.log.debug(roomName, `ExtensionPlan: anchor seeds: ${seeds.map(x => `${x.x},${x.y}`).join(';')}`);
 
@@ -43,7 +43,7 @@ export class ExtensionsPlan implements IPlan {
                 index++;
 
                 const size = Math.max(Math.ceil(plan.size.x / 2), Math.ceil(plan.size.y / 2));
-                center = findPointFor(roomName, dt, seeds, n => n >= size, false, false, CUTOFF_WALKABLE);
+                center = findPointFor(roomName, dt, seeds, n => n >= size, false, false, 200);
                 if (!center) { continue; }
 
                 // update seeds for next plan

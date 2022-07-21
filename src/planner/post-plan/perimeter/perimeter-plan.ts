@@ -16,7 +16,9 @@ export class PerimeterPlan implements IPostPlan {
 
         if (planned.length == 0) { return [structures]; }
 
-        const cuts = util_mincut.GetCutTiles(roomName, planned.map(p => this.plannedToRect(p)).filter(isDefined));
+        const protect = planned.map(p => this.plannedToRect(p)).filter(isDefined);
+        const cuts = util_mincut.GetCutTiles(roomName, protect);
+        // util_mincut.create_graph(roomName, protect, { x1: 0, y1: 0, x2: 49, y2: 49 }, true);
 
         for (let cut of cuts) {
             visual.structure(cut.x, cut.y, STRUCTURE_RAMPART, { opacity: 0.5 });

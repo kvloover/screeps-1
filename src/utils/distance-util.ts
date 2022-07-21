@@ -306,7 +306,7 @@ export const findPointFor =
 export const outerPerimeter =
     function (roomName: string, searchMatrix: CostMatrix, seeds: Point[],
         enableVisuals: boolean = false, cutOff: number = 0)
-        : Point[] {
+        : [perimeter: Point[], visited: CostMatrix, closed: boolean] {
 
         const visual = enableVisuals ? new RoomVisual(roomName) : undefined;
 
@@ -317,7 +317,8 @@ export const outerPerimeter =
 
         // Construct values for the flood
         let depth = 0;
-        let lastGeneration: Point[] = seeds;
+        let closed = true;
+        let perimeter: Point[] = [];
         let thisGeneration: Point[] = seeds;
         let nextGeneration: Point[] = [];
 
@@ -327,10 +328,12 @@ export const outerPerimeter =
             visitedCM.set(pos.x, pos.y, 1);
         }
 
+
         // So long as there are positions in this gen
         while (thisGeneration.length) {
             // Reset next gen
             nextGeneration = [];
+            let checkingAdjacent = false;
 
             // Iterate through positions of this gen
             for (const pos of thisGeneration) {
@@ -339,8 +342,10 @@ export const outerPerimeter =
                 if (depth != 0) {
                     const value = searchMatrix.get(pos.x, pos.y);
                     // Iterate if the terrain is to be avoided
-                    if (value == 255) { continue; }
-                    if (value < cutOff) { continue; }
+                    if (value == 255 || value < cutOff) {
+                        perimeter.push(pos);
+                        continue;
+                    }
                     // If visuals are enabled, show the depth on the pos
                     if (visual && Memory.roomVisuals) {
                         visual.rect(pos.x - 0.5, pos.y - 0.5, 1, 1, {
@@ -350,6 +355,7 @@ export const outerPerimeter =
                     }
                 }
 
+                checkingAdjacent = true;
                 // Construct a rect and get the positions in a range of 1
                 const adjacentPositions = findPositionsInsideRect({ x1: pos.x - 1, y1: pos.y - 1, x2: pos.x + 1, y2: pos.y + 1 });
 
@@ -360,16 +366,17 @@ export const outerPerimeter =
                     // Otherwise record that it has been visited
                     visitedCM.set(adjacentPos.x, adjacentPos.y, 1);
                     // Add it to the next gen
-                    nextGeneration.push({ x: adjacentPos.x, y: adjacentPos.y});
+                    nextGeneration.push(adjacentPos);
                 }
             }
 
             // Set this gen to next gen
-            lastGeneration = thisGeneration;
             thisGeneration = nextGeneration;
             // Increment depth
             depth++;
+
+            closed = !checkingAdjacent; // if we did not check adjacent, then we are closed on the generation
         }
 
-        return lastGeneration
+        return [perimeter, visitedCM, closed];
     }

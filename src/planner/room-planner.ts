@@ -1,10 +1,11 @@
 import { injectAll, singleton } from "tsyringe";
-import { SOURCE } from "utils/custom-types";
-import { IPlan, IPostPlan, PlanKey, Poi, PostPlanKey, StructurePlan } from "./entities/plan";
-import { PlanConverter } from "./util/plan-converter";
 import { Plans } from "./ioc/plan-service";
-import { VisualWrapper } from "./util/visual-wrapper";
+import { IPlan, IPostPlan, PlanKey, Poi, PostPlanKey, StructurePlan } from "./entities/plan";
 import { ExecutablePlan } from "./entities/executable-plan";
+import { SOURCE } from "utils/custom-types";
+import { PlanConverter } from "./util/plan-converter";
+import { VisualWrapper } from "./util/visual-wrapper";
+import { getRoomCostMatrix } from "./util/room-cost-matrix";
 import { RESERVED_LOCATION } from "./util/constants";
 
 @singleton()
@@ -16,20 +17,9 @@ export class RoomPlanner {
         @injectAll(Plans.postPlan) private postPlans: IPostPlan[]
     ) { }
 
-    public getRoomCostMatrix(roomName: string, poi: Poi): CostMatrix {
-        const costs = new PathFinder.CostMatrix();
-        const terrain = Game.map.getRoomTerrain(roomName);
-        for (let y = 0; y < 50; y++) {
-            for (let x = 0; x < 50; x++) {
-                const terrainType = terrain.get(x, y);
-                if (terrainType == TERRAIN_MASK_WALL) {
-                    costs.set(x, y, 0xff);
-                } else {
-                    costs.set(x, y, -1);
-                }
-            }
-        }
 
+    private getCostMatrix(roomName: string, poi: Poi): CostMatrix {
+        const costs = getRoomCostMatrix(roomName);
         // add squares around source locations to terainMatrix as value 255 - cost of unwalkable terrain
         if (!('source' in poi) || !('controller' in poi)) return costs;
         const locs = poi['source']?.concat(poi['controller'] || []) || [];
@@ -42,7 +32,6 @@ export class RoomPlanner {
                 }
             }
         }
-
         return costs;
     }
 
@@ -62,7 +51,7 @@ export class RoomPlanner {
         poi['source'] = sources.map(s => s.pos);
         poi['controller'] = [controller[0].pos];
 
-        const terrain = this.getRoomCostMatrix(roomName, poi);
+        const terrain = this.getCostMatrix(roomName, poi);
         const sorted = this.plans.sort((a, b) => this.planSequence(a.name) - this.planSequence(b.name));
         const sortedPost = this.postPlans.sort((a, b) => this.postPlanSequence(a.name) - this.postPlanSequence(b.name));
 

@@ -80,7 +80,8 @@ declare global {
     }
 }
 
-export type TimingKey = 'plan';
+export type TimingKey = 'plan' | 'defense';
 export const TIMINGS_MAIN: { [key in TimingKey]: number } = {
-    plan: 30
+    plan: 30,
+    defense: 50
 }
