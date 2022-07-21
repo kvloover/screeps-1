@@ -53,7 +53,7 @@ export class TowerManager implements Manager {
             const target = Game.getObjectById(memTask.task.requester)
             // todo clear deleted/destroyed towers
             if (tower && target && isTower(tower) && isStructure(target)) {
-                if ((memTask.task.prio < 100 && tower.store.getUsedCapacity(RESOURCE_ENERGY) > 10)
+                if ((memTask.task.prio < 100 && tower.store.getUsedCapacity(RESOURCE_ENERGY) > 200)
                     || tower.store.getUsedCapacity(RESOURCE_ENERGY) > 500) {
                     const res = tower.repair(target);
                     if (res == OK) {

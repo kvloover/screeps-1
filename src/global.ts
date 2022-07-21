@@ -20,6 +20,7 @@ declare global {
 
     interface RoomMemory {
         stage: number;
+        phase: number;
         manual: boolean;
 
         remote: string | undefined;
