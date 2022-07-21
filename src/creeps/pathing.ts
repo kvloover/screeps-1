@@ -23,19 +23,34 @@ export class Pathing {
         return closest as S;
     }
 
-    public moveTo(creep: Creep, pos: RoomPosition, allowHostile: boolean = false, range: number = 0) {
-        creep.travelTo(pos, { allowHostile: allowHostile, range: range });
-        /*
-        const options: PathFinderOpts = this.opt.optimalFinder();
-        const pathing = PathFinder.search(creep.pos, { pos: pos, range: 1 }, options);
+    public moveTo(creep: Creep, pos: RoomPosition, allowHostile: boolean = false, range: number = 0,
+        opts?: PathingOpts
+    ): CreepActionReturnCode {
 
-        // creep.moveTo(pos, { costCallback })
-        if (pathing && pathing?.path?.length > 0) {
-            const pos = pathing.path[0];
-            this.log.debug(creep.room.name, `next step for ${creep.name}: ${JSON.stringify(pos)}`)
-            creep.move(creep.pos.getDirectionTo(pos));
+        const travelOpts: TravelToOptions = { allowHostile: allowHostile, range: range };
+        if (opts && opts.overwrite) {
+            travelOpts.roomCallback = (room, matrix) => this.mergeMatrix(room, matrix, opts.overwrite);
         }
-        */
+
+        return creep.travelTo(pos,) as CreepActionReturnCode;
+    }
+
+    private mergeMatrix(roomName: string, matrix: CostMatrix, overwrite: CostMatrix | undefined): CostMatrix {
+        if (!overwrite) return matrix;
+
+        for (let x = 0; x < 50; x++) {
+            for (let y = 0; y < 50; y++) {
+                const cost = matrix.get(x, y);
+                if (cost != 0xff) { // walkable
+                    const additionalCost = overwrite.get(x, y);
+                    if (additionalCost > 0) {
+                        matrix.set(x, y, additionalCost);
+                    }
+                }
+            }
+        }
+
+        return matrix;
     }
 
     public scoutRoom(creep: Creep, room: string, allowHostile: boolean = false) {
@@ -43,5 +58,10 @@ export class Pathing {
     }
 
 }
+
+export class PathingOpts {
+    overwrite?: CostMatrix
+}
+
 
 profiler.registerClass(Pathing, 'Pathing');

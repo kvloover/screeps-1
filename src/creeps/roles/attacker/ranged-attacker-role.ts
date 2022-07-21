@@ -1,8 +1,6 @@
 import { singleton } from "tsyringe";
 
-import { CreepUtils } from "creeps/creep-utils";
-import { Pathing } from "creeps/pathing";
-import { CreepState } from "utils/creep-state";
+import { Pathing, PathingOpts } from "creeps/pathing";
 
 import { Role } from "../role-registry";
 import { AttackerRole } from "../_base/attacker-role";
@@ -19,6 +17,16 @@ export class RangedAttackerRole extends AttackerRole implements Role {
     };
 
     constructor(pathing: Pathing) { super(pathing); }
+
+    protected pathingOpts(creep: Creep): PathingOpts {
+        const base = super.pathingOpts(creep);
+
+        const defense = global.defense[creep.room.name];
+        if (defense && defense.closed) {
+            base.overwrite = defense.patrolmatrix; // 1 for ramps, 255 for outside closed def area
+        }
+        return base;
+    }
 
     protected override attack(creep: Creep, hostile: Creep | AnyOwnedStructure): CreepActionReturnCode {
         let ret: CreepActionReturnCode;
