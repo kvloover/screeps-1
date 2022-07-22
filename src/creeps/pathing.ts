@@ -4,6 +4,7 @@ import { Logger } from "logger";
 import { PathingOptions } from "./pathing-options";
 
 import profiler from "screeps-profiler";
+import { Console } from "console";
 
 @singleton()
 export class Pathing {
@@ -32,7 +33,7 @@ export class Pathing {
             travelOpts.roomCallback = (room, matrix) => this.mergeMatrix(room, matrix, opts.overwrite);
         }
 
-        return creep.travelTo(pos,) as CreepActionReturnCode;
+        return creep.travelTo(pos, travelOpts) as CreepActionReturnCode;
     }
 
     private mergeMatrix(roomName: string, matrix: CostMatrix, overwrite: CostMatrix | undefined): CostMatrix {

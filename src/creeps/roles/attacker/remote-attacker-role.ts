@@ -8,6 +8,7 @@ import { Role } from "../role-registry";
 import { RangedAttackerRole } from "./ranged-attacker-role";
 import profiler from "screeps-profiler";
 import { isStructure } from "utils/utils";
+import { Logger } from "logger";
 
 @singleton()
 export class RemoteAttackerRole extends RangedAttackerRole implements Role {
@@ -16,9 +17,8 @@ export class RemoteAttackerRole extends RangedAttackerRole implements Role {
     prio = 2;
     phase = { start: 1, end: 9 };
 
-    constructor(pathing: Pathing) {
-        super(pathing);
-        console.log(`construtor ${this.name}`);
+    constructor(log: Logger, pathing: Pathing) {
+        super(log, pathing);
     }
 
     public override run(creep: Creep): void {
