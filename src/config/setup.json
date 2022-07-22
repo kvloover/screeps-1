@@ -75,6 +75,15 @@
                 }
             },
             {
+                "role": "filler",
+                "priority": 8,
+                "count": 1,
+                "template": {
+                    "carry": 4,
+                    "move": 1
+                }
+            },
+            {
                 "role": "upgrader",
                 "priority": 9,
                 "count": 4,
@@ -126,7 +135,20 @@
             {
                 "role": "hauler",
                 "priority": 3,
-                "count": 1
+                "count": 1,
+                "template": {
+                    "carry": 4,
+                    "move": 4
+                }
+            },
+            {
+                "role": "filler",
+                "priority": 3,
+                "count": 1,
+                "template": {
+                    "carry": 4,
+                    "move": 1
+                }
             },
             {
                 "role": "harvester",
@@ -199,6 +221,15 @@
                 "template": {
                     "carry": 3,
                     "move": 2
+                }
+            },
+            {
+                "role": "filler",
+                "priority": 3,
+                "count": 1,
+                "template": {
+                    "carry": 4,
+                    "move": 1
                 }
             },
             {
@@ -290,6 +321,15 @@
                 "template": {
                     "move": 8,
                     "carry": 8
+                }
+            },
+            {
+                "role": "filler",
+                "priority": 3,
+                "count": 1,
+                "template": {
+                    "carry": 4,
+                    "move": 1
                 }
             },
             {
