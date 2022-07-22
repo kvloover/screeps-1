@@ -264,7 +264,7 @@ export abstract class TransferRole {
             this.log.debug(creep.room.name, `${creep.name} partially finished ${taskOnCreep.id} by transfering ${transferred}/${capacity}`);
             return true;
         } else {
-            this.log.debug(creep.room.name, `${creep.name} progress ${taskOnCreep.id}: ${transferred}/${capacity}`);
+            this.log.debug(creep.room.name, `${creep.name} progress ${taskOnCreep.id}: ${transferred}/${taskOnCreep.amount}`);
             const repoTask = repo.getById(taskOnCreep.id);
             if (repoTask && repoTask.amount) {
                 repoTask.amount -= transferred;
