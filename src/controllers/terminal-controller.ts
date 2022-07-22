@@ -42,6 +42,8 @@ export class TerminalController implements Controller {
                     this.requestRoom(struct);
                 } else if (room.memory.supply) {
                     this.supplyRoom(struct);
+                } else {
+                    this.provideInRoom(struct); // if neither requesting nor supplying, provide all available
                 }
             }
         });
@@ -62,6 +64,21 @@ export class TerminalController implements Controller {
                 this.log.debug(struct.room.name, `${struct.pos}: added request task`);
             }
         }
+
+        // Provide all currently stored to the room | TODO merge logic with storage
+        if (usedCapcity > 0) {
+            const allProvides = this.providerRepo.getForRequester(struct.id);
+            const amount = allProvides.reduce((p, c) => p + (c.amount ?? 0), 0);
+            if (amount < usedCapcity) {
+                this.providerRepo.add(new Task(struct.room.name, 3, usedCapcity - amount, RESOURCE_ENERGY, struct.id, undefined, struct.pos));
+                this.providerRepo.mergeEmpty();
+                this.log.debug(struct.room.name, `${struct.pos}: added supply task`);
+            }
+        }
+    }
+
+    private provideInRoom(struct: AnyStoreStructure): void {
+        const usedCapcity = struct.store.getUsedCapacity(RESOURCE_ENERGY) ?? 0;
 
         // Provide all currently stored to the room | TODO merge logic with storage
         if (usedCapcity > 0) {
