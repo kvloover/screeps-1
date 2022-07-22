@@ -254,7 +254,7 @@
             {
                 "role": "ranged",
                 "priority": 1,
-                "count": 2,
+                "count": 4,
                 "emergency": true,
                 "template": {
                     "tough": 5,
@@ -379,7 +379,7 @@
             {
                 "role": "ranged",
                 "priority": 1,
-                "count": 2,
+                "count": 4,
                 "emergency": true,
                 "template": {
                     "tough": 5,
@@ -548,7 +548,7 @@
             {
                 "role": "ranged",
                 "priority": 1,
-                "count": 2,
+                "count": 4,
                 "emergency": true,
                 "template": {
                     "tough": 7,
@@ -752,7 +752,7 @@
             {
                 "role": "ranged",
                 "priority": 1,
-                "count": 2,
+                "count": 4,
                 "emergency": true,
                 "template": {
                     "tough": 9,
@@ -957,7 +957,7 @@
             {
                 "role": "ranged",
                 "priority": 1,
-                "count": 2,
+                "count": 4,
                 "emergency": true,
                 "template": {
                     "tough": 5,
