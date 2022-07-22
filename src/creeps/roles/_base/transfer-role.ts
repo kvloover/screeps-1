@@ -257,21 +257,24 @@ export abstract class TransferRole {
             // finished fully
             this.log.debug(creep.room.name, `${creep.name} finished ${taskOnCreep.id} by transfering ${transferred}/${taskOnCreep.amount}`);
             return true;
-        } else if (
-            (capacityPerTick * capacity) <= transferred
+        } else if ((capacityPerTick * capacity) <= transferred
             || (taskOnCreep.amount < capacityPerTick)) {
             // finished partially but at capacity
             this.log.debug(creep.room.name, `${creep.name} partially finished ${taskOnCreep.id} by transfering ${transferred}/${capacity}`);
             return true;
-        } else {
-            this.log.debug(creep.room.name, `${creep.name} progress ${taskOnCreep.id}: ${transferred}/${taskOnCreep.amount}`);
-            const repoTask = repo.getById(taskOnCreep.id);
-            if (repoTask && repoTask.amount) {
-                repoTask.amount -= transferred;
-                taskOnCreep.amount = repoTask?.amount; // to avoid link broken due to serialization
-            }
-            return false;
         }
+
+        const repoTask = repo.getById(taskOnCreep.id);
+        if (repoTask && repoTask.amount) {
+            this.log.debug(creep.room.name, `${creep.name} progress ${taskOnCreep.id}: ${transferred}/${taskOnCreep.amount}`);
+            repoTask.amount -= transferred;
+            taskOnCreep.amount = repoTask?.amount; // to avoid link broken due to serialization
+        } else if (!repoTask) {
+            this.log.debug(creep.room.name, `${creep.name} completed check - task was not found, completing`);
+            return true; // task was removed
+        }
+
+        return false;
     }
 
     private consumeAction(repoKey: string, creep: Creep, dest: _HasId, type: ResourceConstant, qty: number | undefined): ScreepsReturnCode {
