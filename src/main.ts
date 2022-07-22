@@ -16,7 +16,7 @@ import { TestConsole } from "consoles/test-console";
 import { GameWorld } from "game-world";
 
 import { Migrations } from "repos/_migration/migration";
-import { onRespawn } from "utils/respawn";
+import { onRespawn, resetRespawned } from "utils/respawn";
 import { initializeOnRespawn } from "init-respawn";
 
 import profiler from 'screeps-profiler';
@@ -39,5 +39,7 @@ export const loop =
         container.resolve(GameWorld).run();
         exportStats();
       });
+
+      resetRespawned(); // prep for OnRespawn - TODO set only on detecting no rooms/spawns/...
     }
   );

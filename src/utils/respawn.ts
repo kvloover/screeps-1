@@ -29,16 +29,31 @@ declare global {
     interface Memory {
         respawnTick: number;
     }
-}
 
-export const onRespawn = (callback: () => boolean) => {
-    if (!respawned && hasRespawned()) {
-        console.log('Respawn detected');
-        respawned = callback(); // keep trying to initialize on respawn till we succeed
+    namespace NodeJS {
+        interface Global {
+            respawned: boolean;
+        }
     }
 }
 
-let respawned = false;
+global.respawned = false;
+
+export const onRespawn = (callback: () => boolean) => {
+    if (!global.respawned && hasRespawned()) {
+        console.log('Respawn detected');
+        global.respawned = callback(); // keep trying to initialize on respawn till we succeed
+    }
+}
+
+export const resetRespawned = () => {
+    if (global.respawned) {
+        if (Game.time - Memory.respawnTick > 10) {
+            console.log('Respawned toggle reset');
+            global.respawned = false;
+        }
+    }
+}
 
 function hasRespawned() {
     // check for multiple calls on same tick
