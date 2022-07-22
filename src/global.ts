@@ -28,7 +28,7 @@ declare global {
         staging: string | undefined;
         conquer: string | undefined;
 
-        debug: boolean;
+        scout: boolean;
         upgrading: boolean;
         building: boolean;
         claim: boolean;

@@ -7,5 +7,6 @@ export enum CreepState {
     attack = 6,
     claim = 7,
     reserve = 8,
-    heal = 9
+    heal = 9,
+    work = 10
 }
