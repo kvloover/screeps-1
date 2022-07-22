@@ -34,7 +34,9 @@ export class RepairTaskRepo extends BaseRepo<Task> implements Persistent {
             this.tasks = global.repair ?? []; //Memory.persistency.repair;
 
         this.tasks.forEach(t => {
-            if (t.pos) { this.visual(t.room).circle(t.pos.x, t.pos.y, { stroke: "#00CC00" }); }
+            // hsl 120(green) -> 0(red)
+            const color = `hsl(${((1 - Math.min(250, t.prio) / 250) * 120)}, 100%, 50%)`;
+            if (t.pos) { this.visual(t.room).circle(t.pos.x, t.pos.y, { stroke: color }); }
         })
     }
 
