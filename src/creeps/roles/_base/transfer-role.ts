@@ -150,7 +150,7 @@ export abstract class TransferRole {
             if (!cont) { return; }
 
             const res = this.tryConsumeForTask(dest, stored.repo, key, creep, memTask);
-            if (res.error || (res.executed && this.completed(stored, repo, res.amount, creep.store.getFreeCapacity(memTask.type)))) {
+            if (res.error || (res.executed && this.completed(creep, stored, repo, res.amount, creep.store.getFreeCapacity(memTask.type), res.capacityPerTick))) {
                 repo.finishTask(creep, memTask, key);
                 this.log.debug(creep.room.name, `${creep.name}: consume ${key} task removed for ${memTask.id}`);
             }
@@ -178,7 +178,7 @@ export abstract class TransferRole {
             if (!cont) { return; }
 
             const res = this.trySupplyForTask(dest, stored.repo, key, creep, memTask);
-            if (res.error || (res.executed && this.completed(stored, repo, res.amount, creep.store.getUsedCapacity(memTask.type)))) {
+            if (res.error || (res.executed && this.completed(creep, stored, repo, res.amount, creep.store.getUsedCapacity(memTask.type), res.capacityPerTick))) {
                 repo.finishTask(creep, memTask, key);
                 this.log.debug(creep.room.name, `${creep.name}: supply ${key} task removed for ${memTask.id}`);
             }
@@ -189,29 +189,30 @@ export abstract class TransferRole {
 
     protected beforeSupplyTo(dest: _HasId | null, creep: Creep): boolean { return true; }
 
-    protected tryConsumeForTask(dest: _HasId | null, repo: string, key: string, creep: Creep, task: Task): { executed: boolean, error: boolean, type?: ResourceConstant, amount: number } {
+    protected tryConsumeForTask(dest: _HasId | null, repo: string, key: string, creep: Creep, task: Task): TryTaskResult {
         if (dest) {
             const type = task.type ?? RESOURCE_ENERGY; // Only supply should be undefined type -> fetch from dest using store
 
             const pos = isHasPos(dest) ? dest.pos : task.pos;
             const range = this.rangeTo(repo);
-            const transfering = this.energyPerTick(repo, key, creep, task, type) * this.amountPerEnergy(repo);
+            const amountPerEnergy = this.amountPerEnergy(repo);
+            const transfering = this.energyPerTick(repo, key, creep, task, type) * amountPerEnergy;
 
             if (pos && !creep.pos.inRangeTo(pos, range)) {
                 this.pathing.moveTo(creep, pos, undefined, range);
             }
             if (this.consumeAction(repo, creep, dest, type, transfering) === OK) {
-                return { executed: true, error: false, type: type, amount: transfering };
+                return { executed: true, error: false, type: type, amount: transfering, capacityPerTick: amountPerEnergy };
             }
         } else {
             // invalid location
-            return { executed: false, error: true, type: undefined, amount: 0 };
+            return { executed: false, error: true, type: undefined, amount: 0, capacityPerTick: 0 };
         }
 
-        return { executed: false, error: false, type: undefined, amount: 0 };
+        return { executed: false, error: false, type: undefined, amount: 0, capacityPerTick: 0 };
     }
 
-    protected trySupplyForTask(dest: _HasId | null, repo: string, key: string, creep: Creep, task: Task): { executed: boolean, error: boolean, type?: ResourceConstant, amount: number } {
+    protected trySupplyForTask(dest: _HasId | null, repo: string, key: string, creep: Creep, task: Task): TryTaskResult {
         if (dest) {
             const types = [];
             if (!task.type) {
@@ -225,7 +226,8 @@ export abstract class TransferRole {
                 if (isResourceConstant(type)) {
                     const pos = isHasPos(dest) ? dest.pos : task.pos;
                     const range = this.rangeTo(repo);
-                    const transfering = this.energyPerTick(repo, key, creep, task, type) * this.amountPerEnergy(repo);
+                    const amountPerEnergy = this.amountPerEnergy(repo);
+                    const transfering = this.energyPerTick(repo, key, creep, task, type) * amountPerEnergy;
 
                     if (pos && !creep.pos.inRangeTo(pos, range)) {
                         this.log.debug(creep.room.name, `${creep.name} not in range, moving`);
@@ -233,31 +235,36 @@ export abstract class TransferRole {
                     }
                     // todo if transfering multiple types and accepting multipe = transfer all at once
                     if (this.supplyAction(repo, creep, dest, type, transfering) === OK) {
-                        return { executed: true, error: false, type: type, amount: transfering };
+                        return { executed: true, error: false, type: type, amount: transfering, capacityPerTick: amountPerEnergy };
                     } else {
                         this.log.debug(creep.room.name, `${creep.name} could not supply`);
                     }
                 }
             }
         } else {
-            return { executed: false, error: true, type: undefined, amount: 0 };
+            return { executed: false, error: true, type: undefined, amount: 0, capacityPerTick: 0 };
         }
 
         // invalid location
-        return { executed: false, error: false, type: undefined, amount: 0 };
+        return { executed: false, error: false, type: undefined, amount: 0, capacityPerTick: 0 };
     }
 
-    private completed(creepTask: CreepTask, repo: TaskRepo<Task>, transferred: number, capacity: number): boolean {
+    private completed(creep: Creep, creepTask: CreepTask, repo: TaskRepo<Task>, transferred: number, capacity: number, capacityPerTick: number): boolean {
         const taskOnCreep = creepTask.task;
         if (!taskOnCreep.amount) return true;
 
         if (taskOnCreep.amount <= transferred) {
             // finished fully
+            this.log.debug(creep.room.name, `${creep.name} finished ${taskOnCreep.id} by transfering ${transferred}/${taskOnCreep.amount}`);
             return true;
-        } else if (capacity <= transferred) {
+        } else if (
+            (capacityPerTick * capacity) <= transferred
+            || (taskOnCreep.amount < capacityPerTick)) {
             // finished partially but at capacity
+            this.log.debug(creep.room.name, `${creep.name} partially finished ${taskOnCreep.id} by transfering ${transferred}/${capacity}`);
             return true;
         } else {
+            this.log.debug(creep.room.name, `${creep.name} progress ${taskOnCreep.id}: ${transferred}/${capacity}`);
             const repoTask = repo.getById(taskOnCreep.id);
             if (repoTask && repoTask.amount) {
                 repoTask.amount -= transferred;
@@ -317,4 +324,12 @@ export abstract class TransferRole {
         }
     }
 
+}
+
+export interface TryTaskResult {
+    executed: boolean;
+    error: boolean;
+    type?: ResourceConstant;
+    amount: number;
+    capacityPerTick: number;
 }
