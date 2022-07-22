@@ -53,7 +53,7 @@
             {
                 "role": "builder",
                 "priority": 6,
-                "count": 4,
+                "count": 3,
                 "template": {
                     "carry": 2,
                     "work": 1,
@@ -63,12 +63,12 @@
             {
                 "role": "harvester",
                 "priority": 7,
-                "count": 10
+                "count": 6
             },
             {
                 "role": "upgrader",
                 "priority": 8,
-                "count": 5,
+                "count": 4,
                 "template": {
                     "carry": 1,
                     "work": 2,
@@ -78,7 +78,7 @@
             {
                 "role": "builder",
                 "priority": 9,
-                "count": 6,
+                "count": 4,
                 "template": {
                     "carry": 2,
                     "work": 1,
