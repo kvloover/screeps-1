@@ -93,7 +93,7 @@ profiler.registerClass(HaulerMidstreamRole, 'HaulerMidstreamRole');
 export class HaulerStorageRole extends HaulerRole {
 
     phase = {
-        start: 1, // storage, ! to and from storage
+        start: 1,
         end: 9
     };
 
