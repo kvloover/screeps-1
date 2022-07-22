@@ -15,13 +15,18 @@ import { TestConsole } from "consoles/test-console";
 
 import { GameWorld } from "game-world";
 
-import profiler from 'screeps-profiler';
 import { Migrations } from "repos/_migration/migration";
+import { onRespawn } from "utils/respawn";
+import { initializeOnRespawn } from "init-respawn";
+
+import profiler from 'screeps-profiler';
 
 profiler.enable();
 
 ExConsole.init();
 TestConsole.init();
+
+onRespawn(initializeOnRespawn)
 
 export const loop =
   ErrorMapper.wrapLoop(

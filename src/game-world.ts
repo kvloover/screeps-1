@@ -12,6 +12,7 @@ export class GameWorld {
     constructor(private log: Logger) { }
 
     private cleanMemory(persistent: Persistent[]): void {
+        if (!Memory.creeps) return;
         for (const name in Memory.creeps) {
             if (!(name in Game.creeps)) {
                 const id = Memory.creeps[name].id;
@@ -22,6 +23,7 @@ export class GameWorld {
     }
 
     private setIds(): void {
+        if (!Memory.creeps) return;
         Object.entries(Memory.creeps)
             .forEach(([key, val]) => {
                 if (Game.creeps[key]) {

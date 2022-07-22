@@ -13,6 +13,9 @@ export abstract class Migrations {
     static readonly token = Symbol('Migrations');
 
     public static Migrate(): void {
+
+        if (!Memory.persistency) return;
+
         const migrations = container.resolveAll<Migration>(Migrations.token);
         const executing = migrations
             .filter(m => m.index > (Memory.persistency.migration || 0))
