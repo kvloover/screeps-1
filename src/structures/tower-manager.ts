@@ -40,6 +40,14 @@ export class TowerManager implements Manager {
         if (!memory.tasks) { memory.tasks = {}; }
         let memTask = memory.tasks['repair'];
 
+        if (memTask) {
+            const repoTask = this.repairs.getById(memTask.task.id);
+            if (!repoTask) {
+                // clear task if no longer present (global reset)
+                memTask = undefined;
+            }
+        }
+
         if (!memTask) {
             const pos = new RoomPosition(memory.pos.x, memory.pos.y, memory.pos.roomName);
             const closest = this.repairs.closestTask(pos, RESOURCE_ENERGY, room.name, undefined, 20);
