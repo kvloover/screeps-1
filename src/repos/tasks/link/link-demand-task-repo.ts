@@ -1,17 +1,17 @@
 import { Logger } from "logger";
 import profiler from "screeps-profiler";
 import { Lifecycle, scoped } from "tsyringe";
-import { Persistent } from "../persistent";
+import { Persistent } from "repos/persistent";
 import { Task } from "../task";
 import { BaseRepo } from "../_base/task-repo";
 
 /**
-* Construction sites
+* midstream demand
 **/
 @scoped(Lifecycle.ContainerScoped)
-export class ConstructionTaskRepo extends BaseRepo<Task> implements Persistent {
+export class LinkDemandTaskRepo extends BaseRepo<Task> implements Persistent {
 
-    constructor(log: Logger) { super('construction', log); }
+    constructor(log: Logger) { super('link_demand', log); }
 
     // Repository
     // Cf. base class TaskRepo
@@ -19,12 +19,12 @@ export class ConstructionTaskRepo extends BaseRepo<Task> implements Persistent {
     // Persistency
     restore(): void {
         if (Memory.persistency?.hasOwnProperty(this.key))
-            this.tasks = Memory.persistency.construction;
+            this.tasks = Memory.persistency.link_demand;
     }
 
     save(): void {
         this.mergeEmpty();
-        Memory.persistency = Object.assign(Memory.persistency, { construction: this.tasks ?? [] });
+        Memory.persistency = Object.assign(Memory.persistency, { link_demand: this.tasks ?? [] });
     }
 
     gc(): void {
@@ -69,9 +69,8 @@ export class ConstructionTaskRepo extends BaseRepo<Task> implements Persistent {
 
 declare global {
     interface Persistency {
-        construction: Task[];
+        link_demand: Task[];
     }
 }
 
-profiler.registerClass(Task, 'Task');
-
+profiler.registerClass(LinkDemandTaskRepo, 'LinkDemandTaskRepo');

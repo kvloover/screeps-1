@@ -7,7 +7,7 @@ import { StorageSupplyTaskRepo } from "repos/storage/storage-supply-task-repo";
 import { StorageDemandTaskRepo } from "repos/storage/storage-demand-task-repo";
 import { ContainerSupplyTaskRepo } from "repos/container/container-supply-task-repo";
 import { DropTaskRepo } from "repos/misc/drop-task-repo";
-import { CombinedRepo } from "repos/_base/combined-repo";
+import { CombinedRepo } from "repos/tasks/_base/combined-repo";
 
 import profiler from "screeps-profiler";
 

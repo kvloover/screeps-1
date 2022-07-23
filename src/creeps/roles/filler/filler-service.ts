@@ -11,7 +11,7 @@ import { ContainerSupplyTaskRepo } from "repos/container/container-supply-task-r
 import { LinkSupplyTaskRepo } from "repos/link/link-supply-task-repo";
 import { StorageDemandTaskRepo } from "repos/storage/storage-demand-task-repo";
 import { DropTaskRepo } from "repos/misc/drop-task-repo";
-import { CombinedRepo } from "repos/_base/combined-repo";
+import { CombinedRepo } from "repos/tasks/_base/combined-repo";
 
 import profiler from "screeps-profiler";
 

@@ -1,7 +1,7 @@
 import { Logger } from "logger";
 import profiler from "screeps-profiler";
 import { Lifecycle, scoped } from "tsyringe";
-import { Persistent } from "../persistent";
+import { Persistent } from "repos/persistent";
 import { Task } from "../task";
 import { BaseRepo } from "../_base/task-repo";
 

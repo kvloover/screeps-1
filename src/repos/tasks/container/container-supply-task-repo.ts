@@ -1,17 +1,17 @@
 import { Logger } from "logger";
 import profiler from "screeps-profiler";
 import { Lifecycle, scoped } from "tsyringe";
-import { Persistent } from "../persistent";
+import { Persistent } from "repos/persistent";
 import { Task } from "../task";
 import { BaseRepo } from "../_base/task-repo";
 
 /**
-* Demand terminal resources
+* Supplying containers
 **/
 @scoped(Lifecycle.ContainerScoped)
-export class TerminalDemandTaskRepo extends BaseRepo<Task> implements Persistent {
+export class ContainerSupplyTaskRepo extends BaseRepo<Task> implements Persistent {
 
-    constructor(log: Logger) { super('terminal_demand', log); }
+    constructor(log: Logger) { super('container_supply', log); }
 
     // Repository
     // Cf. base class TaskRepo
@@ -19,12 +19,12 @@ export class TerminalDemandTaskRepo extends BaseRepo<Task> implements Persistent
     // Persistency
     restore(): void {
         if (Memory.persistency?.hasOwnProperty(this.key))
-            this.tasks = Memory.persistency.terminal_demand;
+            this.tasks = Memory.persistency.container_supply;
     }
 
     save(): void {
         this.mergeEmpty();
-        Memory.persistency = Object.assign(Memory.persistency, { terminal_demand: this.tasks ?? [] });
+        Memory.persistency = Object.assign(Memory.persistency, { container_supply: this.tasks ?? [] });
     }
 
     gc(): void {
@@ -69,9 +69,9 @@ export class TerminalDemandTaskRepo extends BaseRepo<Task> implements Persistent
 
 declare global {
     interface Persistency {
-        terminal_demand: Task[];
+        container_supply: Task[];
     }
 }
 
-profiler.registerClass(TerminalDemandTaskRepo, 'TerminalDemandTaskRepo');
+profiler.registerClass(ContainerSupplyTaskRepo, 'ContainerSupplyTaskRepo');
 

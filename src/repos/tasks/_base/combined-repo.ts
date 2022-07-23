@@ -1,5 +1,5 @@
 import { TaskRepo } from "./task-repo";
-import { Task } from "repos/task";
+import { Task } from "repos/tasks/task";
 import { Logger } from "logger";
 
 export class CombinedRepo implements TaskRepo<Task> {

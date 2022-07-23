@@ -1,30 +1,48 @@
 import { Logger } from "logger";
 import profiler from "screeps-profiler";
 import { Lifecycle, scoped } from "tsyringe";
-import { Persistent } from "../persistent";
+import { Persistent } from "repos/persistent";
 import { Task } from "../task";
 import { BaseRepo } from "../_base/task-repo";
 
+let visuals: { [room: string]: RoomVisual };
+
 /**
-* Dropped resources or tombstones
+* Repair tasks stored in global
 **/
 @scoped(Lifecycle.ContainerScoped)
-export class DropTaskRepo extends BaseRepo<Task> implements Persistent {
+export class RepairTaskRepo extends BaseRepo<Task> implements Persistent {
 
-    constructor(log: Logger) { super('drop', log); }
+    constructor(log: Logger) { super('repair', log); }
+
+    private visual(room: string): RoomVisual {
+        if (!visuals) visuals = {};
+        return visuals[room] ?? (visuals[room] = new RoomVisual(room));
+    }
 
     // Repository
     // Cf. base class TaskRepo
 
+    public override add(task: Task): void {
+        if (task.pos) this.visual(task.room).circle(task.pos.x, task.pos.y, { stroke: "#CC0000" });
+        super.add(task);
+    }
+
     // Persistency
     restore(): void {
         if (Memory.persistency?.hasOwnProperty(this.key))
-            this.tasks = Memory.persistency.drop;
+            this.tasks = global.repair ?? []; //Memory.persistency.repair;
+
+        this.tasks.forEach(t => {
+            // hsl 120(green) -> 0(red)
+            const color = `hsl(${((1 - Math.min(250, t.prio) / 250) * 120)}, 100%, 50%)`;
+            if (t.pos) { this.visual(t.room).circle(t.pos.x, t.pos.y, { stroke: color }); }
+        })
     }
 
     save(): void {
         this.mergeEmpty();
-        Memory.persistency = Object.assign(Memory.persistency, { drop: this.tasks ?? [] });
+        global.repair = Object.assign(global.repair ?? [], this.tasks);
     }
 
     gc(): void {
@@ -69,9 +87,9 @@ export class DropTaskRepo extends BaseRepo<Task> implements Persistent {
 
 declare global {
     interface Persistency {
-        drop: Task[];
+        repair: Task[];
     }
 }
 
-profiler.registerClass(DropTaskRepo, 'DropTaskRepo');
+profiler.registerClass(RepairTaskRepo, 'RepairTaskRepo');
 

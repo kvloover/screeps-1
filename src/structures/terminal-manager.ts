@@ -8,7 +8,7 @@ import { ExchangeTaskRepo } from "repos/terminal/exchange-task-repo";
 import { RequestTaskRepo } from "repos/terminal/request-task-repo";
 
 import profiler from "screeps-profiler";
-import { Task } from "repos/task";
+import { Task } from "repos/tasks/task";
 
 // TODO move outside room based managers
 // TODO other resource types ! cost energy

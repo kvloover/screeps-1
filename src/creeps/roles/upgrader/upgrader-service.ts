@@ -5,12 +5,12 @@ import { Pathing } from "../../pathing";
 import { UpgraderRole } from "./upgrader-role";
 
 import { HarvestAction } from "../harvester/harvest-action";
-import { TaskRepo } from "repos/_base/task-repo";
-import { Task } from "repos/task";
+import { TaskRepo } from "repos/tasks/_base/task-repo";
+import { Task } from "repos/tasks/task";
 import { StorageSupplyTaskRepo } from "repos/storage/storage-supply-task-repo";
 import { LinkSupplyUtilityTaskRepo } from "repos/link/link-supply-utility-task-repo";
 import { ContainerSupplyTaskRepo } from "repos/container/container-supply-task-repo";
-import { CombinedRepo } from "repos/_base/combined-repo";
+import { CombinedRepo } from "repos/tasks/_base/combined-repo";
 
 import profiler from "screeps-profiler";
 

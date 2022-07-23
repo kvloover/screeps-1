@@ -1,17 +1,17 @@
 import { Logger } from "logger";
 import profiler from "screeps-profiler";
 import { Lifecycle, scoped } from "tsyringe";
-import { Persistent } from "../persistent";
+import { Persistent } from "repos/persistent";
 import { Task } from "../task";
 import { BaseRepo } from "../_base/task-repo";
 
 /**
-* Sources to harvest
+* Midstream utility
 **/
 @scoped(Lifecycle.ContainerScoped)
-export class HarvestTaskRepo extends BaseRepo<Task> implements Persistent {
+export class LinkSupplyUtilityTaskRepo extends BaseRepo<Task> implements Persistent {
 
-    constructor(log: Logger) { super('harvest', log); }
+    constructor(log: Logger) { super('link_supply_utility', log); }
 
     // Repository
     // Cf. base class TaskRepo
@@ -19,12 +19,12 @@ export class HarvestTaskRepo extends BaseRepo<Task> implements Persistent {
     // Persistency
     restore(): void {
         if (Memory.persistency?.hasOwnProperty(this.key))
-            this.tasks = Memory.persistency.harvest;
+            this.tasks = Memory.persistency.link_supply_utility;
     }
 
     save(): void {
         this.mergeEmpty();
-        Memory.persistency = Object.assign(Memory.persistency, { harvest: this.tasks ?? [] });
+        Memory.persistency = Object.assign(Memory.persistency, { link_supply_utility: this.tasks ?? [] });
     }
 
     gc(): void {
@@ -50,28 +50,9 @@ export class HarvestTaskRepo extends BaseRepo<Task> implements Persistent {
         })
 
         // remove other references
-        const requesters: Id<_HasId>[] = []
-
         this.tasks.forEach(t => {
-            if (t.executer == id) {
-                t.executer = undefined;
-                if (t.requester) { requesters.push(t.requester); }
-            }
+            if (t.executer === id) { t.executer = undefined; }
         });
-
-        // merge empty task on requester > harvest tasks are persistent
-        requesters.forEach(req => {
-            const requests = this.tasks.filter(r => r.requester === req && !r.executer);
-            if (requests.length > 1) {
-                this.tasks = _.difference(this.tasks, requests);
-                const record = requests.reduce((prev: Task, curr: Task) => {
-                    if (prev.amount) prev.amount += curr.amount ?? 0;
-                    return prev;
-                })
-                this.add(record);
-            }
-        })
-
     }
 
     clearRoomRef(roomName: string): void {
@@ -88,9 +69,8 @@ export class HarvestTaskRepo extends BaseRepo<Task> implements Persistent {
 
 declare global {
     interface Persistency {
-        harvest: Task[];
+        link_supply_utility: Task[];
     }
 }
 
-profiler.registerClass(HarvestTaskRepo, 'HarvestTaskRepo');
-
+profiler.registerClass(LinkSupplyUtilityTaskRepo, 'LinkSupplyUtilityTaskRepo');

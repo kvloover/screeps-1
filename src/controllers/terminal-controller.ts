@@ -1,6 +1,6 @@
 import { injectable } from "tsyringe";
 
-import { Task } from "repos/task";
+import { Task } from "repos/tasks/task";
 import { Controller } from "./controller";
 import { Logger } from "logger";
 

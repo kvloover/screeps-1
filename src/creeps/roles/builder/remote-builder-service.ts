@@ -12,9 +12,9 @@ import { BuilderContainerRole, BuilderSourceRole, BuilderStorageRole } from "./b
 
 import profiler from "screeps-profiler";
 import { BuilderRole } from "./builder-role";
-import { CombinedRepo } from "repos/_base/combined-repo";
-import { TaskRepo } from "repos/_base/task-repo";
-import { Task } from "repos/task";
+import { CombinedRepo } from "repos/tasks/_base/combined-repo";
+import { TaskRepo } from "repos/tasks/_base/task-repo";
+import { Task } from "repos/tasks/task";
 
 @singleton()
 export class RemoteBuilderSourceRole extends BuilderSourceRole {

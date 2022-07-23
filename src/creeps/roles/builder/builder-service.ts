@@ -9,10 +9,10 @@ import { BuilderRole } from "./builder-role";
 import { StorageSupplyTaskRepo } from "repos/storage/storage-supply-task-repo";
 import { RepairTaskRepo } from "repos/structures/repair-task-repo";
 import { ConstructionTaskRepo } from "repos/structures/construction-task-repo";
-import { CombinedRepo } from "repos/_base/combined-repo";
+import { CombinedRepo } from "repos/tasks/_base/combined-repo";
 import { ContainerSupplyTaskRepo } from "repos/container/container-supply-task-repo";
-import { Task } from "repos/task";
-import { TaskRepo } from "repos/_base/task-repo";
+import { Task } from "repos/tasks/task";
+import { TaskRepo } from "repos/tasks/_base/task-repo";
 
 import profiler from "screeps-profiler";
 

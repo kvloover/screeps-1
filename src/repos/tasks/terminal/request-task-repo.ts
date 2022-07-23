@@ -1,17 +1,17 @@
 import { Logger } from "logger";
 import profiler from "screeps-profiler";
 import { Lifecycle, scoped } from "tsyringe";
-import { Persistent } from "../persistent";
+import { Persistent } from "repos/persistent";
 import { Task } from "../task";
 import { BaseRepo } from "../_base/task-repo";
 
 /**
-* Storage demand
+* Request from other rooms
 **/
 @scoped(Lifecycle.ContainerScoped)
-export class StorageDemandTaskRepo extends BaseRepo<Task> implements Persistent {
+export class RequestTaskRepo extends BaseRepo<Task> implements Persistent {
 
-    constructor(log: Logger) { super('storage_demand', log); }
+    constructor(log: Logger) { super('request', log); }
 
     // Repository
     // Cf. base class TaskRepo
@@ -19,12 +19,12 @@ export class StorageDemandTaskRepo extends BaseRepo<Task> implements Persistent 
     // Persistency
     restore(): void {
         if (Memory.persistency?.hasOwnProperty(this.key))
-            this.tasks = Memory.persistency.storage_demand;
+            this.tasks = Memory.persistency.request;
     }
 
     save(): void {
         this.mergeEmpty();
-        Memory.persistency = Object.assign(Memory.persistency, { storage_demand: this.tasks ?? [] });
+        Memory.persistency = Object.assign(Memory.persistency, { request: this.tasks ?? [] });
     }
 
     gc(): void {
@@ -69,8 +69,9 @@ export class StorageDemandTaskRepo extends BaseRepo<Task> implements Persistent 
 
 declare global {
     interface Persistency {
-        storage_demand: Task[];
+        request: Task[];
     }
 }
 
-profiler.registerClass(StorageDemandTaskRepo, 'StorageDemandTaskRepo');
+profiler.registerClass(RequestTaskRepo, 'RequestTaskRepo');
+

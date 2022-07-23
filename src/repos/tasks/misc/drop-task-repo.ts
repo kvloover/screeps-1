@@ -1,17 +1,17 @@
 import { Logger } from "logger";
 import profiler from "screeps-profiler";
 import { Lifecycle, scoped } from "tsyringe";
-import { Persistent } from "../persistent";
+import { Persistent } from "repos/persistent";
 import { Task } from "../task";
 import { BaseRepo } from "../_base/task-repo";
 
 /**
-* Supply to other rooms
+* Dropped resources or tombstones
 **/
 @scoped(Lifecycle.ContainerScoped)
-export class ExchangeTaskRepo extends BaseRepo<Task> implements Persistent {
+export class DropTaskRepo extends BaseRepo<Task> implements Persistent {
 
-    constructor(log: Logger) { super('exchange', log); }
+    constructor(log: Logger) { super('drop', log); }
 
     // Repository
     // Cf. base class TaskRepo
@@ -19,12 +19,12 @@ export class ExchangeTaskRepo extends BaseRepo<Task> implements Persistent {
     // Persistency
     restore(): void {
         if (Memory.persistency?.hasOwnProperty(this.key))
-            this.tasks = Memory.persistency.exchange;
+            this.tasks = Memory.persistency.drop;
     }
 
     save(): void {
         this.mergeEmpty();
-        Memory.persistency = Object.assign(Memory.persistency, { exchange: this.tasks ?? [] });
+        Memory.persistency = Object.assign(Memory.persistency, { drop: this.tasks ?? [] });
     }
 
     gc(): void {
@@ -69,9 +69,9 @@ export class ExchangeTaskRepo extends BaseRepo<Task> implements Persistent {
 
 declare global {
     interface Persistency {
-        exchange: Task[];
+        drop: Task[];
     }
 }
 
-profiler.registerClass(ExchangeTaskRepo, 'ExchangeTaskRepo');
+profiler.registerClass(DropTaskRepo, 'DropTaskRepo');
 

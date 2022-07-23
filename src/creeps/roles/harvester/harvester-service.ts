@@ -12,7 +12,7 @@ import { HarvestAction } from "./harvest-action";
 import profiler from "screeps-profiler";
 import { ContainerDemandTaskRepo } from "repos/container/container-demand-task-repo";
 import { StorageDemandTaskRepo } from "repos/storage/storage-demand-task-repo";
-import { CombinedRepo } from "repos/_base/combined-repo";
+import { CombinedRepo } from "repos/tasks/_base/combined-repo";
 
 
 @singleton()

@@ -6,8 +6,8 @@ import { RemoteHarvesterRole } from "./remote-harvester-role";
 import { HarvestAction } from "./harvest-action";
 import { ConstructionTaskRepo } from "repos/structures/construction-task-repo";
 import { RepairTaskRepo } from "repos/structures/repair-task-repo";
-import { CombinedRepo } from "repos/_base/combined-repo";
-import { Task } from "repos/task";
+import { CombinedRepo } from "repos/tasks/_base/combined-repo";
+import { Task } from "repos/tasks/task";
 
 import profiler from "screeps-profiler";
 

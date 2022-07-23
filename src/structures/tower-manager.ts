@@ -8,7 +8,7 @@ import profiler from "screeps-profiler";
 import { initObjectMemory } from "structures/memory/structure-memory";
 import { RepairTaskRepo } from "repos/structures/repair-task-repo";
 import { threadId } from "worker_threads";
-import { Task } from "repos/task";
+import { Task } from "repos/tasks/task";
 
 @singleton()
 export class TowerManager implements Manager {

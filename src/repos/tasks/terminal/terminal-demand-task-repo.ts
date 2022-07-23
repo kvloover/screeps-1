@@ -1,17 +1,17 @@
 import { Logger } from "logger";
 import profiler from "screeps-profiler";
 import { Lifecycle, scoped } from "tsyringe";
-import { Persistent } from "../persistent";
+import { Persistent } from "repos/persistent";
 import { Task } from "../task";
 import { BaseRepo } from "../_base/task-repo";
 
 /**
-* Request from other rooms
+* Demand terminal resources
 **/
 @scoped(Lifecycle.ContainerScoped)
-export class RequestTaskRepo extends BaseRepo<Task> implements Persistent {
+export class TerminalDemandTaskRepo extends BaseRepo<Task> implements Persistent {
 
-    constructor(log: Logger) { super('request', log); }
+    constructor(log: Logger) { super('terminal_demand', log); }
 
     // Repository
     // Cf. base class TaskRepo
@@ -19,12 +19,12 @@ export class RequestTaskRepo extends BaseRepo<Task> implements Persistent {
     // Persistency
     restore(): void {
         if (Memory.persistency?.hasOwnProperty(this.key))
-            this.tasks = Memory.persistency.request;
+            this.tasks = Memory.persistency.terminal_demand;
     }
 
     save(): void {
         this.mergeEmpty();
-        Memory.persistency = Object.assign(Memory.persistency, { request: this.tasks ?? [] });
+        Memory.persistency = Object.assign(Memory.persistency, { terminal_demand: this.tasks ?? [] });
     }
 
     gc(): void {
@@ -69,9 +69,9 @@ export class RequestTaskRepo extends BaseRepo<Task> implements Persistent {
 
 declare global {
     interface Persistency {
-        request: Task[];
+        terminal_demand: Task[];
     }
 }
 
-profiler.registerClass(RequestTaskRepo, 'RequestTaskRepo');
+profiler.registerClass(TerminalDemandTaskRepo, 'TerminalDemandTaskRepo');
 
