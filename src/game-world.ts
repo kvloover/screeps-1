@@ -1,4 +1,4 @@
-import { container, injectable } from "tsyringe";
+import { container, singleton } from "tsyringe";
 
 import { Logger } from "logger";
 import { Manager, Managers } from "manager";
@@ -7,7 +7,7 @@ import { GarbageCollector } from "utils/garbage-collect";
 import { Brain } from "objectives/brain";
 // import { RoleService, RoleServices } from "creeps/roles/role-service-registry";
 
-@injectable()
+@singleton()
 export class GameWorld {
 
     constructor(private log: Logger) {

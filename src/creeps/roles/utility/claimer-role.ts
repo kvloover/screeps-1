@@ -7,8 +7,7 @@ import profiler from "screeps-profiler";
 import { isController, whoAmI } from "utils/utils";
 import { CreepState } from "utils/creep-state";
 
-@singleton()
-export class ClaimerRole implements Role {
+export abstract class ClaimerRole implements Role {
 
     name: string = 'claimer';
     prio = 9;
@@ -96,4 +95,3 @@ export class ClaimerRole implements Role {
 }
 
 profiler.registerClass(ClaimerRole, 'ClaimerRole');
-

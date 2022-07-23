@@ -6,12 +6,11 @@ import { CreepState } from "utils/creep-state";
 
 import { Role } from "../role-registry";
 import { RangedAttackerRole } from "./ranged-attacker-role";
-import profiler from "screeps-profiler";
-import { isStructure } from "utils/utils";
 import { Logger } from "logger";
 
-@singleton()
-export class RemoteAttackerRole extends RangedAttackerRole implements Role {
+import profiler from "screeps-profiler";
+
+export abstract class RemoteAttackerRole extends RangedAttackerRole implements Role {
 
     name: string = 'remote-attacker'
     prio = 2;
@@ -23,24 +22,28 @@ export class RemoteAttackerRole extends RangedAttackerRole implements Role {
 
     public override run(creep: Creep): void {
 
-        if (!creep.memory.targetRoom) {
-            // get setting on room:
-            if (Memory.rooms[creep.memory.room]) {
-                const target = Memory.rooms[creep.memory.room].attack;
-                creep.memory.targetRoom = target;
-            }
-        }
+        // if (!creep.memory.targetRoom) {
+        //     // get setting on room:
+        //     if (Memory.rooms[creep.memory.room]) {
+        //         const target = Memory.rooms[creep.memory.room].attack;
+        //         creep.memory.targetRoom = target;
+        //     }
+        // }
 
-        if (!creep.memory.staging) {
-            // get setting on room:
-            if (Memory.rooms[creep.memory.room]) {
-                const target = Memory.rooms[creep.memory.room].staging;
-                creep.memory.staging = target;
-            }
-        }
+        // if (!creep.memory.staging) {
+        //     // get setting on room:
+        //     if (Memory.rooms[creep.memory.room]) {
+        //         const target = Memory.rooms[creep.memory.room].staging;
+        //         creep.memory.staging = target;
+        //     }
+        // }
 
         if (creep.memory.state == CreepState.idle) {
-            creep.memory.state = CreepState.heal
+            if (creep.memory.staging) {
+                creep.memory.state = CreepState.heal;
+            } else {
+                creep.memory.state = CreepState.attack;
+            }
         }
 
         if (creep.hits > 0.9 * creep.hitsMax) {
@@ -48,7 +51,7 @@ export class RemoteAttackerRole extends RangedAttackerRole implements Role {
             creep.memory.state = CreepState.attack
         }
 
-        if (creep.hits < 0.6 * creep.hitsMax) {
+        if (creep.hits < 0.6 * creep.hitsMax && creep.memory.staging) {
             if (creep.memory.state != CreepState.heal) { creep.memory.target = undefined; }
             creep.memory.state = CreepState.heal
         }
@@ -59,27 +62,6 @@ export class RemoteAttackerRole extends RangedAttackerRole implements Role {
             this.act(creep);
         }
     }
-
-    // moved to ranged-attacker-role
-    // protected override attack(creep: Creep, hostile: Creep | AnyOwnedStructure): CreepActionReturnCode {
-    //     let ret: CreepActionReturnCode;
-    //     if (isStructure(hostile)) {
-    //         const range = hostile.pos.getRangeTo(creep.pos);
-    //         if (range < 3) {
-    //             creep.rangedMassAttack();
-    //         }
-    //         ret = range < 2 ? OK : ERR_NOT_IN_RANGE
-    //     } else {
-    //         ret = creep.rangedAttack(hostile);
-    //     }
-    //     if (creep.getActiveBodyparts(HEAL) > 0) {
-    //         const retHeal = creep.heal(creep);
-    //     }
-    //     if (creep.getActiveBodyparts(ATTACK) > 0)
-    //         return creep.attack(hostile);
-    //     else
-    //         return ret;
-    // }
 
     public act(creep: Creep): void {
         if (creep.memory.targetRoom

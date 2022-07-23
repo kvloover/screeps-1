@@ -4,6 +4,7 @@ export interface ScoutData {
     lastVisitedByRoom: string;
     depth: number;
 
+    sources: number | undefined;
     controller: RoomPosition | undefined;
     level: number | undefined;
 

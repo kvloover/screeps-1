@@ -35,7 +35,7 @@ export class ScoutHandler implements Handler {
         const exits = Game.map.describeExits(roomName);
         if (exits) {
             for (let [direction, newRoom] of Object.entries(exits)) {
-                if (Game.rooms.hasOwnProperty(newRoom)) continue;
+                if (Game.rooms.hasOwnProperty(newRoom) && isMyRoom(Game.rooms[newRoom])) continue;
                 if (visited.includes(newRoom)) continue;
                 if (existing.find(o => (o.data as ObjectiveScoutData)?.room == newRoom)) continue;
 

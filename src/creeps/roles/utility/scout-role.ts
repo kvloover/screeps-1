@@ -115,10 +115,13 @@ export class ScoutRole implements Role {
             + c.getActiveBodyparts(RANGED_ATTACK)
             + c.getActiveBodyparts(HEAL), 0);
 
+        const sources = creep.room.find(FIND_SOURCES).length;
+
         return {
             room: creep.room.name,
             depth: data.depth,
 
+            sources: sources,
             controller: controller,
             level: level,
 
