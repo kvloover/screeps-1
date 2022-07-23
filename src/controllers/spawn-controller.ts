@@ -1,6 +1,6 @@
 import { injectable } from "tsyringe";
 
-import { SpawnDemandTaskRepo } from "repos/spawn/spawn-demand-task-repo";
+import { SpawnDemandTaskRepo } from "repos/tasks/spawn/spawn-demand-task-repo";
 import { Controller } from "./controller";
 import { Task } from "repos/tasks/task";
 import { Logger } from "logger";

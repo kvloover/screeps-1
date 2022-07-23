@@ -18,10 +18,11 @@ export class Brain {
         const objectives = this.repo.list();
 
         for (let handler of this.handlers) {
-            const newObj = handler.generateObjectives();
+            const existing = objectives.filter(i => i.type == handler.type);
+            const newObj = handler.generateObjectives(existing);
             newObj.forEach(obj => this.repo.add(obj));
 
-            const handlerObjectives = newObj.concat(objectives.filter(i => i.type == handler.type));
+            const handlerObjectives = newObj.concat(existing);
             for (let obj of handlerObjectives) {
                 if (handler.handle(obj)) {
                     this.repo.removeById(obj.id);

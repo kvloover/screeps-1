@@ -6,13 +6,11 @@ import { CreepState } from "utils/creep-state";
 import { HarvestAction } from "../harvester/harvest-action";
 import { BuilderRole } from "./builder-role";
 
-import { StorageSupplyTaskRepo } from "repos/storage/storage-supply-task-repo";
-import { RepairTaskRepo } from "repos/structures/repair-task-repo";
-import { ConstructionTaskRepo } from "repos/structures/construction-task-repo";
+import { StorageSupplyTaskRepo } from "repos/tasks/storage/storage-supply-task-repo";
+import { RepairTaskRepo } from "repos/tasks/structures/repair-task-repo";
+import { ConstructionTaskRepo } from "repos/tasks/structures/construction-task-repo";
 import { CombinedRepo } from "repos/tasks/_base/combined-repo";
-import { ContainerSupplyTaskRepo } from "repos/container/container-supply-task-repo";
-import { Task } from "repos/tasks/task";
-import { TaskRepo } from "repos/tasks/_base/task-repo";
+import { ContainerSupplyTaskRepo } from "repos/tasks/container/container-supply-task-repo";
 
 import profiler from "screeps-profiler";
 

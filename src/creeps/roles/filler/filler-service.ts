@@ -6,16 +6,16 @@ import { Pathing } from "../../pathing";
 
 import { FillerRole } from "./filler-role";
 
-import { SpawnDemandTaskRepo } from "repos/spawn/spawn-demand-task-repo";
-import { ContainerSupplyTaskRepo } from "repos/container/container-supply-task-repo";
-import { LinkSupplyTaskRepo } from "repos/link/link-supply-task-repo";
-import { StorageDemandTaskRepo } from "repos/storage/storage-demand-task-repo";
-import { DropTaskRepo } from "repos/misc/drop-task-repo";
+import { SpawnDemandTaskRepo } from "repos/tasks/spawn/spawn-demand-task-repo";
+import { StorageDemandTaskRepo } from "repos/tasks/storage/storage-demand-task-repo";
+import { ContainerSupplyTaskRepo } from "repos/tasks/container/container-supply-task-repo";
+import { LinkSupplyTaskRepo } from "repos/tasks/link/link-supply-task-repo";
+import { StorageSupplyTaskRepo } from "repos/tasks/storage/storage-supply-task-repo";
+import { TerminalSupplyTaskRepo } from "repos/tasks/terminal/terminal-supply-task-repo";
+import { DropTaskRepo } from "repos/tasks/misc/drop-task-repo";
 import { CombinedRepo } from "repos/tasks/_base/combined-repo";
 
 import profiler from "screeps-profiler";
-import { StorageSupplyTaskRepo } from "repos/storage/storage-supply-task-repo";
-import { TerminalSupplyTaskRepo } from "repos/terminal/terminal-supply-task-repo";
 
 /**
  * drops/container to demand ~ hauler

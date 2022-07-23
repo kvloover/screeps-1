@@ -5,13 +5,13 @@ import { Pathing } from "../../pathing";
 // import { RoleService } from "creeps/roles/role-service-registry";
 import { HarvesterRole } from "./harvester-role";
 
-import { SpawnDemandTaskRepo } from "repos/spawn/spawn-demand-task-repo";
-import { LinkDemandTaskRepo } from "repos/link/link-demand-task-repo";
+import { SpawnDemandTaskRepo } from "repos/tasks/spawn/spawn-demand-task-repo";
+import { LinkDemandTaskRepo } from "repos/tasks/link/link-demand-task-repo";
 import { HarvestAction } from "./harvest-action";
 
 import profiler from "screeps-profiler";
-import { ContainerDemandTaskRepo } from "repos/container/container-demand-task-repo";
-import { StorageDemandTaskRepo } from "repos/storage/storage-demand-task-repo";
+import { ContainerDemandTaskRepo } from "repos/tasks/container/container-demand-task-repo";
+import { StorageDemandTaskRepo } from "repos/tasks/storage/storage-demand-task-repo";
 import { CombinedRepo } from "repos/tasks/_base/combined-repo";
 
 

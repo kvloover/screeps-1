@@ -4,7 +4,7 @@ import { Task } from "repos/tasks/task";
 import { Controller } from "./controller";
 import { Logger } from "logger";
 
-import { DropTaskRepo } from "repos/misc/drop-task-repo";
+import { DropTaskRepo } from "repos/tasks/misc/drop-task-repo";
 import { isMyRoom, isRemote, isResourceConstant } from "utils/utils";
 
 import profiler from "screeps-profiler";

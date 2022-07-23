@@ -2,19 +2,19 @@ import { singleton } from "tsyringe";
 import { Logger } from "logger";
 import { Pathing } from "../../pathing";
 
-import { StorageSupplyTaskRepo } from "repos/storage/storage-supply-task-repo";
-import { RepairTaskRepo } from "repos/structures/repair-task-repo";
-import { ConstructionTaskRepo } from "repos/structures/construction-task-repo";
-import { ContainerSupplyTaskRepo } from "repos/container/container-supply-task-repo";
-import { HarvestAction } from "../harvester/harvest-action";
-
-import { BuilderContainerRole, BuilderSourceRole, BuilderStorageRole } from "./builder-service";
-
-import profiler from "screeps-profiler";
-import { BuilderRole } from "./builder-role";
+import { StorageSupplyTaskRepo } from "repos/tasks/storage/storage-supply-task-repo";
+import { RepairTaskRepo } from "repos/tasks/structures/repair-task-repo";
+import { ConstructionTaskRepo } from "repos/tasks/structures/construction-task-repo";
+import { ContainerSupplyTaskRepo } from "repos/tasks/container/container-supply-task-repo";
 import { CombinedRepo } from "repos/tasks/_base/combined-repo";
 import { TaskRepo } from "repos/tasks/_base/task-repo";
 import { Task } from "repos/tasks/task";
+
+import { HarvestAction } from "../harvester/harvest-action";
+import { BuilderSourceRole } from "./builder-service";
+import { BuilderRole } from "./builder-role";
+
+import profiler from "screeps-profiler";
 
 @singleton()
 export class RemoteBuilderSourceRole extends BuilderSourceRole {

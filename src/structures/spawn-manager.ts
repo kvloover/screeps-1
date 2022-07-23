@@ -124,6 +124,7 @@ export class SpawnManager implements Manager {
             target: undefined,
             memoryId: undefined,
             memoryPos: undefined,
+            objective: undefined,
             tasks: {},
             tasks_blacklist: {},
             started: 0

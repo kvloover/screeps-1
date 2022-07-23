@@ -1,10 +1,13 @@
+import { singleton } from "tsyringe";
 import { Logger } from "logger";
+
 import { Handler } from "objectives/entities/handler";
 import { ObjectiveData } from "objectives/entities/objective";
 import { Objective } from "repos/objectives/objective";
 import { CreepState } from "utils/creep-state";
 import { isMyRoom } from "utils/utils";
 
+@singleton()
 export class ScoutHandler implements Handler {
 
     type = 'scout';
@@ -12,27 +15,42 @@ export class ScoutHandler implements Handler {
 
     constructor(private log: Logger) { }
 
-    generateObjectives(): Objective[] {
-        // todo: only for rooms we own or desired depth
-        // priority depth ?
-
+    generateObjectives(existing: Objective[]): Objective[] {
         const objectives: Objective[] = [];
+        const visited: string[] = [];
         for (let [roomName, room] of Object.entries(Game.rooms)) {
-            if (isMyRoom(room) || (global.scoutData?.[roomName] && global.scoutData[roomName].depth < 2)) {
-                const exits = Game.map.describeExits(roomName);
-                if (exits) {
-                    for (let [direction, newRoom] of Object.entries(exits)) {
-                        if (Game.rooms.hasOwnProperty(newRoom)) continue;
+            if (isMyRoom(room)) {
+                const subObjectives = this.stepRoom(roomName, roomName, existing, visited);
+                objectives.push(...subObjectives);
+            }
+        }
 
-                        if (!global.scoutData?.hasOwnProperty(newRoom) || global.scoutData[newRoom].lastVisited < Game.time - 1000) {
-                            const data: ObjectiveScoutData = { started: Game.time, room: newRoom };
-                            const obj = new Objective(roomName, this.type, data);
-                            objectives.push(obj);
+        return objectives;
+    }
 
-                            this.log.info(roomName, `adding scout objective for ${newRoom}`);
-                        }
-                    }
+    stepRoom(master: string, roomName: string, existing: Objective[], visited: string[], depth: number = 1): Objective[] {
+        const objectives: Objective[] = [];
+        if (depth > 2) return objectives;
+
+        const exits = Game.map.describeExits(roomName);
+        if (exits) {
+            for (let [direction, newRoom] of Object.entries(exits)) {
+                if (Game.rooms.hasOwnProperty(newRoom)) continue;
+                if (visited.includes(newRoom)) continue;
+                if (existing.find(o => (o.data as ObjectiveScoutData)?.room == newRoom)) continue;
+
+                if (!global.scoutData?.hasOwnProperty(newRoom) || global.scoutData[newRoom].lastVisited < Game.time - 1000) {
+                    const data: ObjectiveScoutData = { started: Game.time, room: newRoom };
+                    const obj = new Objective(master, this.type, data);
+                    objectives.push(obj);
+
+                    visited.push(newRoom);
+
+                    this.log.info(roomName, `adding scout objective for ${newRoom}`);
                 }
+
+                const subObjectives = this.stepRoom(master, newRoom, existing, visited, depth + 1);
+                objectives.push(...subObjectives);
             }
         }
 

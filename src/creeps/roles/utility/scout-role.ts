@@ -93,6 +93,7 @@ export class ScoutRole implements Role {
                 const data = obj.data as ObjectiveScoutData
                 if (data) {
                     const scoutData = this.collectData(creep, obj, data);
+                    if (!global.scoutData) { global.scoutData = {}; }
                     global.scoutData[scoutData.room] = scoutData;
                     return true;
                 }

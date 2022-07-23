@@ -5,8 +5,8 @@ import { Controller } from "./controller";
 import { Logger } from "logger";
 
 import { isMyRoom, isRemote, isResourceConstant } from "utils/utils";
-import { ContainerDemandTaskRepo } from "repos/container/container-demand-task-repo";
-import { ContainerSupplyTaskRepo } from "repos/container/container-supply-task-repo";
+import { ContainerDemandTaskRepo } from "repos/tasks/container/container-demand-task-repo";
+import { ContainerSupplyTaskRepo } from "repos/tasks/container/container-supply-task-repo";
 
 import profiler from "screeps-profiler";
 

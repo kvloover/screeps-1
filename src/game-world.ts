@@ -4,12 +4,15 @@ import { Logger } from "logger";
 import { Manager, Managers } from "manager";
 import { Persistency, Persistent } from "repos/persistent";
 import { GarbageCollector } from "utils/garbage-collect";
+import { Brain } from "objectives/brain";
 // import { RoleService, RoleServices } from "creeps/roles/role-service-registry";
 
 @injectable()
 export class GameWorld {
 
-    constructor(private log: Logger) { }
+    constructor(private log: Logger) {
+        this.log.info('GameWorld', 'GameWorld initialized');
+    }
 
     private cleanMemory(persistent: Persistent[]): void {
         if (!Memory.creeps) return;
@@ -40,6 +43,9 @@ export class GameWorld {
 
         // Clean old memory | TODO: move to GC ?
         this.cleanMemory(persistency);
+
+        // Run brain
+        container.resolve(Brain).process();
 
         // Main logic
         _.forEach(Game.rooms, room => {

@@ -56,7 +56,7 @@ export class Pathing {
 
     public scoutRoom(creep: Creep, room: string, allowHostile: boolean = false): boolean {
         const pos = new RoomPosition(25, 25, room);
-        const range = 24;
+        const range = 23;
         if (creep.room.name == room && pos.getRangeTo(creep.pos) <= range) return false;
         creep.travelTo(pos, { range: range, allowHostile: allowHostile });
         return true;

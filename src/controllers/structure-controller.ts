@@ -7,7 +7,7 @@ import { Logger } from "logger";
 import profiler from "screeps-profiler";
 import { initHeapMemory } from "structures/memory/structure-memory";
 import { ObjectConstant } from "utils/custom-types";
-import { RepairTaskRepo } from "repos/structures/repair-task-repo";
+import { RepairTaskRepo } from "repos/tasks/structures/repair-task-repo";
 
 // let structures: { [room: string]: { id: Id<_HasId>, pos: RoomPosition }[] };
 
