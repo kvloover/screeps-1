@@ -7,6 +7,7 @@ export interface ScoutData {
     controller: RoomPosition | undefined;
 
     owner: string | undefined;
+    reservation: string | undefined;
     level: number | undefined;
 }
 

@@ -107,6 +107,7 @@ export class ScoutRole implements Role {
     private collectData(creep: Creep, objective: Objective, data: ObjectiveScoutData): ScoutData {
         const controller = creep.room.controller?.pos;
         const owner = creep.room.controller?.owner?.username;
+        const reservation = creep.room.controller?.reservation?.username;
         const level = creep.room.controller?.level;
         let depth = 1;
         if (!Game.rooms.hasOwnProperty(objective.master) || !isMyRoom(Game.rooms[objective.master])) {
@@ -120,6 +121,7 @@ export class ScoutRole implements Role {
             depth: depth,
 
             owner: owner,
+            reservation: reservation,
             controller: controller,
             level: level,
 
