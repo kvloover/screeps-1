@@ -74,9 +74,7 @@ export class ConquerHandler implements Handler {
                 if (Game.rooms.hasOwnProperty(newRoom) && isMyRoom(Game.rooms[newRoom])) continue;
                 const scoutData = global.scoutData[newRoom];
 
-                // leave depth 1 for remote mining
-                if (depth > 1 && scoutData) {
-
+                if (scoutData) {
                     let check = true;
                     if (existing.find(o => (o.data as ObjectiveConquerData)?.room == newRoom)) check = false;
                     if (scoutData.lastVisited < Game.time - 200) check = false; // only initiate new remote when we know the situation
