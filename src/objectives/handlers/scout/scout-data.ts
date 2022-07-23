@@ -5,10 +5,11 @@ export interface ScoutData {
     depth: number;
 
     controller: RoomPosition | undefined;
+    level: number | undefined;
 
     owner: string | undefined;
     reservation: string | undefined;
-    level: number | undefined;
+    hostilePower: number;
 }
 
 declare global {

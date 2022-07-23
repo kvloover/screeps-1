@@ -109,24 +109,25 @@ export class ScoutRole implements Role {
         const owner = creep.room.controller?.owner?.username;
         const reservation = creep.room.controller?.reservation?.username;
         const level = creep.room.controller?.level;
-        let depth = 1;
-        if (!Game.rooms.hasOwnProperty(objective.master) || !isMyRoom(Game.rooms[objective.master])) {
-            if (global.scoutData.hasOwnProperty(objective.master)) {
-                depth = global.scoutData[objective.master].depth + 1;
-            }
-        }
+
+        const hostilePower = creep.room.find(FIND_HOSTILE_CREEPS).reduce((s, c) =>
+            c.getActiveBodyparts(ATTACK)
+            + c.getActiveBodyparts(RANGED_ATTACK)
+            + c.getActiveBodyparts(HEAL), 0);
 
         return {
             room: creep.room.name,
-            depth: depth,
+            depth: data.depth,
 
-            owner: owner,
-            reservation: reservation,
             controller: controller,
             level: level,
 
+            owner: owner,
+            reservation: reservation,
+            hostilePower: hostilePower,
+
             lastVisited: Game.time,
-            lastVisitedByRoom: objective.master
+            lastVisitedByRoom: objective.master,
         }
     }
 
