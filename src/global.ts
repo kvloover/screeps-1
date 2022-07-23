@@ -39,6 +39,7 @@ declare global {
         drain: boolean;
         healer: boolean;
 
+        remote_builder: boolean;
         remote_mining: number | undefined;
         remote_hauler: number | undefined;
         remote_defend: number | undefined;
