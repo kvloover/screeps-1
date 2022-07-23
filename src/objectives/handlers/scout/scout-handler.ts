@@ -40,7 +40,7 @@ export class ScoutHandler implements Handler {
                 if (existing.find(o => (o.data as ObjectiveScoutData)?.room == newRoom)) continue;
 
                 if (!global.scoutData?.hasOwnProperty(newRoom) || global.scoutData[newRoom].lastVisited < Game.time - 1000) {
-                    const data: ObjectiveScoutData = { started: Game.time, room: newRoom };
+                    const data: ObjectiveScoutData = { started: Game.time, room: newRoom, origin: roomName };
                     const obj = new Objective(master, this.type, data);
                     objectives.push(obj);
 
@@ -49,8 +49,11 @@ export class ScoutHandler implements Handler {
                     this.log.info(roomName, `adding scout objective for ${newRoom}`);
                 }
 
-                const subObjectives = this.stepRoom(master, newRoom, existing, visited, depth + 1);
-                objectives.push(...subObjectives);
+                if (!global.scoutData || !global.scoutData.hasOwnProperty(newRoom) || !global.scoutData[newRoom].owner) {
+                    const subObjectives = this.stepRoom(master, newRoom, existing, visited, depth + 1);
+                    objectives.push(...subObjectives);
+                }
+
             }
         }
 
@@ -99,4 +102,5 @@ export class ScoutHandler implements Handler {
 
 export interface ObjectiveScoutData extends ObjectiveData {
     room: string;
+    origin: string;
 }
