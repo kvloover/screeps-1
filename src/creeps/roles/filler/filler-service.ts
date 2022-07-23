@@ -14,6 +14,8 @@ import { DropTaskRepo } from "repos/misc/drop-task-repo";
 import { CombinedRepo } from "repos/tasks/_base/combined-repo";
 
 import profiler from "screeps-profiler";
+import { StorageSupplyTaskRepo } from "repos/storage/storage-supply-task-repo";
+import { TerminalSupplyTaskRepo } from "repos/terminal/terminal-supply-task-repo";
 
 /**
  * drops/container to demand ~ hauler
@@ -29,9 +31,16 @@ export class FillerSupplierRole extends FillerRole {
     constructor(log: Logger, pathing: Pathing,
         provider: DropTaskRepo,
         containers: ContainerSupplyTaskRepo,
+        stockpile: StorageSupplyTaskRepo,
+        terminalOut: TerminalSupplyTaskRepo,
         demands: SpawnDemandTaskRepo) {
         super(log, pathing,
-            new CombinedRepo('combined-supply', log, [{ offset: 0, repo: provider }, { offset: 3, repo: containers }]),
+            new CombinedRepo('combined-supply', log, [
+                { offset: 0, repo: provider },
+                { offset: 3, repo: containers },
+                { offset: 6, repo: stockpile },
+                { offset: 9, repo: terminalOut },
+            ]),
             demands);
     }
 
@@ -55,9 +64,16 @@ export class FillerStorageRole extends FillerRole {
     constructor(log: Logger, pathing: Pathing,
         provider: DropTaskRepo,
         containers: ContainerSupplyTaskRepo,
+        stockpile: StorageSupplyTaskRepo,
+        terminalOut: TerminalSupplyTaskRepo,
         demands: StorageDemandTaskRepo) {
         super(log, pathing,
-            new CombinedRepo('combined-supply', log, [{ offset: 0, repo: provider }, { offset: 3, repo: containers }]),
+            new CombinedRepo('combined-supply', log, [
+                { offset: 0, repo: provider },
+                { offset: 3, repo: containers },
+                { offset: 6, repo: stockpile },
+                { offset: 9, repo: terminalOut },
+            ]),
             demands);
     }
 
