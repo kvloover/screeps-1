@@ -76,7 +76,7 @@
             },
             {
                 "role": "upgrader",
-                "priority": 9,
+                "priority": 10,
                 "count": 4,
                 "template": {
                     "carry": 1,

@@ -1,5 +1,5 @@
 import { LogFilter, LogLevel } from "logger";
-import { Task } from "repos/task";
+import { Task } from "repos/tasks/task";
 import { CreepState } from "./utils/creep-state";
 
 export { };
@@ -59,6 +59,8 @@ declare global {
 
         memoryId: undefined | Id<_HasId>; // to store useful Id in memory
         memoryPos: undefined | RoomPosition; // to store useful pos in memory
+
+        objective: undefined | string;
 
         tasks: { [key: string]: CreepTask | undefined };
         tasks_blacklist: { [key: string]: string[] }; // ignore specific requesters for the given type
