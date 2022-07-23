@@ -19,15 +19,6 @@ export abstract class ClaimerRole implements Role {
     constructor(protected pathing: Pathing) { }
 
     public run(creep: Creep): void {
-        if (!creep.memory.targetRoom) {
-            // get setting on room:
-            const roomMem = Memory.rooms[creep.memory.room];
-            if (roomMem) {
-                creep.memory.targetRoom = roomMem.conquer ?? roomMem.remote;
-                creep.memory.state = roomMem.conquer ? CreepState.claim : CreepState.reserve;
-            }
-        }
-
         if (!creep.memory.targetId) {
             if (creep.memory.targetRoom) {
                 if (!Game.rooms.hasOwnProperty(creep.memory.targetRoom)) {

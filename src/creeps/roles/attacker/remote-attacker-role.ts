@@ -64,22 +64,10 @@ export abstract class RemoteAttackerRole extends RangedAttackerRole implements R
     }
 
     public act(creep: Creep): void {
-        if (creep.memory.targetRoom
-            && !creep.memory.target
-            && !creep.memory.targetId
-            && creep.room.name != creep.memory.targetRoom) {
-            if (!Game.rooms.hasOwnProperty(creep.memory.targetRoom)) {
-                // move to room
-                this.pathing.scoutRoom(creep, creep.memory.targetRoom, true);
-            } else {
-                // move to room
-                this.pathing.scoutRoom(creep, creep.memory.targetRoom, true);
-                // const room = Game.rooms[creep.memory.targetRoom]
-                // super.findAttack(creep, room);;
-            }
-        } else {
-            super.findAttack(creep, creep.memory.targetRoom ? Game.rooms[creep.memory.targetRoom] : creep.room);
-        }
+        const room = creep.memory.targetRoom ? Game.rooms[creep.memory.targetRoom] : creep.room;
+        if (!super.findAttack(creep, room)) {
+            if (creep.memory.targetRoom) this.pathing.scoutRoom(creep, creep.memory.targetRoom, true);
+        };
     }
 
     public flee(creep: Creep): void {
