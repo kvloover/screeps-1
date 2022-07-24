@@ -61,26 +61,26 @@
                 }
             },
             {
-                "role": "harvester",
+                "role": "filler",
                 "priority": 7,
+                "count": 1,
+                "template": {
+                    "carry": 1,
+                    "move": 1
+                }
+            },
+            {
+                "role": "harvester",
+                "priority": 8,
                 "count": 4
             },
             {
                 "role": "hauler",
-                "priority": 8,
+                "priority": 9,
                 "count": 2,
                 "template": {
                     "carry": 2,
                     "move": 2
-                }
-            },
-            {
-                "role": "filler",
-                "priority": 8,
-                "count": 1,
-                "template": {
-                    "carry": 4,
-                    "move": 1
                 }
             },
             {
@@ -133,21 +133,21 @@
                 "count": 2
             },
             {
+                "role": "filler",
+                "priority": 3,
+                "count": 1,
+                "template": {
+                    "carry": 2,
+                    "move": 1
+                }
+            },
+            {
                 "role": "hauler",
                 "priority": 3,
                 "count": 1,
                 "template": {
                     "carry": 4,
                     "move": 4
-                }
-            },
-            {
-                "role": "filler",
-                "priority": 3,
-                "count": 1,
-                "template": {
-                    "carry": 4,
-                    "move": 1
                 }
             },
             {
@@ -224,21 +224,21 @@
                 }
             },
             {
+                "role": "filler",
+                "priority": 3,
+                "count": 1,
+                "template": {
+                    "carry": 2,
+                    "move": 1
+                }
+            },
+            {
                 "role": "hauler",
                 "priority": 3,
                 "count": 1,
                 "template": {
                     "carry": 3,
                     "move": 2
-                }
-            },
-            {
-                "role": "filler",
-                "priority": 3,
-                "count": 1,
-                "template": {
-                    "carry": 4,
-                    "move": 1
                 }
             },
             {
@@ -333,21 +333,21 @@
                 }
             },
             {
-                "role": "hauler",
-                "priority": 3,
-                "count": 1,
-                "template": {
-                    "move": 8,
-                    "carry": 8
-                }
-            },
-            {
                 "role": "filler",
                 "priority": 3,
                 "count": 1,
                 "template": {
                     "carry": 4,
                     "move": 1
+                }
+            },
+            {
+                "role": "hauler",
+                "priority": 3,
+                "count": 1,
+                "template": {
+                    "move": 8,
+                    "carry": 8
                 }
             },
             {

@@ -7,3 +7,7 @@
 export interface ObjectiveData {
     started: number;
 }
+
+export interface ObjectiveRoomData extends ObjectiveData {
+    room: string;
+}

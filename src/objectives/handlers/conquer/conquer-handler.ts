@@ -2,7 +2,7 @@ import { singleton } from "tsyringe";
 import { Logger } from "logger";
 
 import { Handler } from "objectives/entities/handler";
-import { ObjectiveData } from "objectives/entities/objective";
+import { ObjectiveData, ObjectiveRoomData } from "objectives/entities/objective";
 import { Objective } from "repos/objectives/objective";
 import { isMyRoom, whoAmI } from "utils/utils";
 
@@ -13,7 +13,7 @@ export class ConquerHandler implements Handler {
 
     constructor(private log: Logger) { }
 
-    generateObjectives(existing: Objective[]): Objective[] {
+    generateObjectives(existing: Objective[], other: Objective[]): Objective[] {
         let rooms = Object.values(Game.rooms).filter(isMyRoom).length;
         rooms += existing.filter(i => !Game.rooms.hasOwnProperty((i.data as ObjectiveConquerData).room)).length;
 
@@ -28,9 +28,12 @@ export class ConquerHandler implements Handler {
 
             if (isMyRoom(room)) {
                 if ((room.controller?.level || 0) >= 5) {
+
+                    this.log.debug(room.name, `brain - generating conquer objectives`);
+
                     const conquer = Memory.rooms[roomName].conquer;
                     if (!conquer) {
-                        const subObjectives = this.stepRoom(roomName, roomName, existing, visited);
+                        const subObjectives = this.stepRoom(roomName, roomName, existing, other, visited);
                         objectives.push(...subObjectives);
                         rooms += subObjectives.length; // should only be 1
                     } else {
@@ -46,7 +49,7 @@ export class ConquerHandler implements Handler {
                         const data: ObjectiveConquerData = { started: Game.time, room: conquer, controller: conqRoom.controller.pos };
                         const obj = new Objective(roomName, this.type, data);
                         objectives.push(obj);
-                        this.log.info(roomName, `re-attached conquer objective for ${conquer}`);
+                        this.log.info(roomName, `brain - re-attached conquer objective for ${conquer}`);
                     }
                 }
             }
@@ -55,7 +58,7 @@ export class ConquerHandler implements Handler {
         return objectives;
     }
 
-    stepRoom(master: string, roomName: string, existing: Objective[], visited: string[], depth: number = 1): Objective[] {
+    stepRoom(master: string, roomName: string, existing: Objective[], other: Objective[], visited: string[], depth: number = 1): Objective[] {
         const objectives: Objective[] = [];
         if (depth > 2) return objectives;
 
@@ -64,20 +67,23 @@ export class ConquerHandler implements Handler {
         const exits = Game.map.describeExits(roomName);
         if (exits) {
 
-            const allScouted = !Object.values(exits).some(([direction, newRoom]) => !global.scoutData.hasOwnProperty(newRoom));
+            const allScouted = !Object.values(exits).some((newRoom) => !global.scoutData.hasOwnProperty(newRoom));
             if (!allScouted) return objectives; // wait for all scouted
 
             const sources = (rm: string) => global.scoutData[rm].sources || 0
-            const sorted = Object.entries(exits).sort(([a, b], [c, d]) => - sources(b) - sources(d));
+            const sorted = Object.values(exits).sort((a, b) => sources(a) - sources(b));
 
-            for (let [direction, newRoom] of sorted) {
+            for (let newRoom of sorted) {
+                this.log.debug(newRoom, `brain - recursing conquer objectives for ${master}`);
+
                 if (Game.rooms.hasOwnProperty(newRoom) && isMyRoom(Game.rooms[newRoom])) continue;
                 const scoutData = global.scoutData[newRoom];
 
                 if (scoutData) {
                     let check = true;
                     if (existing.find(o => (o.data as ObjectiveConquerData)?.room == newRoom)) check = false;
-                    if (scoutData.lastVisited < Game.time - 200) check = false; // only initiate new remote when we know the situation
+                    if (other.find(o => o.type != 'scout' && (o.data as ObjectiveRoomData)?.room == newRoom)) check = false;
+                    if (scoutData.lastVisited < Game.time - 400) check = false; // only initiate new remote when we know the situation
                     if (!scoutData.sources || scoutData.sources == 0) check = false;
                     if (scoutData.owner) check = false;
                     if (scoutData.hostilePower > 0) check = false;
@@ -87,13 +93,16 @@ export class ConquerHandler implements Handler {
                         const data: ObjectiveConquerData = { started: Game.time, room: newRoom, controller: scoutData.controller };
                         const obj = new Objective(master, this.type, data);
                         objectives.push(obj);
-                        this.log.info(master, `created conquer objective for ${newRoom}`);
+
+                        this.log.info(master, `brain - created conquer objective for ${newRoom}`);
+                        this.log.debug(newRoom, `brain - set as remote for ${master}`);
+
                         return objectives; // do not check further
                     }
                 }
 
                 if (scoutData && !scoutData.owner) {
-                    const subObjectives = this.stepRoom(master, newRoom, existing, visited, depth + 1);
+                    const subObjectives = this.stepRoom(master, newRoom, existing, other, visited, depth + 1);
                     objectives.push(...subObjectives);
                     if (objectives.length > 0) return objectives; // do not check further
                 }
@@ -125,7 +134,7 @@ export class ConquerHandler implements Handler {
                 + c.getActiveBodyparts(HEAL), 0);
 
             if (hostilePower > 0.9 * friendlyPower) {
-                this.log.info(obj.master, `cancelling remote objective for ${data.room}`);
+                this.log.info(obj.master, `brain - cancelling remote objective for ${data.room}`);
 
                 roomMem.conquer = undefined;
                 roomMem.conquerer = false;
@@ -157,7 +166,6 @@ export class ConquerHandler implements Handler {
 
 }
 
-export interface ObjectiveConquerData extends ObjectiveData {
-    room: string;
+export interface ObjectiveConquerData extends ObjectiveRoomData {
     controller: RoomPosition;
 }

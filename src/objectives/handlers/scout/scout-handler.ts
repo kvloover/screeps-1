@@ -2,7 +2,7 @@ import { singleton } from "tsyringe";
 import { Logger } from "logger";
 
 import { Handler } from "objectives/entities/handler";
-import { ObjectiveData } from "objectives/entities/objective";
+import { ObjectiveData, ObjectiveRoomData } from "objectives/entities/objective";
 import { Objective } from "repos/objectives/objective";
 import { CreepState } from "utils/creep-state";
 import { isMyRoom } from "utils/utils";
@@ -15,7 +15,7 @@ export class ScoutHandler implements Handler {
 
     constructor(private log: Logger) { }
 
-    generateObjectives(existing: Objective[]): Objective[] {
+    generateObjectives(existing: Objective[], other: Objective[]): Objective[] {
         const objectives: Objective[] = [];
         const visited: string[] = [];
         for (let [roomName, room] of Object.entries(Game.rooms)) {
@@ -100,8 +100,7 @@ export class ScoutHandler implements Handler {
     }
 }
 
-export interface ObjectiveScoutData extends ObjectiveData {
-    room: string;
+export interface ObjectiveScoutData extends ObjectiveRoomData {
     origin: string;
     depth: number;
 }
