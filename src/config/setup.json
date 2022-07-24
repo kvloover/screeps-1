@@ -130,7 +130,7 @@
             {
                 "role": "harvester",
                 "priority": 2,
-                "count": 2
+                "count": 1
             },
             {
                 "role": "filler",
@@ -146,14 +146,14 @@
                 "priority": 3,
                 "count": 1,
                 "template": {
-                    "carry": 4,
-                    "move": 4
+                    "carry": 2,
+                    "move": 2
                 }
             },
             {
                 "role": "harvester",
                 "priority": 4,
-                "count": 4
+                "count": 3
             },
             {
                 "role": "upgrader",
