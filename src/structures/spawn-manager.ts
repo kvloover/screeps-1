@@ -29,13 +29,23 @@ export class SpawnManager implements Manager {
     }
 
     private isPrio(room: Room, roomCreeps: Creep[], cfg: roleConfig): boolean {
+        if (cfg.count <= 0) return false;
+
+        const current = roomCreeps?.filter(c => c.memory.role === cfg.role
+            && (!c.ticksToLive // spawning
+                || c.ticksToLive > c.body.length * 3
+            ))?.length;
+
         return (cfg.count > 0)
             && (!cfg.emergency || (room.memory.emergency?.active))
-            && (!cfg.condition || (room.memory.hasOwnProperty(cfg.condition) && (room.memory as any)[cfg.condition]))
-            && (roomCreeps?.filter(c => c.memory.role === cfg.role
-                && (!c.ticksToLive // spawning
-                    || c.ticksToLive > c.body.length * 3
-                ))?.length < cfg.count);
+            && (!cfg.condition
+                || (room.memory.hasOwnProperty(cfg.condition)
+                    && (
+                        (cfg.dynamic_condition && (room.memory as any)[cfg.condition] > current)
+                        || (!cfg.dynamic_condition && (room.memory as any)[cfg.condition])
+                    )
+                ))
+            && (cfg.dynamic_condition || current < cfg.count);
     }
 
     protected manageSpawns(room: Room): void {
@@ -124,6 +134,7 @@ export class SpawnManager implements Manager {
             target: undefined,
             memoryId: undefined,
             memoryPos: undefined,
+            objective: undefined,
             tasks: {},
             tasks_blacklist: {},
             started: 0

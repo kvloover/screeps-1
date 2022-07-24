@@ -1,4 +1,4 @@
-import { Task } from "repos/task";
+import { Task } from "repos/tasks/task";
 import { injectable } from "tsyringe";
 
 @injectable()

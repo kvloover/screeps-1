@@ -1,5 +1,5 @@
 import { LogFilter, LogLevel } from "logger";
-import { Task } from "repos/task";
+import { Task } from "repos/tasks/task";
 import { CreepState } from "./utils/creep-state";
 
 export { };
@@ -24,19 +24,26 @@ declare global {
         manual: boolean;
 
         remote: string | undefined;
-        attack: string | undefined;
-        staging: string | undefined;
         conquer: string | undefined;
 
-        debug: boolean;
+        attack: string | undefined;
+        staging: string | undefined;
+
+        scout: boolean;
+        reserver: boolean;
+        conquerer: boolean;
+
         upgrading: boolean;
         building: boolean;
-        claim: boolean;
+        reseve: boolean;
         drain: boolean;
         healer: boolean;
-        remote_attack: boolean;
-        remote_mining: boolean;
-        remote_hauler: boolean;
+
+        remote_builder: boolean;
+        remote_mining: number | undefined;
+        remote_hauler: number | undefined;
+        remote_defend: number | undefined;
+        conquer_attack: number | undefined;
 
         supply: boolean;
         request: boolean;
@@ -59,6 +66,8 @@ declare global {
 
         memoryId: undefined | Id<_HasId>; // to store useful Id in memory
         memoryPos: undefined | RoomPosition; // to store useful pos in memory
+
+        objective: undefined | string;
 
         tasks: { [key: string]: CreepTask | undefined };
         tasks_blacklist: { [key: string]: string[] }; // ignore specific requesters for the given type

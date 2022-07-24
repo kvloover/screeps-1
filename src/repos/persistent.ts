@@ -1,23 +1,25 @@
 import { registry } from "tsyringe";
 
-import { LinkDemandTaskRepo } from "./link/link-demand-task-repo";
-import { HarvestTaskRepo } from "./source/harvest-task-repo";
-import { SpawnDemandTaskRepo } from "./spawn/spawn-demand-task-repo";
-import { LinkSupplyTaskRepo } from "./link/link-supply-task-repo";
-import { StorageSupplyTaskRepo } from "./storage/storage-supply-task-repo";
-import { StorageDemandTaskRepo } from "./storage/storage-demand-task-repo";
-import { ConstructionTaskRepo } from "./structures/construction-task-repo";
-import { RepairTaskRepo } from "./structures/repair-task-repo";
-import { LinkSupplyUtilityTaskRepo } from "./link/link-supply-utility-task-repo";
-import { RequestTaskRepo } from "./terminal/request-task-repo";
-import { ExchangeTaskRepo } from "./terminal/exchange-task-repo";
-import { ContainerDemandTaskRepo } from "./container/container-demand-task-repo";
-import { ContainerDemandTempTaskRepo } from "./container/container-demand-temp-task-repo";
-import { ContainerSupplyTaskRepo } from "./container/container-supply-task-repo";
-import { DropTaskRepo } from "./misc/drop-task-repo";
-import { TowerDemandTaskRepo } from "./misc/tower-demand-task-repo";
-import { TerminalDemandTaskRepo } from "./terminal/terminal-demand-task-repo";
-import { TerminalSupplyTaskRepo } from "./terminal/terminal-supply-task-repo";
+import { ObjectiveRepo } from "./objectives/objectives-repo";
+
+import { ContainerDemandTaskRepo } from "./tasks/container/container-demand-task-repo";
+import { ContainerDemandTempTaskRepo } from "./tasks/container/container-demand-temp-task-repo";
+import { ContainerSupplyTaskRepo } from "./tasks/container/container-supply-task-repo";
+import { LinkDemandTaskRepo } from "./tasks/link/link-demand-task-repo";
+import { LinkSupplyTaskRepo } from "./tasks/link/link-supply-task-repo";
+import { LinkSupplyUtilityTaskRepo } from "./tasks/link/link-supply-utility-task-repo";
+import { DropTaskRepo } from "./tasks/misc/drop-task-repo";
+import { TowerDemandTaskRepo } from "./tasks/misc/tower-demand-task-repo";
+import { HarvestTaskRepo } from "./tasks/source/harvest-task-repo";
+import { SpawnDemandTaskRepo } from "./tasks/spawn/spawn-demand-task-repo";
+import { StorageDemandTaskRepo } from "./tasks/storage/storage-demand-task-repo";
+import { StorageSupplyTaskRepo } from "./tasks/storage/storage-supply-task-repo";
+import { ConstructionTaskRepo } from "./tasks/structures/construction-task-repo";
+import { RepairTaskRepo } from "./tasks/structures/repair-task-repo";
+import { ExchangeTaskRepo } from "./tasks/terminal/exchange-task-repo";
+import { RequestTaskRepo } from "./tasks/terminal/request-task-repo";
+import { TerminalDemandTaskRepo } from "./tasks/terminal/terminal-demand-task-repo";
+import { TerminalSupplyTaskRepo } from "./tasks/terminal/terminal-supply-task-repo";
 
 export interface Persistent {
     restore(): void;
@@ -46,6 +48,7 @@ export interface Persistent {
     { token: Persistency.token, useToken: ExchangeTaskRepo },
     { token: Persistency.token, useToken: TerminalDemandTaskRepo },
     { token: Persistency.token, useToken: TerminalSupplyTaskRepo },
+    { token: Persistency.token, useToken: ObjectiveRepo },
 ])
 export abstract class Persistency {
     public static Initialize(): void {

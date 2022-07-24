@@ -17,6 +17,9 @@ import { RemoteHaulerStorageRole } from "./hauler/remote-hauler-service";
 import { FillerLinkRole, FillerStorageRole, FillerSupplierRole } from "./filler/filler-service";
 import { DrainRole } from "./attacker/drain-role";
 import { HealerRole } from "./attacker/healer-role";
+import { ScoutRole } from "./utility/scout-role";
+import { ConquerAttackerRole, RemoteDefenderRole } from "./attacker/remote-attacker-service";
+import { ConquererRole, ReserverRole } from "./utility/claimer-service";
 
 export interface Role {
     name: string;
@@ -31,7 +34,8 @@ export interface Role {
 @registry([
     { token: Roles.token, useToken: MeleeAttackerRole },
     { token: Roles.token, useToken: RangedAttackerRole },
-    { token: Roles.token, useToken: ClaimerRole },
+    { token: Roles.token, useToken: ConquererRole },
+    { token: Roles.token, useToken: ReserverRole },
     { token: Roles.token, useToken: BuilderSourceRole },
     { token: Roles.token, useToken: BuilderContainerRole },
     { token: Roles.token, useToken: BuilderStorageRole },
@@ -49,12 +53,14 @@ export interface Role {
     { token: Roles.token, useToken: FillerLinkRole },
     { token: Roles.token, useToken: DrainRole },
     { token: Roles.token, useToken: HealerRole },
-    { token: Roles.token, useToken: RemoteAttackerRole },
+    { token: Roles.token, useToken: ConquerAttackerRole },
+    { token: Roles.token, useToken: RemoteDefenderRole },
     { token: Roles.token, useToken: RemoteBuilderSourceRole },
     { token: Roles.token, useToken: RemoteBuilderContainerRole },
     { token: Roles.token, useToken: RemoteBuilderStorageRole },
     { token: Roles.token, useToken: RemoteHarvestMidstreamRole },
     { token: Roles.token, useToken: RemoteHaulerStorageRole },
+    { token: Roles.token, useToken: ScoutRole },
 ])
 export abstract class Roles {
     static readonly token = Symbol('Role');

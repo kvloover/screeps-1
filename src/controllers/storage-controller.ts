@@ -1,11 +1,11 @@
 import { injectable } from "tsyringe";
 
-import { Task } from "repos/task";
+import { Task } from "repos/tasks/task";
 import { Controller } from "./controller";
 import { Logger } from "logger";
 
-import { StorageSupplyTaskRepo } from "repos/storage/storage-supply-task-repo";
-import { StorageDemandTaskRepo } from "repos/storage/storage-demand-task-repo";
+import { StorageSupplyTaskRepo } from "repos/tasks/storage/storage-supply-task-repo";
+import { StorageDemandTaskRepo } from "repos/tasks/storage/storage-demand-task-repo";
 import { isMyRoom, isResourceConstant, isStoreStructure } from "utils/utils";
 
 import profiler from "screeps-profiler";

@@ -4,11 +4,11 @@ import { Manager } from "manager";
 import { Logger } from "logger";
 import { isMyRoom, isStructure, isTower } from "utils/utils";
 
-import profiler from "screeps-profiler";
 import { initObjectMemory } from "structures/memory/structure-memory";
-import { RepairTaskRepo } from "repos/structures/repair-task-repo";
-import { threadId } from "worker_threads";
-import { Task } from "repos/task";
+import { RepairTaskRepo } from "repos/tasks/structures/repair-task-repo";
+import { Task } from "repos/tasks/task";
+
+import profiler from "screeps-profiler";
 
 @singleton()
 export class TowerManager implements Manager {

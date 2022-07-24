@@ -22,7 +22,6 @@ export class RoomManager implements Manager {
     }
 
     private initMemory(room: Room) {
-        if (!room.memory.debug) { room.memory.debug = false; }
     }
 
 }

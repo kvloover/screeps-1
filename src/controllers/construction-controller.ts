@@ -1,8 +1,8 @@
 import { injectable, injectAll } from "tsyringe";
 
 import { initConstructionMemory, initHeapMemory, initObjectMemory } from "structures/memory/structure-memory";
-import { Task } from "repos/task";
-import { ConstructionTaskRepo } from "repos/structures/construction-task-repo";
+import { Task } from "repos/tasks/task";
+import { ConstructionTaskRepo } from "repos/tasks/structures/construction-task-repo";
 import { Controller } from "./controller";
 import { Logger } from "logger";
 

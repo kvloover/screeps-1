@@ -7,8 +7,8 @@ import { isContainer, isDefined } from "utils/utils";
 import { Role } from "../role-registry";
 import { TransferRole } from "../_base/transfer-role";
 
-import { TaskRepo } from "repos/_base/task-repo";
-import { Task } from "repos/task";
+import { TaskRepo } from "repos/tasks/_base/task-repo";
+import { Task } from "repos/tasks/task";
 import { HarvestAction } from "./harvest-action";
 import { CREEP_AMOUNT_PER_ENERGY, CREEP_ENERGY_PER_PART, CREEP_RANGE } from "utils/constants";
 

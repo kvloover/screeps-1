@@ -4,8 +4,8 @@ import { Pathing } from "creeps/pathing";
 
 import { Role } from "../role-registry";
 
-import { Task } from "repos/task";
-import { TaskRepo } from "repos/_base/task-repo";
+import { Task } from "repos/tasks/task";
+import { TaskRepo } from "repos/tasks/_base/task-repo";
 import { TransferRole } from "../_base/transfer-role";
 import { HarvestAction } from "./harvest-action";
 

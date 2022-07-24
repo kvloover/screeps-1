@@ -1,4 +1,4 @@
-import { Task } from "repos/task";
+import { Task } from "repos/tasks/task";
 import { ObjectConstant, SOURCE } from "../../utils/custom-types";
 
 export const initObjectMemory = (room: RoomMemory, key: StructureConstant | ObjectConstant) => {

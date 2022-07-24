@@ -4,11 +4,11 @@ import { Manager } from "manager";
 import { Logger } from "logger";
 import { isTerminal, isMyRoom } from "utils/utils";
 
-import { ExchangeTaskRepo } from "repos/terminal/exchange-task-repo";
-import { RequestTaskRepo } from "repos/terminal/request-task-repo";
+import { ExchangeTaskRepo } from "repos/tasks/terminal/exchange-task-repo";
+import { RequestTaskRepo } from "repos/tasks/terminal/request-task-repo";
+import { Task } from "repos/tasks/task";
 
 import profiler from "screeps-profiler";
-import { Task } from "repos/task";
 
 // TODO move outside room based managers
 // TODO other resource types ! cost energy
