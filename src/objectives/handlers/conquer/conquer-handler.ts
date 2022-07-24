@@ -67,11 +67,14 @@ export class ConquerHandler implements Handler {
         const exits = Game.map.describeExits(roomName);
         if (exits) {
 
-            const allScouted = !Object.values(exits).some((newRoom) => !global.scoutData.hasOwnProperty(newRoom));
+            const allScouted = !Object.values(exits)
+                .some((newRoom) => !global.scoutData.hasOwnProperty(newRoom) && !Game.rooms.hasOwnProperty(newRoom));
             if (!allScouted) return objectives; // wait for all scouted
 
             const sources = (rm: string) => global.scoutData[rm].sources || 0
-            const sorted = Object.values(exits).sort((a, b) => sources(a) - sources(b));
+            const sorted = Object.values(exits)
+                .filter(a => !Game.rooms.hasOwnProperty(a) || !isMyRoom(Game.rooms[a]))
+                .sort((a, b) => sources(a) - sources(b));
 
             for (let newRoom of sorted) {
                 this.log.debug(newRoom, `brain - recursing conquer objectives for ${master}`);
