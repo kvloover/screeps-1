@@ -55,7 +55,9 @@ export class RemoteHandler implements Handler {
                 .some((newRoom) => !global.scoutData.hasOwnProperty(newRoom) && !Game.rooms.hasOwnProperty(newRoom));
             if (!allScouted) return objectives; // wait for all scouted
 
-            const sources = (rm: string) => global.scoutData[rm]?.sources || 0
+            const sources = (rm: string) => global.scoutData[rm]?.sources
+                || Game.rooms[rm]?.memory.objects?.source?.length
+                || 0;
             const sorted = Object.values(exits)
                 .filter(a => !Game.rooms.hasOwnProperty(a) || !isMyRoom(Game.rooms[a]))
                 .sort((a, b) => sources(a) - sources(b));
@@ -68,13 +70,27 @@ export class RemoteHandler implements Handler {
                 if (Game.rooms.hasOwnProperty(newRoom) && isMyRoom(Game.rooms[newRoom])) continue;
 
                 const scoutData = global.scoutData[newRoom];
-                if (scoutData.lastVisited < Game.time - 400) continue; // only initiate new remote when we know the situation
-                if (!scoutData.sources || scoutData.sources == 0) continue;
-                if (scoutData.owner) continue;
-                if (scoutData.hostilePower > 0) continue;
-                if (scoutData.reservation && scoutData.reservation != whoAmI()) continue;
+                let sources = 0;
+                if (scoutData) {
+                    if (scoutData.lastVisited < Game.time - 400) continue; // only initiate new remote when we know the situation
+                    if (!scoutData.sources || scoutData.sources == 0) continue;
+                    if (scoutData.owner) continue;
+                    if (scoutData.hostilePower > 0) continue;
+                    if (scoutData.reservation && scoutData.reservation != whoAmI()) continue;
 
-                const data: ObjectiveRemoteData = { started: Game.time, room: newRoom, sources: scoutData.sources };
+                    sources = scoutData.sources;
+                } else if (Game.rooms.hasOwnProperty(newRoom)) {
+                    const roomData = Game.rooms[newRoom];
+                    if (!roomData.memory.objects?.source || roomData.memory.objects?.source?.length == 0) continue;
+                    if (roomData.controller?.owner) continue;
+                    if (roomData.controller?.reservation && roomData.controller?.reservation.username != whoAmI()) continue;
+
+                    sources = roomData.memory.objects?.source?.length;
+                } else {
+                    continue;
+                }
+
+                const data: ObjectiveRemoteData = { started: Game.time, room: newRoom, sources: sources };
                 const obj = new Objective(master, this.type, data);
                 objectives.push(obj);
 

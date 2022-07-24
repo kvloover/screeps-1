@@ -74,17 +74,16 @@ export class ScoutRole implements Role {
     private idle(creep: Creep): void { }
 
     private scout(creep: Creep): void {
-        if (creep.memory.targetRoom) {
-            if (!this.pathing.scoutRoom(creep, creep.memory.targetRoom)) {
-
-                if (this.executeObjective(creep)) {
-                    // scout reached target room and data collected
-                    creep.memory.targetRoom = undefined;
-                    this.setState(creep, CreepState.idle);
-                }
+        if (creep.memory.targetRoom)
+            if (!this.executeObjective(creep)) {
+                this.pathing.scoutRoom(creep, creep.memory.targetRoom)
+            } else {
+                // scout reached target room and data collected
+                creep.memory.targetRoom = undefined;
+                this.setState(creep, CreepState.idle);
             }
-        }
     }
+
 
     private executeObjective(creep: Creep): boolean {
         if (creep.memory.objective) {
@@ -92,6 +91,8 @@ export class ScoutRole implements Role {
             if (obj) {
                 const data = obj.data as ObjectiveScoutData
                 if (data) {
+                    if (data.room != creep.room.name) return false;
+
                     const scoutData = this.collectData(creep, obj, data);
                     if (!global.scoutData) { global.scoutData = {}; }
                     global.scoutData[scoutData.room] = scoutData;
@@ -99,7 +100,6 @@ export class ScoutRole implements Role {
                 }
             }
         }
-
         // always return true if we can't perform scout objective => proceed to next objective
         return true;
     }

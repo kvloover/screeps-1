@@ -71,7 +71,9 @@ export class ConquerHandler implements Handler {
                 .some((newRoom) => !global.scoutData.hasOwnProperty(newRoom) && !Game.rooms.hasOwnProperty(newRoom));
             if (!allScouted) return objectives; // wait for all scouted
 
-            const sources = (rm: string) => global.scoutData[rm].sources || 0
+            const sources = (rm: string) => global.scoutData[rm]?.sources
+                || Game.rooms[rm]?.memory.objects?.source?.length
+                || 0;
             const sorted = Object.values(exits)
                 .filter(a => !Game.rooms.hasOwnProperty(a) || !isMyRoom(Game.rooms[a]))
                 .sort((a, b) => sources(a) - sources(b));
@@ -82,27 +84,41 @@ export class ConquerHandler implements Handler {
                 if (Game.rooms.hasOwnProperty(newRoom) && isMyRoom(Game.rooms[newRoom])) continue;
                 const scoutData = global.scoutData[newRoom];
 
+                let check = false;
+                let controller: RoomPosition | undefined;
                 if (scoutData) {
-                    let check = true;
-                    if (existing.find(o => (o.data as ObjectiveConquerData)?.room == newRoom)) check = false;
-                    if (other.find(o => o.type != 'scout' && (o.data as ObjectiveRoomData)?.room == newRoom)) check = false;
+                    check = true;
                     if (scoutData.lastVisited < Game.time - 400) check = false; // only initiate new remote when we know the situation
                     if (!scoutData.sources || scoutData.sources == 0) check = false;
                     if (scoutData.owner) check = false;
                     if (scoutData.hostilePower > 0) check = false;
                     if (scoutData.reservation && scoutData.reservation != whoAmI()) check = false;
 
-                    if (check && scoutData.controller) {
-                        const data: ObjectiveConquerData = { started: Game.time, room: newRoom, controller: scoutData.controller };
-                        const obj = new Objective(master, this.type, data);
-                        objectives.push(obj);
+                    controller = scoutData.controller;
+                } else if (Game.rooms.hasOwnProperty(newRoom)) {
+                    check = true;
+                    const roomData = Game.rooms[newRoom];
+                    if (!roomData.memory.objects?.source || roomData.memory.objects?.source?.length == 0) check = false;
+                    if (roomData.controller?.owner) check = false;;
+                    if (roomData.controller?.reservation && roomData.controller?.reservation.username != whoAmI()) check = false;;
 
-                        this.log.info(master, `brain - created conquer objective for ${newRoom}`);
-                        this.log.debug(newRoom, `brain - set as remote for ${master}`);
-
-                        return objectives; // do not check further
-                    }
+                    controller = roomData.controller?.pos;
                 }
+
+                if (existing.find(o => (o.data as ObjectiveConquerData)?.room == newRoom)) check = false;
+                if (other.find(o => o.type != 'scout' && (o.data as ObjectiveRoomData)?.room == newRoom)) check = false;
+
+                if (check && controller) {
+                    const data: ObjectiveConquerData = { started: Game.time, room: newRoom, controller: controller };
+                    const obj = new Objective(master, this.type, data);
+                    objectives.push(obj);
+
+                    this.log.info(master, `brain - created conquer objective for ${newRoom}`);
+                    this.log.debug(newRoom, `brain - set as remote for ${master}`);
+
+                    return objectives; // do not check further
+                }
+
 
                 if (scoutData && !scoutData.owner) {
                     const subObjectives = this.stepRoom(master, newRoom, existing, other, visited, depth + 1);
