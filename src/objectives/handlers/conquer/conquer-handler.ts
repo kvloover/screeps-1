@@ -82,6 +82,8 @@ export class ConquerHandler implements Handler {
                 this.log.debug(newRoom, `brain - recursing conquer objectives for ${master}`);
 
                 if (Game.rooms.hasOwnProperty(newRoom) && isMyRoom(Game.rooms[newRoom])) continue;
+                if (Memory.avoid && Memory.avoid.some(i => i == newRoom)) continue;
+
                 const scoutData = global.scoutData[newRoom];
 
                 let check = false;
@@ -160,7 +162,9 @@ export class ConquerHandler implements Handler {
 
             const avgFriendly = friendlies.length > 0 ? friendlyPower / friendlies.length : 0;
 
-            if (hostilePower > 2 * friendlyPower) {
+            const defenders = avgFriendly > 0 ? Math.max(Math.ceil(hostilePower / avgFriendly), 1) : 1;
+
+            if ((hostilePower > 10 && hostilePower > 2 * friendlyPower) || defenders > 7) {
                 this.log.info(obj.master, `brain - cancelling conquer objective for ${data.room}`);
 
                 roomMem.conquer = undefined;
@@ -169,7 +173,6 @@ export class ConquerHandler implements Handler {
 
                 return true;
             } else {
-                const defenders = avgFriendly > 0 ? Math.max(Math.ceil(hostilePower / avgFriendly), 1) : 1;
                 this.log.info(obj.master, `brain - update defender count to ${defenders} on conquer objective for ${data.room}`);
 
                 roomMem.conquer_attack = defenders;

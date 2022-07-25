@@ -143,7 +143,7 @@ export abstract class TransferRole {
         const stored = creep.memory.tasks[key];
         const memTask = stored?.task;
         if (memTask) {
-            this.log.debug(creep.room.name, `${creep.name}: consuming for ${key} task ${memTask.id}`);
+            this.log.debug(creep.room.name, `${creep.name}: consuming for ${key} task ${memTask.id} on ${repo.key}`);
             const dest = memTask.requester ? Game.getObjectById(memTask.requester) : null;
 
             const cont = this.beforeConsumeFrom(dest, creep);
@@ -171,7 +171,7 @@ export abstract class TransferRole {
         const stored = creep.memory.tasks[key];
         const memTask = stored?.task;
         if (memTask) {
-            this.log.debug(creep.room.name, `${creep.name}: supplying for ${key} task ${memTask.id}`);
+            this.log.debug(creep.room.name, `${creep.name}: supplying for ${key} task ${memTask.id} on ${repo.key}`);
             const dest = memTask.requester ? Game.getObjectById(memTask.requester) : null;
 
             const cont = this.beforeSupplyTo(dest, creep);

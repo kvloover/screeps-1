@@ -38,6 +38,7 @@ export class ScoutHandler implements Handler {
                 if (Game.rooms.hasOwnProperty(newRoom) && isMyRoom(Game.rooms[newRoom])) continue;
                 if (visited.includes(newRoom)) continue;
                 if (existing.find(o => (o.data as ObjectiveScoutData)?.room == newRoom)) continue;
+                if (Memory.avoid && Memory.avoid.some(i => i == newRoom)) continue;
 
                 if (!global.scoutData?.hasOwnProperty(newRoom) || global.scoutData[newRoom].lastVisited < Game.time - 1000) {
                     const data: ObjectiveScoutData = { started: Game.time, room: newRoom, origin: roomName, depth: depth };
@@ -65,6 +66,8 @@ export class ScoutHandler implements Handler {
         if (!data) return true; // finished invalid objective
         const roomMem = Memory.rooms[obj.master];
         if (!roomMem) return true; // invalid master room
+
+        if (Memory.avoid && Memory.avoid.some(i => i == data.room)) return true;
 
         // check if room has already been scouted
         if (global.scoutData?.hasOwnProperty(data.room) && global.scoutData[data.room].lastVisited > Game.time - 1000) {

@@ -12,6 +12,7 @@ export class GameWorld {
 
     constructor(private log: Logger) {
         this.log.info('GameWorld', 'GameWorld initialized');
+        global.lastReset = Game.time;
     }
 
     private cleanMemory(persistent: Persistent[]): void {

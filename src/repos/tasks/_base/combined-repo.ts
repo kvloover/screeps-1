@@ -1,6 +1,7 @@
 import { TaskRepo } from "./task-repo";
 import { Task } from "repos/tasks/task";
 import { Logger } from "logger";
+import { repeat } from "lodash";
 
 export class CombinedRepo implements TaskRepo<Task> {
 
@@ -85,6 +86,7 @@ export class CombinedRepo implements TaskRepo<Task> {
     registerTask(creep: Creep, task: Task, key: string): void {
         const set = this.repoForTask(task);
         if (set) { set.repo.registerTask(creep, task, key); }
+        const bounded = creep.memory.tasks[key];
     }
 
     linkTask(executer: Id<_HasId>, task: Task): void {

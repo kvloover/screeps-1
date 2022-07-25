@@ -83,6 +83,7 @@ declare global {
 
     namespace NodeJS {
         interface Global {
+            lastReset: number;
             repair?: Task[];
             timingOffset?: { [key in TimingKey]?: { [key: string]: number } }; // random stored in global for reuse
             visuals?: { [key: string]: { [key: string]: string } };

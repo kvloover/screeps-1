@@ -65,6 +65,8 @@ export class RemoteHandler implements Handler {
             for (let newRoom of sorted) {
                 this.log.debug(newRoom, `brain - recursing remote objectives for ${master}`);
 
+                if (Memory.avoid && Memory.avoid.some(i => i == newRoom)) continue;
+
                 if (existing.find(o => (o.data as ObjectiveRemoteData)?.room == newRoom)) continue;
                 if (other.find(o => o.type != 'scout' && (o.data as ObjectiveRoomData)?.room == newRoom)) continue;
                 if (Game.rooms.hasOwnProperty(newRoom) && isMyRoom(Game.rooms[newRoom])) continue;
@@ -133,8 +135,9 @@ export class RemoteHandler implements Handler {
 
             const avgFriendly = friendlies.length > 0 ? friendlyPower / friendlies.length : 0;
 
+            const defenders = avgFriendly > 0 ? Math.max(Math.ceil(hostilePower / avgFriendly), 1) : 1;
 
-            if (hostilePower > 2 * friendlyPower || isMyRoom(room)) {
+            if ((hostilePower > 10 && hostilePower > 2 * friendlyPower) || defenders > 7 || isMyRoom(room)) {
                 this.log.info(obj.master, `brain - cancelling remote objective for ${data.room}`);
 
                 roomMem.remote = undefined;
@@ -145,7 +148,6 @@ export class RemoteHandler implements Handler {
 
                 return true;
             } else {
-                const defenders = avgFriendly > 0 ? Math.max(Math.ceil(hostilePower / avgFriendly), 1) : 1;
                 this.log.info(obj.master, `brain - update defender count to ${defenders} on remote objective for ${data.room}`);
 
                 roomMem.remote = data.room;
