@@ -18,25 +18,29 @@ export class Brain {
         const objectives = this.repo.list();
 
         for (let handler of this.handlers) {
-            const existing = objectives.filter(i => i.type == handler.type);
-            const others = objectives.filter(i => i.type != handler.type);
-            const newObj = handler.generateObjectives(existing, others);
+            try {
+                const existing = objectives.filter(i => i.type == handler.type);
+                const others = objectives.filter(i => i.type != handler.type);
+                const newObj = handler.generateObjectives(existing, others);
 
-            // Handle prev objectives first
-            for (let obj of existing) {
-                if (handler.handle(obj)) {
-                    this.repo.removeById(obj.id);
+                // Handle prev objectives first
+                for (let obj of existing) {
+                    if (handler.handle(obj)) {
+                        this.repo.removeById(obj.id);
+                    }
                 }
-            }
 
-            // If persisting, keep them in memory
-            for (let obj of newObj) {
-                if (handler.handle(obj)) {
-                    this.repo.removeById(obj.id);
-                } else {
-                    this.repo.add(obj);
-                    objectives.push(obj);
+                // If persisting, keep them in memory
+                for (let obj of newObj) {
+                    if (handler.handle(obj)) {
+                        this.repo.removeById(obj.id);
+                    } else {
+                        this.repo.add(obj);
+                        objectives.push(obj);
+                    }
                 }
+            } catch (error) {
+                console.log(error);
             }
         }
     }

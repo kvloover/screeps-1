@@ -92,7 +92,9 @@ export class ConquerHandler implements Handler {
                     if (!scoutData.sources || scoutData.sources == 0) check = false;
                     if (scoutData.owner) check = false;
                     if (scoutData.hostilePower > 0) check = false;
-                    if (scoutData.reservation && scoutData.reservation != whoAmI()) check = false;
+                    if (scoutData.reservation
+                        && scoutData.reservation != whoAmI()
+                        && scoutData.reservation != 'Invader') check = false;
 
                     controller = scoutData.controller;
                 } else if (Game.rooms.hasOwnProperty(newRoom)) {
@@ -100,7 +102,10 @@ export class ConquerHandler implements Handler {
                     const roomData = Game.rooms[newRoom];
                     if (!roomData.memory.objects?.source || roomData.memory.objects?.source?.length == 0) check = false;
                     if (roomData.controller?.owner) check = false;;
-                    if (roomData.controller?.reservation && roomData.controller?.reservation.username != whoAmI()) check = false;;
+                    if (roomData.controller?.reservation
+                        && roomData.controller?.reservation.username != whoAmI()
+                        && roomData.controller?.reservation.username != 'Invader')
+                        check = false;
 
                     controller = roomData.controller?.pos;
                 }
@@ -147,19 +152,32 @@ export class ConquerHandler implements Handler {
                 + c.getActiveBodyparts(RANGED_ATTACK)
                 + c.getActiveBodyparts(HEAL), 0);
 
-            const friendlyPower = room.find(FIND_MY_CREEPS).reduce((s, c) =>
+            const friendlies = room.find(FIND_MY_CREEPS);
+            const friendlyPower = friendlies.reduce((s, c) =>
                 c.getActiveBodyparts(ATTACK)
                 + c.getActiveBodyparts(RANGED_ATTACK)
                 + c.getActiveBodyparts(HEAL), 0);
 
-            if (hostilePower > 0.9 * friendlyPower) {
-                this.log.info(obj.master, `brain - cancelling remote objective for ${data.room}`);
+            const avgFriendly = friendlies.length > 0 ? friendlyPower / friendlies.length : 0;
+
+            if (hostilePower > 2 * friendlyPower) {
+                this.log.info(obj.master, `brain - cancelling conquer objective for ${data.room}`);
 
                 roomMem.conquer = undefined;
                 roomMem.conquerer = false;
                 roomMem.remote_builder = false;
 
                 return true;
+            } else {
+                const defenders = avgFriendly > 0 ? Math.max(Math.ceil(hostilePower / avgFriendly), 1) : 1;
+                this.log.info(obj.master, `brain - update defender count to ${defenders} on conquer objective for ${data.room}`);
+
+                roomMem.conquer_attack = defenders;
+                roomMem.conquer = data.room;
+                roomMem.conquerer = !room.controller?.my;
+                roomMem.remote_builder = (room.controller?.level || 0) <= 2;
+
+                return false;
             }
         }
 
@@ -174,6 +192,7 @@ export class ConquerHandler implements Handler {
             if (conqRoom.controller.my && conqRoom.controller.level <= 2) {
                 roomMem.conquerer = false;
                 roomMem.remote_builder = true;
+                roomMem.conquer_attack = 1;
                 return false;
             } else {
                 roomMem.conquerer = false;

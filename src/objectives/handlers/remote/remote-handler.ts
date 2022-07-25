@@ -18,7 +18,7 @@ export class RemoteHandler implements Handler {
         const visited: string[] = [];
         for (let [roomName, room] of Object.entries(Game.rooms)) {
             if (isMyRoom(room)) {
-                if ((room.controller?.level || 0) >= 3) {
+                if ((room.controller?.level || 0) >= 2) {
 
                     this.log.debug(room.name, `brain - generating remote objectives`);
 
@@ -117,17 +117,24 @@ export class RemoteHandler implements Handler {
 
         if (Game.rooms.hasOwnProperty(data.room)) {
             const room = Game.rooms[data.room];
-            const hostilePower = room.find(FIND_HOSTILE_CREEPS).reduce((s, c) =>
+            const hostiles = room.find(FIND_HOSTILE_CREEPS);
+            const hostilePower = hostiles.reduce((s, c) =>
                 c.getActiveBodyparts(ATTACK)
                 + c.getActiveBodyparts(RANGED_ATTACK)
                 + c.getActiveBodyparts(HEAL), 0);
 
-            const friendlyPower = room.find(FIND_MY_CREEPS).reduce((s, c) =>
+            // const avgHostile = hostilePower / hostiles.length;
+
+            const friendlies = room.find(FIND_MY_CREEPS);
+            const friendlyPower = friendlies.reduce((s, c) =>
                 c.getActiveBodyparts(ATTACK)
                 + c.getActiveBodyparts(RANGED_ATTACK)
                 + c.getActiveBodyparts(HEAL), 0);
 
-            if (hostilePower > 0.9 * friendlyPower || isMyRoom(room)) {
+            const avgFriendly = friendlies.length > 0 ? friendlyPower / friendlies.length : 0;
+
+
+            if (hostilePower > 2 * friendlyPower || isMyRoom(room)) {
                 this.log.info(obj.master, `brain - cancelling remote objective for ${data.room}`);
 
                 roomMem.remote = undefined;
@@ -137,6 +144,17 @@ export class RemoteHandler implements Handler {
                 roomMem.reserver = false;
 
                 return true;
+            } else {
+                const defenders = avgFriendly > 0 ? Math.max(Math.ceil(hostilePower / avgFriendly), 1) : 1;
+                this.log.info(obj.master, `brain - update defender count to ${defenders} on remote objective for ${data.room}`);
+
+                roomMem.remote = data.room;
+                roomMem.remote_mining = data.sources;
+                roomMem.remote_hauler = data.sources;
+                roomMem.remote_defend = defenders;
+                roomMem.reserver = true;
+
+                return false;
             }
         }
 

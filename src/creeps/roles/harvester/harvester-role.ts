@@ -25,6 +25,7 @@ export abstract class HarvesterRole extends TransferRole implements Role {
     constructor(log: Logger,
         pathing: Pathing,
         protected demands: TaskRepo<Task>,
+        protected buildTasks: TaskRepo<Task>,
         protected harvesting: HarvestAction,
         private rangeLimit?: number
     ) { super(log, pathing) }
@@ -34,7 +35,16 @@ export abstract class HarvesterRole extends TransferRole implements Role {
     }
 
     protected supply(creep: Creep) {
-        this.supplyToRepo(creep, this.demands, 'supply', RESOURCE_ENERGY, undefined, this.rangeLimit);
+        const key = 'supply';
+        const task = this.findTask(creep, this.demands, key, RESOURCE_ENERGY, undefined, this.rangeLimit);
+        if (task) {
+            this.supplyToRepo(creep, this.demands, 'supply', RESOURCE_ENERGY, undefined, this.rangeLimit);
+        } else {
+            // try to build containe if available
+            const buildTask = this.findTask(creep, this.buildTasks, key, RESOURCE_ENERGY, undefined, 2);
+            const repo = buildTask ? this.buildTasks : this.demands;
+            this.supplyToRepo(creep, repo, key, RESOURCE_ENERGY, creep.room.name, this.rangeLimit);
+        }
     }
 
     protected beforeSupplyTo(dest: _HasId | null, creep: Creep): boolean {
@@ -67,5 +77,4 @@ export abstract class HarvesterRole extends TransferRole implements Role {
 
         return true;
     }
-
 }

@@ -38,6 +38,8 @@ export class HarvestTaskRepo extends BaseRepo<Task> implements Persistent {
         invalid.forEach(id => {
             this.removeById(id);
         })
+
+        this.mergeEmpty();
     }
 
     clearReference(id: Id<_HasId>): void {

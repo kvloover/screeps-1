@@ -61,8 +61,17 @@
                 }
             },
             {
-                "role": "filler",
+                "role": "scout",
                 "priority": 7,
+                "condition": "scout",
+                "count": 1,
+                "template": {
+                    "move": 1
+                }
+            },
+            {
+                "role": "filler",
+                "priority": 8,
                 "count": 1,
                 "template": {
                     "carry": 1,
@@ -71,12 +80,12 @@
             },
             {
                 "role": "harvester",
-                "priority": 8,
+                "priority": 9,
                 "count": 4
             },
             {
                 "role": "hauler",
-                "priority": 9,
+                "priority": 10,
                 "count": 2,
                 "template": {
                     "carry": 2,
@@ -85,7 +94,7 @@
             },
             {
                 "role": "upgrader",
-                "priority": 10,
+                "priority": 11,
                 "count": 4,
                 "template": {
                     "carry": 1,
@@ -95,7 +104,7 @@
             },
             {
                 "role": "builder",
-                "priority": 10,
+                "priority": 12,
                 "count": 4,
                 "template": {
                     "carry": 2,
@@ -276,14 +285,48 @@
                 "count": 2
             },
             {
-                "role": "upgrader",
+                "role": "remote-defender",
+                "priority": 1,
+                "count": 2,
+                "condition": "remote_defend",
+                "dynamic_condition": true,
+                "template": {
+                    "ranged_attack": 2,
+                    "move": 3
+                }
+            },
+            {
+                "role": "remote-harvester",
                 "priority": 9,
+                "count": 2,
+                "condition": "remote_mining",
+                "dynamic_condition": true,
+                "template": {
+                    "move": 3,
+                    "carry": 1,
+                    "work": 3
+                }
+            },
+            {
+                "role": "remote-hauler",
+                "priority": 9,
+                "count": 1,
+                "condition": "remote_hauler",
+                "dynamic_condition": true,
+                "template": {
+                    "carry": 5,
+                    "move": 5
+                }
+            },
+            {
+                "role": "upgrader",
+                "priority": 10,
                 "condition": "upgrading",
                 "count": 4
             },
             {
                 "role": "builder",
-                "priority": 9,
+                "priority": 10,
                 "condition": "building",
                 "count": 4
             }
@@ -394,6 +437,17 @@
                 "count": 2
             },
             {
+                "role": "remote-defender",
+                "priority": 1,
+                "count": 2,
+                "condition": "remote_defend",
+                "dynamic_condition": true,
+                "template": {
+                    "ranged_attack": 4,
+                    "move": 4
+                }
+            },
+            {
                 "role": "remote-harvester",
                 "priority": 10,
                 "count": 4,
@@ -406,31 +460,31 @@
                 }
             },
             {
-                "role": "upgrader",
-                "priority": 10,
-                "condition": "upgrading",
-                "count": 4
-            },
-            {
                 "role": "remote-hauler",
                 "priority": 10,
                 "count": 1,
                 "condition": "remote_hauler",
-                "template": {
-                    "carry": 8,
-                    "move": 8
-                }
-            },
-            {
-                "role": "remote-hauler",
-                "priority": 10,
-                "count": 1,
-                "condition": "remote_mining",
                 "dynamic_condition": true,
                 "template": {
                     "carry": 8,
                     "move": 8
                 }
+            },
+            {
+                "role": "reserver",
+                "priority": 11,
+                "condition": "reserver",
+                "count": 1,
+                "template": {
+                    "claim": 1,
+                    "move": 1
+                }
+            },
+            {
+                "role": "upgrader",
+                "priority": 12,
+                "condition": "upgrading",
+                "count": 4
             }
         ]
     },
@@ -455,16 +509,6 @@
                     "move": 4,
                     "ranged_attack": 4,
                     "heal": 1
-                }
-            },
-            {
-                "role": "reserver",
-                "priority": 1,
-                "condition": "reserver",
-                "count": 1,
-                "template": {
-                    "claim": 1,
-                    "move": 1
                 }
             },
             {
@@ -494,10 +538,10 @@
                 "condition": "remote_defend",
                 "dynamic_condition": true,
                 "template": {
-                    "tough": 5,
+                    "tough": 1,
                     "ranged_attack": 4,
-                    "move": 3,
-                    "heal": 2
+                    "move": 6,
+                    "heal": 1
                 }
             },
             {
@@ -507,10 +551,10 @@
                 "condition": "conquer_attack",
                 "dynamic_condition": true,
                 "template": {
-                    "tough": 5,
+                    "tough": 1,
                     "ranged_attack": 4,
-                    "move": 3,
-                    "heal": 2
+                    "move": 6,
+                    "heal": 1
                 }
             },
             {
@@ -597,6 +641,16 @@
                 }
             },
             {
+                "role": "reserver",
+                "priority": 11,
+                "condition": "reserver",
+                "count": 1,
+                "template": {
+                    "claim": 1,
+                    "move": 1
+                }
+            },
+            {
                 "role": "builder",
                 "priority": 11,
                 "count": 3,
@@ -617,17 +671,6 @@
                     "carry": 12,
                     "move": 12
                 }
-            },
-            {
-                "role": "remote-hauler",
-                "priority": 11,
-                "count": 1,
-                "condition": "remote_mining",
-                "dynamic_condition": true,
-                "template": {
-                    "carry": 12,
-                    "move": 12
-                }
             }
         ]
     },
@@ -637,16 +680,6 @@
         "controller": 5,
         "creeps": 4,
         "roles": [
-            {
-                "role": "reserver",
-                "priority": 1,
-                "condition": "reserver",
-                "count": 1,
-                "template": {
-                    "claim": 1,
-                    "move": 1
-                }
-            },
             {
                 "role": "conquerer",
                 "priority": 1,
@@ -753,10 +786,10 @@
                 "condition": "remote_defend",
                 "dynamic_condition": true,
                 "template": {
-                    "tough": 5,
+                    "tough": 3,
                     "ranged_attack": 5,
-                    "move": 5,
-                    "heal": 3
+                    "move": 10,
+                    "heal": 2
                 }
             },
             {
@@ -766,10 +799,10 @@
                 "condition": "conquer_attack",
                 "dynamic_condition": true,
                 "template": {
-                    "tough": 5,
+                    "tough": 3,
                     "ranged_attack": 5,
-                    "move": 5,
-                    "heal": 3
+                    "move": 10,
+                    "heal": 2
                 }
             },
             {
@@ -836,6 +869,16 @@
                 }
             },
             {
+                "role": "reserver",
+                "priority": 9,
+                "condition": "reserver",
+                "count": 1,
+                "template": {
+                    "claim": 1,
+                    "move": 1
+                }
+            },
+            {
                 "role": "remote-builder",
                 "priority": 9,
                 "count": 1,
@@ -851,16 +894,6 @@
                 "priority": 9,
                 "count": 1,
                 "condition": "remote_hauler",
-                "template": {
-                    "carry": 18,
-                    "move": 18
-                }
-            },
-            {
-                "role": "remote-hauler",
-                "priority": 9,
-                "count": 1,
-                "condition": "remote_mining",
                 "dynamic_condition": true,
                 "template": {
                     "carry": 18,
@@ -875,16 +908,6 @@
         "controller": 6,
         "creeps": 4,
         "roles": [
-            {
-                "role": "reserver",
-                "priority": 1,
-                "condition": "reserver",
-                "count": 1,
-                "template": {
-                    "claim": 2,
-                    "move": 4
-                }
-            },
             {
                 "role": "conquerer",
                 "priority": 1,
@@ -993,9 +1016,10 @@
                 "condition": "remote_defend",
                 "dynamic_condition": true,
                 "template": {
-                    "ranged_attack": 10,
-                    "move": 11,
-                    "heal": 1
+                    "tough": 5,
+                    "ranged_attack": 7,
+                    "move": 14,
+                    "heal": 2
                 }
             },
             {
@@ -1005,9 +1029,10 @@
                 "condition": "conquer_attack",
                 "dynamic_condition": true,
                 "template": {
-                    "ranged_attack": 10,
-                    "move": 11,
-                    "heal": 1
+                    "tough": 5,
+                    "ranged_attack": 7,
+                    "move": 14,
+                    "heal": 2
                 }
             },
             {
@@ -1074,6 +1099,16 @@
                 }
             },
             {
+                "role": "reserver",
+                "priority": 9,
+                "condition": "reserver",
+                "count": 1,
+                "template": {
+                    "claim": 2,
+                    "move": 4
+                }
+            },
+            {
                 "role": "remote-builder",
                 "priority": 9,
                 "count": 1,
@@ -1089,16 +1124,6 @@
                 "priority": 9,
                 "count": 1,
                 "condition": "remote_hauler",
-                "template": {
-                    "carry": 20,
-                    "move": 20
-                }
-            },
-            {
-                "role": "remote-hauler",
-                "priority": 9,
-                "count": 2,
-                "condition": "remote_mining",
                 "dynamic_condition": true,
                 "template": {
                     "carry": 20,
@@ -1113,16 +1138,6 @@
         "controller": 7,
         "creeps": 4,
         "roles": [
-            {
-                "role": "reserver",
-                "priority": 1,
-                "condition": "reserver",
-                "count": 1,
-                "template": {
-                    "claim": 2,
-                    "move": 4
-                }
-            },
             {
                 "role": "conquerer",
                 "priority": 1,
@@ -1221,9 +1236,9 @@
                 "condition": "remote_defend",
                 "dynamic_condition": true,
                 "template": {
-                    "ranged_attack": 24,
-                    "move": 24,
-                    "heal": 1
+                    "move": 25,
+                    "ranged_attack": 20,
+                    "heal": 5
                 }
             },
             {
@@ -1233,9 +1248,9 @@
                 "condition": "conquer_attack",
                 "dynamic_condition": true,
                 "template": {
-                    "ranged_attack": 24,
-                    "move": 24,
-                    "heal": 1
+                    "move": 25,
+                    "ranged_attack": 20,
+                    "heal": 5
                 }
             },
             {
@@ -1302,6 +1317,16 @@
                 }
             },
             {
+                "role": "reserver",
+                "priority": 9,
+                "condition": "reserver",
+                "count": 1,
+                "template": {
+                    "claim": 2,
+                    "move": 4
+                }
+            },
+            {
                 "role": "remote-builder",
                 "priority": 9,
                 "count": 1,
@@ -1317,20 +1342,230 @@
                 "priority": 9,
                 "count": 1,
                 "condition": "remote_hauler",
+                "dynamic_condition": true,
                 "template": {
                     "carry": 20,
                     "move": 20
                 }
+            }
+        ]
+    },
+    "stage-9": {
+        "order": 9,
+        "energy": 12900,
+        "controller": 8,
+        "creeps": 4,
+        "roles": [
+            {
+                "role": "conquerer",
+                "priority": 1,
+                "condition": "conquerer",
+                "count": 1,
+                "template": {
+                    "claim": 2,
+                    "move": 4
+                }
             },
             {
-                "role": "remote-hauler",
+                "role": "ranged",
+                "priority": 1,
+                "count": 4,
+                "emergency": true,
+                "template": {
+                    "tough": 5,
+                    "move": 17,
+                    "ranged_attack": 16,
+                    "heal": 12
+                }
+            },
+            {
+                "role": "melee",
+                "priority": 1,
+                "emergency": true,
+                "count": 3,
+                "template": {
+                    "tough": 10,
+                    "move": 9,
+                    "ranged_attack": 8,
+                    "heal": 15
+                }
+            },
+            {
+                "role": "harvester",
+                "priority": 2,
+                "count": 1,
+                "template": {
+                    "work": 6,
+                    "carry": 4,
+                    "move": 3
+                }
+            },
+            {
+                "role": "filler",
+                "priority": 3,
+                "count": 1,
+                "template": {
+                    "carry": 20,
+                    "move": 4
+                }
+            },
+            {
+                "role": "hauler",
+                "priority": 3,
+                "count": 1,
+                "template": {
+                    "carry": 20,
+                    "move": 10
+                }
+            },
+            {
+                "role": "harvester",
+                "priority": 4,
+                "count": 2,
+                "template": {
+                    "work": 6,
+                    "carry": 4,
+                    "move": 3
+                }
+            },
+            {
+                "role": "scout",
+                "priority": 5,
+                "condition": "scout",
+                "count": 1,
+                "template": {
+                    "move": 1
+                }
+            },
+            {
+                "role": "drain",
+                "priority": 5,
+                "count": 2,
+                "condition": "drain",
+                "template": {
+                    "tough": 33,
+                    "move": 17
+                }
+            },
+            {
+                "role": "remote-defender",
+                "priority": 5,
+                "count": 2,
+                "condition": "remote_defend",
+                "dynamic_condition": true,
+                "template": {
+                    "tough": 3,
+                    "move": 25,
+                    "ranged_attack": 14,
+                    "heal": 8
+                }
+            },
+            {
+                "role": "conquer-attacker",
+                "priority": 5,
+                "count": 2,
+                "condition": "conquer_attack",
+                "dynamic_condition": true,
+                "template": {
+                    "tough": 3,
+                    "move": 25,
+                    "ranged_attack": 14,
+                    "heal": 8
+                }
+            },
+            {
+                "role": "hauler",
+                "priority": 6,
+                "count": 2,
+                "template": {
+                    "carry": 20,
+                    "move": 10
+                }
+            },
+            {
+                "role": "upgrader",
+                "priority": 7,
+                "count": 1,
+                "template": {
+                    "work": 8,
+                    "carry": 10,
+                    "move": 10
+                }
+            },
+            {
+                "role": "builder",
+                "priority": 8,
+                "count": 1,
+                "template": {
+                    "carry": 6,
+                    "work": 6,
+                    "move": 12
+                }
+            },
+            {
+                "role": "upgrader",
+                "priority": 9,
+                "count": 2,
+                "condition": "upgrading",
+                "template": {
+                    "work": 8,
+                    "carry": 10,
+                    "move": 10
+                }
+            },
+            {
+                "role": "builder",
+                "priority": 9,
+                "count": 2,
+                "condition": "building",
+                "template": {
+                    "carry": 6,
+                    "work": 6,
+                    "move": 12
+                }
+            },
+            {
+                "role": "remote-harvester",
                 "priority": 9,
                 "count": 2,
                 "condition": "remote_mining",
                 "dynamic_condition": true,
                 "template": {
-                    "carry": 20,
+                    "carry": 8,
+                    "work": 4,
                     "move": 20
+                }
+            },
+            {
+                "role": "reserver",
+                "priority": 9,
+                "condition": "reserver",
+                "count": 1,
+                "template": {
+                    "claim": 2,
+                    "move": 4
+                }
+            },
+            {
+                "role": "remote-builder",
+                "priority": 9,
+                "count": 1,
+                "condition": "remote_builder",
+                "template": {
+                    "carry": 15,
+                    "work": 10,
+                    "move": 25
+                }
+            },
+            {
+                "role": "remote-hauler",
+                "priority": 9,
+                "count": 1,
+                "condition": "remote_hauler",
+                "dynamic_condition": true,
+                "template": {
+                    "carry": 25,
+                    "move": 25
                 }
             }
         ]

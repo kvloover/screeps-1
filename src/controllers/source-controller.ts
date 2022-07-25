@@ -20,8 +20,7 @@ export class SourceController implements Controller {
 
         // if (Game.time % 10 != 0) return;
 
-        // TODO rooms without sources ?
-        if (!room.memory.objects?.source) { // || room.memory.objects.source.length == 0
+        if (!room.memory.objects?.source || room.memory.objects.source.length == 0) {
             this.initializeRoom(room);
         }
 
