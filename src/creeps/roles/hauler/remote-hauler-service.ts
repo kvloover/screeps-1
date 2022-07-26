@@ -31,8 +31,8 @@ export class RemoteHaulerStorageRole extends HaulerRole {
                 { offset: 6, repo: provider }
             ]),
             new CombinedRepo('combined', log, [
-                { offset: 0, repo: leftDemands },
-                { offset: 3, repo: rightDemands }
+                { offset: 3, repo: leftDemands },
+                { offset: 0, repo: rightDemands }
             ])
         );
     }
