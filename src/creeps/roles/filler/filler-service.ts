@@ -36,10 +36,10 @@ export class FillerSupplierRole extends FillerRole {
         demands: SpawnDemandTaskRepo) {
         super(log, pathing,
             new CombinedRepo('combined-supply', log, [
-                { offset: 0, repo: provider },
-                { offset: 3, repo: containers },
-                { offset: 6, repo: stockpile },
-                { offset: 9, repo: terminalOut },
+                { offset: 0, repo: stockpile },
+                { offset: 3, repo: terminalOut },
+                { offset: 6, repo: containers },
+                { offset: 9, repo: provider },
             ]),
             demands);
     }
@@ -69,10 +69,10 @@ export class FillerStorageRole extends FillerRole {
         demands: StorageDemandTaskRepo) {
         super(log, pathing,
             new CombinedRepo('combined-supply', log, [
-                { offset: 0, repo: provider },
-                { offset: 3, repo: containers },
-                { offset: 6, repo: stockpile },
-                { offset: 9, repo: terminalOut },
+                { offset: 0, repo: stockpile },
+                { offset: 3, repo: terminalOut },
+                { offset: 6, repo: containers },
+                { offset: 9, repo: provider },
             ]),
             demands);
     }
