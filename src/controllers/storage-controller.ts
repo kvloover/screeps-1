@@ -65,7 +65,8 @@ export class StorageController implements Controller {
                             const current = this.providerRepo.getForRequester(struct.id, type);
                             const amount = current.reduce((p, c) => p + (c.amount ?? 0), 0);
                             if (amount < stored) {
-                                this.providerRepo.add(new Task(struct.room.name, 2, stored - amount, type, struct.id, undefined, struct.pos));
+                                // Same base prio as containers
+                                this.providerRepo.add(new Task(struct.room.name, 1, stored - amount, type, struct.id, undefined, struct.pos));
                                 this.providerRepo.mergeEmpty();
                                 this.log.debug(room.name, `${struct.pos}: added storage provider task`);
                             }
