@@ -22,8 +22,8 @@ export class RemoteHaulerStorageRole extends HaulerRole {
         drops: DropTaskRepo,
         provider: StorageSupplyTaskRepo,
         containers: ContainerSupplyTaskRepo,
-        private leftDemands: SpawnDemandTaskRepo,
-        private rightDemands: StorageDemandTaskRepo) {
+        private spawn: SpawnDemandTaskRepo,
+        private storage: StorageDemandTaskRepo) {
         super(log, pathing,
             new CombinedRepo('combined-supply', log, [
                 { offset: 0, repo: drops },
@@ -31,8 +31,8 @@ export class RemoteHaulerStorageRole extends HaulerRole {
                 { offset: 6, repo: provider }
             ]),
             new CombinedRepo('combined', log, [
-                { offset: 3, repo: leftDemands },
-                { offset: 0, repo: rightDemands }
+                { offset: 0, repo: storage },
+                { offset: 3, repo: spawn }
             ])
         );
     }
@@ -72,10 +72,10 @@ export class RemoteHaulerStorageRole extends HaulerRole {
     }
 
     protected override unlinkSupply(creep: Creep): void {
-        this.leftDemands.unregisterTask(creep, 'supply');
-        this.leftDemands.clearReference(creep.id);
-        this.rightDemands.unregisterTask(creep, 'supply');
-        this.rightDemands.clearReference(creep.id);
+        this.spawn.unregisterTask(creep, 'supply');
+        this.spawn.clearReference(creep.id);
+        this.storage.unregisterTask(creep, 'supply');
+        this.storage.clearReference(creep.id);
     }
 
 }
