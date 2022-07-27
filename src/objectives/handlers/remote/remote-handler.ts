@@ -52,7 +52,8 @@ export class RemoteHandler implements Handler {
         if (exits) {
 
             const allScouted = !Object.values(exits)
-                .some((newRoom) => !global.scoutData.hasOwnProperty(newRoom) && !Game.rooms.hasOwnProperty(newRoom));
+                .some((newRoom) => !global.scoutData.hasOwnProperty(newRoom)
+                    && !Game.rooms.hasOwnProperty(newRoom) && !(Memory.avoid && Memory.avoid.some(i => i == newRoom)));
             if (!allScouted) return objectives; // wait for all scouted
 
             const sources = (rm: string) => global.scoutData[rm]?.sources

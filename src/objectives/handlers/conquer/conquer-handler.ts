@@ -73,7 +73,8 @@ export class ConquerHandler implements Handler {
         if (exits) {
 
             const allScouted = !Object.values(exits)
-                .some((newRoom) => !global.scoutData.hasOwnProperty(newRoom) && !Game.rooms.hasOwnProperty(newRoom));
+                .some((newRoom) => !global.scoutData.hasOwnProperty(newRoom)
+                    && !Game.rooms.hasOwnProperty(newRoom) && !(Memory.avoid && Memory.avoid.some(i => i == newRoom)));
             if (!allScouted) {
                 this.log.debug(roomName, `brain - ${master} not all exits scouted, stopping search path`);
                 return objectives; // wait for all scouted
