@@ -36,6 +36,8 @@ export class ConquerHandler implements Handler {
                         const subObjectives = this.stepRoom(roomName, roomName, existing, other, visited);
                         objectives.push(...subObjectives);
                         rooms += subObjectives.length; // should only be 1
+
+                        this.log.debug(room.name, `brain - found ${subObjectives.length} conquer objectives`);
                     } else {
                         // reattach objective
                         if (existing.find(o => (o.data as ObjectiveConquerData)?.room == conquer)) continue;
@@ -60,7 +62,10 @@ export class ConquerHandler implements Handler {
 
     stepRoom(master: string, roomName: string, existing: Objective[], other: Objective[], visited: string[], depth: number = 1): Objective[] {
         const objectives: Objective[] = [];
-        if (depth > 2) return objectives;
+        if (depth > 2) {
+            this.log.debug(roomName, `brain - ${master} max depth reached: ${roomName}`);
+            return objectives;
+        }
 
         if (!global.scoutData) return objectives; // nothing scouted
 
@@ -69,7 +74,10 @@ export class ConquerHandler implements Handler {
 
             const allScouted = !Object.values(exits)
                 .some((newRoom) => !global.scoutData.hasOwnProperty(newRoom) && !Game.rooms.hasOwnProperty(newRoom));
-            if (!allScouted) return objectives; // wait for all scouted
+            if (!allScouted) {
+                this.log.debug(roomName, `brain - ${master} not all exits scouted, stopping search path`);
+                return objectives; // wait for all scouted
+            }
 
             const sources = (rm: string) => global.scoutData[rm]?.sources
                 || Game.rooms[rm]?.memory.objects?.source?.length
@@ -79,10 +87,16 @@ export class ConquerHandler implements Handler {
                 .sort((a, b) => sources(a) - sources(b));
 
             for (let newRoom of sorted) {
-                this.log.debug(newRoom, `brain - recursing conquer objectives for ${master}`);
+                this.log.debug(newRoom, `brain - ${master} recursing conquer objectives: ${newRoom}`);
 
-                if (Game.rooms.hasOwnProperty(newRoom) && isMyRoom(Game.rooms[newRoom])) continue;
-                if (Memory.avoid && Memory.avoid.some(i => i == newRoom)) continue;
+                if (Game.rooms.hasOwnProperty(newRoom) && isMyRoom(Game.rooms[newRoom])) {
+                    this.log.debug(newRoom, `brain - ${master} conquer target ${newRoom} is own room, skipping`);
+                    continue;
+                }
+                if (Memory.avoid && Memory.avoid.some(i => i == newRoom)) {
+                    this.log.debug(newRoom, `brain - ${master} conquer target ${newRoom} is to be avoided, skipping`);
+                    continue;
+                }
 
                 const scoutData = global.scoutData[newRoom];
 
@@ -98,6 +112,7 @@ export class ConquerHandler implements Handler {
                         && scoutData.reservation != whoAmI()
                         && scoutData.reservation != 'Invader') check = false;
 
+                    this.log.debug(newRoom, `brain - ${master} conquer based on scoutdata ${newRoom}`);
                     controller = scoutData.controller;
                 } else if (Game.rooms.hasOwnProperty(newRoom)) {
                     check = true;
@@ -109,25 +124,35 @@ export class ConquerHandler implements Handler {
                         && roomData.controller?.reservation.username != 'Invader')
                         check = false;
 
+                    this.log.debug(newRoom, `brain - ${master} conquer based on roomdata ${newRoom}`);
                     controller = roomData.controller?.pos;
                 }
 
-                if (existing.find(o => (o.data as ObjectiveConquerData)?.room == newRoom)) check = false;
-                if (other.find(o => o.type != 'scout' && (o.data as ObjectiveRoomData)?.room == newRoom)) check = false;
+                if (existing.find(o => (o.data as ObjectiveConquerData)?.room == newRoom)) {
+                    this.log.debug(newRoom, `brain - ${master} conquer target ${newRoom} already being conquered`);
+                    check = false;
+                }
+                if (other.find(o => o.type != 'scout' && (o.data as ObjectiveRoomData)?.room == newRoom)) {
+                    this.log.debug(newRoom, `brain - ${master} conquer target ${newRoom} already being remoted`);
+                    check = false;
+                }
 
                 if (check && controller) {
                     const data: ObjectiveConquerData = { started: Game.time, room: newRoom, controller: controller };
                     const obj = new Objective(master, this.type, data);
                     objectives.push(obj);
 
-                    this.log.info(master, `brain - created conquer objective for ${newRoom}`);
-                    this.log.debug(newRoom, `brain - set as remote for ${master}`);
+                    this.log.info(master, `brain - ${master} conquer objective created for ${newRoom}`);
+                    this.log.info(newRoom, `brain - ${master} conquer objective created for ${newRoom}`);
 
                     return objectives; // do not check further
+                } else {
+                    this.log.info(newRoom, `brain - ${master} conquer target ${newRoom} did not pass check`);
                 }
 
 
-                if (scoutData && !scoutData.owner) {
+                if ((scoutData && !scoutData.owner)
+                    || (Game.rooms.hasOwnProperty(newRoom) && !Game.rooms[newRoom].controller?.owner)) {
                     const subObjectives = this.stepRoom(master, newRoom, existing, other, visited, depth + 1);
                     objectives.push(...subObjectives);
                     if (objectives.length > 0) return objectives; // do not check further

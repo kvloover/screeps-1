@@ -74,6 +74,9 @@ export class ScoutRole implements Role {
     private idle(creep: Creep): void { }
 
     private scout(creep: Creep): void {
+        // todo have initializing step
+        creep.notifyWhenAttacked(false);
+
         if (creep.memory.targetRoom)
             if (!this.executeObjective(creep)) {
                 this.pathing.scoutRoom(creep, creep.memory.targetRoom)

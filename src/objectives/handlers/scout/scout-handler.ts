@@ -5,7 +5,7 @@ import { Handler } from "objectives/entities/handler";
 import { ObjectiveData, ObjectiveRoomData } from "objectives/entities/objective";
 import { Objective } from "repos/objectives/objective";
 import { CreepState } from "utils/creep-state";
-import { isMyRoom } from "utils/utils";
+import { isDefined, isMyRoom } from "utils/utils";
 
 @singleton()
 export class ScoutHandler implements Handler {
@@ -37,7 +37,9 @@ export class ScoutHandler implements Handler {
             for (let [direction, newRoom] of Object.entries(exits)) {
                 if (Game.rooms.hasOwnProperty(newRoom) && isMyRoom(Game.rooms[newRoom])) continue;
                 if (visited.includes(newRoom)) continue;
-                if (existing.find(o => (o.data as ObjectiveScoutData)?.room == newRoom)) continue;
+                if (existing
+                    .map(o => o.data as ObjectiveScoutData).filter(isDefined)
+                    .find(data => data.room == newRoom && data.depth <= depth)) continue;
                 if (Memory.avoid && Memory.avoid.some(i => i == newRoom)) continue;
 
                 if (!global.scoutData?.hasOwnProperty(newRoom) || global.scoutData[newRoom].lastVisited < Game.time - 1000) {
