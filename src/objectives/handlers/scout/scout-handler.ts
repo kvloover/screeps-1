@@ -5,7 +5,7 @@ import { Handler } from "objectives/entities/handler";
 import { ObjectiveData, ObjectiveRoomData } from "objectives/entities/objective";
 import { Objective } from "repos/objectives/objective";
 import { CreepState } from "utils/creep-state";
-import { isDefined, isMyRoom } from "utils/utils";
+import { isDefined, isMyRoom, parseRoomName } from "utils/utils";
 
 @singleton()
 export class ScoutHandler implements Handler {
@@ -42,6 +42,10 @@ export class ScoutHandler implements Handler {
                     .find(data => data.room == newRoom && data.depth <= depth)) continue;
                 if (Memory.avoid && Memory.avoid.some(i => i == newRoom)) continue;
 
+                const parsedLoc = parseRoomName(newRoom);
+                if (!(parsedLoc.x % 5 > 1 && parsedLoc.x % 5 < 4)
+                    && !(parsedLoc.y % 5 > 1 && parsedLoc.y % 5 < 4)) continue; // center/highway room
+
                 if (!global.scoutData?.hasOwnProperty(newRoom) || global.scoutData[newRoom].lastVisited < Game.time - 1000) {
                     const data: ObjectiveScoutData = { started: Game.time, room: newRoom, origin: roomName, depth: depth };
                     const obj = new Objective(master, this.type, data);
@@ -74,6 +78,10 @@ export class ScoutHandler implements Handler {
         // check if room has already been scouted
         if (global.scoutData?.hasOwnProperty(data.room) && global.scoutData[data.room].lastVisited > Game.time - 1000) {
             return true; // scouted
+        }
+
+        if (data.started < Game.time - 1500) {
+            return true; // timeout
         }
 
         // find the scout of the room
