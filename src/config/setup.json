@@ -667,6 +667,7 @@
                 "priority": 11,
                 "count": 1,
                 "condition": "remote_hauler",
+                "dynamic_condition": true,
                 "template": {
                     "carry": 12,
                     "move": 12
