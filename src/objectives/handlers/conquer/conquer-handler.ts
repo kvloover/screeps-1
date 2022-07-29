@@ -193,6 +193,7 @@ export class ConquerHandler implements Handler {
             if ((hostilePower > 10 && hostilePower > 2 * friendlyPower) || defenders > 7) {
                 this.log.info(obj.master, `brain - cancelling conquer objective for ${data.room}`);
 
+                roomMem.conquer_attack = 0;
                 roomMem.conquer = undefined;
                 roomMem.conquerer = false;
                 roomMem.remote_builder = false;
@@ -226,6 +227,7 @@ export class ConquerHandler implements Handler {
             } else {
                 roomMem.conquerer = false;
                 roomMem.remote_builder = false;
+                roomMem.conquer_attack = 0;
                 return true;
             }
         }

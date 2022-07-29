@@ -43,8 +43,8 @@ export class ScoutHandler implements Handler {
                 if (Memory.avoid && Memory.avoid.some(i => i == newRoom)) continue;
 
                 const parsedLoc = parseRoomName(newRoom);
-                if (!(parsedLoc.x % 10 < 4 || parsedLoc.x % 10 > 6)
-                    && !(parsedLoc.y % 10 < 4 || parsedLoc.y % 10 > 6)) continue; // center room
+                if ((parsedLoc.x % 10 >= 4 && parsedLoc.x % 10 <= 6)
+                    && (parsedLoc.y % 10 >= 4 && parsedLoc.y % 10 <= 6)) continue; // center room
 
                 if (!global.scoutData?.hasOwnProperty(newRoom)
                     || global.scoutData[newRoom].depth > depth
