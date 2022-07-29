@@ -46,7 +46,7 @@ export class ScoutHandler implements Handler {
                 if (!(parsedLoc.x % 5 > 1 && parsedLoc.x % 5 < 4)
                     && !(parsedLoc.y % 5 > 1 && parsedLoc.y % 5 < 4)) continue; // center/highway room
 
-                if (!global.scoutData?.hasOwnProperty(newRoom) || global.scoutData[newRoom].lastVisited < Game.time - 1000) {
+                if (!global.scoutData?.hasOwnProperty(newRoom) || global.scoutData[newRoom].lastVisited < Game.time - 500) {
                     const data: ObjectiveScoutData = { started: Game.time, room: newRoom, origin: roomName, depth: depth };
                     const obj = new Objective(master, this.type, data);
                     objectives.push(obj);
@@ -56,10 +56,9 @@ export class ScoutHandler implements Handler {
                     this.log.info(roomName, `adding scout objective for ${newRoom}`);
                 }
 
-                if (!global.scoutData || !global.scoutData.hasOwnProperty(newRoom) || !global.scoutData[newRoom].owner) {
-                    const subObjectives = this.stepRoom(master, newRoom, existing, visited, depth + 1);
-                    objectives.push(...subObjectives);
-                }
+
+                const subObjectives = this.stepRoom(master, newRoom, existing, visited, depth + 1);
+                objectives.push(...subObjectives);
 
             }
         }

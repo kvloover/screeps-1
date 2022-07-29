@@ -85,7 +85,7 @@ export class ConquerHandler implements Handler {
                 || 0;
             const sorted = Object.values(exits)
                 .filter(a => !Game.rooms.hasOwnProperty(a) || !isMyRoom(Game.rooms[a]))
-                .sort((a, b) => sources(a) - sources(b));
+                .sort((a, b) => sources(b) - sources(a));
 
             for (let newRoom of sorted) {
                 this.log.debug(newRoom, `brain - ${master} recursing conquer objectives: ${newRoom}`);
