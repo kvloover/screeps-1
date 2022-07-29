@@ -71,20 +71,26 @@ export class ScoutRole implements Role {
         return creep.memory.targetRoom != undefined;
     }
 
-    private idle(creep: Creep): void { }
+    private idle(creep: Creep): void {
+        this.collectUpdates(creep);
+    }
 
     private scout(creep: Creep): void {
         // todo have initializing step
         creep.notifyWhenAttacked(false);
 
-        if (creep.memory.targetRoom)
+        if (creep.memory.targetRoom) {
             if (!this.executeObjective(creep)) {
+                this.collectUpdates(creep);
                 this.pathing.scoutRoom(creep, creep.memory.targetRoom)
             } else {
                 // scout reached target room and data collected
                 creep.memory.targetRoom = undefined;
                 this.setState(creep, CreepState.idle);
             }
+        } else {
+            this.collectUpdates(creep);
+        }
     }
 
 
@@ -96,7 +102,7 @@ export class ScoutRole implements Role {
                 if (data) {
                     if (data.room != creep.room.name) return false;
 
-                    const scoutData = this.collectData(creep, obj, data);
+                    const scoutData = this.collectData(creep, obj.master, data.depth);
                     if (!global.scoutData) { global.scoutData = {}; }
                     global.scoutData[scoutData.room] = scoutData;
                     return true;
@@ -107,7 +113,17 @@ export class ScoutRole implements Role {
         return true;
     }
 
-    private collectData(creep: Creep, objective: Objective, data: ObjectiveScoutData): ScoutData {
+    private collectUpdates(creep: Creep): void {
+        if (!global.scoutData
+            || !global.scoutData[creep.room.name]
+            || global.scoutData[creep.room.name].lastVisited <= Game.time - 100) {
+            const scoutData = this.collectData(creep, creep.memory.room, global.scoutData?.[creep.room.name]?.depth ?? 999);
+            if (!global.scoutData) { global.scoutData = {}; }
+            global.scoutData[creep.room.name] = scoutData;
+        }
+    }
+
+    private collectData(creep: Creep, masterRoom: string, currDepth: number): ScoutData {
         const controller = creep.room.controller?.pos;
         const owner = creep.room.controller?.owner?.username;
         const reservation = creep.room.controller?.reservation?.username;
@@ -122,7 +138,7 @@ export class ScoutRole implements Role {
 
         return {
             room: creep.room.name,
-            depth: data.depth,
+            depth: currDepth,
 
             sources: sources,
             controller: controller,
@@ -133,7 +149,7 @@ export class ScoutRole implements Role {
             hostilePower: hostilePower,
 
             lastVisited: Game.time,
-            lastVisitedByRoom: objective.master,
+            lastVisitedByRoom: masterRoom,
         }
     }
 
