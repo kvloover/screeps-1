@@ -79,11 +79,11 @@ export class HarvestHandler implements Handler {
                 this.log.debug(obj.master, `harvesting ${data.sourceId} with ${simpleBody.join(',')}`);
 
                 const curHarvesters = roomCreeps(obj.master, 'harvester');
-                const assigned = curHarvesters.filter(c => c.memory.objective == obj.id && c.ticksToLive && c.ticksToLive > simpleBody.length * 3);
+                const assigned = curHarvesters.filter(c => c.memory.objective == obj.id && (!c.ticksToLive || c.ticksToLive > simpleBody.length * 3));
                 if (assigned.length >= data.positions) return false;
 
                 const harvestPower = assigned.map(c => c.getActiveBodyparts(WORK)).reduce((a, b) => a + b, 0);
-                if (harvestPower < 5 && data.positions > assigned.length) {
+                if (harvestPower < 5) {
                     // add new harvester with the given body and assign to the objective
 
                     // TODO move to class
