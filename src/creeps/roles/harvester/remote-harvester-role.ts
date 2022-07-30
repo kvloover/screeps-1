@@ -4,8 +4,8 @@ import { Pathing } from "creeps/pathing";
 
 import { Role } from "../role-registry";
 
-import { Task } from "repos/task";
-import { TaskRepo } from "repos/_base/task-repo";
+import { Task } from "repos/tasks/task";
+import { TaskRepo } from "repos/tasks/_base/task-repo";
 import { TransferRole } from "../_base/transfer-role";
 import { HarvestAction } from "./harvest-action";
 
@@ -50,12 +50,17 @@ export class RemoteHarvesterRole extends TransferRole implements Role {
         if (!memTask) {
             const creating = this.createContainer(creep);
 
-            const buildTask = this.findAndRegisterTask(creep, this.buildTasks, key, creep.store.getUsedCapacity(RESOURCE_ENERGY), RESOURCE_ENERGY, creep.room.name, 3);
+            const buildTask = this.findTask(creep, this.buildTasks, key, RESOURCE_ENERGY, creep.room.name, 3);
+            if (buildTask) { this.log.debug(creep.room.name, `${creep.name} - Found build task`); }
             const repo = buildTask || creating ? this.buildTasks : this.demands;
             this.supplyToRepo(creep, repo, key, RESOURCE_ENERGY, creep.room.name, 5);
         } else {
-            const repo = this.buildTasks.key == memTask.repo ? this.buildTasks : this.demands;
-            this.supplyToRepo(creep, repo, key, RESOURCE_ENERGY, creep.room.name, 5);
+            const repo = memTask.repo == 'repair' || memTask.repo == 'construction' ? this.buildTasks : this.demands;
+            if (memTask.tick < Game.time - 20) {
+                repo.finishTask(creep, memTask.task, key);
+            } else {
+                this.supplyToRepo(creep, repo, key, RESOURCE_ENERGY, creep.room.name, 5);
+            }
         }
     }
 
@@ -76,7 +81,7 @@ export class RemoteHarvesterRole extends TransferRole implements Role {
                 const sitePos = creep.pos;
                 if (sitePos.getRangeTo(pos) == 1) {
                     // check for construction - takes a tick to be created
-                    const sites = creep.room.lookAt(sitePos)
+                    const sites = creep.room.lookForAtArea(LOOK_CONSTRUCTION_SITES, pos.y - 1, pos.x - 1, pos.y + 1, pos.x + 1, true)
                         .filter(s => s.constructionSite && s.constructionSite.structureType === STRUCTURE_CONTAINER);
                     if (sites.length > 0 && sites[0].constructionSite) {
                         const construction = sites[0].constructionSite

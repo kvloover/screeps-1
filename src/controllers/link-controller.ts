@@ -1,15 +1,15 @@
 import { injectable } from "tsyringe";
 
-import { Task } from "repos/task";
+import { Task } from "repos/tasks/task";
 import { Controller } from "./controller";
 import { Logger } from "logger";
 
-import { LinkDemandTaskRepo } from "repos/link/link-demand-task-repo";
-import { LinkSupplyTaskRepo } from "repos/link/link-supply-task-repo";
+import { LinkDemandTaskRepo } from "repos/tasks/link/link-demand-task-repo";
+import { LinkSupplyTaskRepo } from "repos/tasks/link/link-supply-task-repo";
+import { LinkSupplyUtilityTaskRepo } from "repos/tasks/link/link-supply-utility-task-repo";
 import { isLinkStructure, isMyRoom } from "utils/utils";
 
 import profiler from "screeps-profiler";
-import { LinkSupplyUtilityTaskRepo } from "repos/link/link-supply-utility-task-repo";
 
 @injectable()
 export class LinkController implements Controller {

@@ -22,10 +22,10 @@ export class ExConsole {
 
             upgrading: (m, v) => ExConsole.toggle(m, 'upgrading', v),
             building: (m, v) => ExConsole.toggle(m, 'building', v),
-            remote_attack: (m, v) => ExConsole.toggle(m, 'remote_attack', v),
+            remote_attack: (m, v) => ExConsole.toggle(m, 'remote_defend', v),
             remote_mining: (m, v) => ExConsole.toggle(m, 'remote_mining', v),
             remote_hauler: (m, v) => ExConsole.toggle(m, 'remote_hauler', v),
-            claim: (m, v) => ExConsole.toggle(m, 'claim', v),
+            claim: (m, v) => ExConsole.toggle(m, 'conquerer', v),
             drain: (m, v) => ExConsole.toggle(m, 'drain', v),
             healer: (m, v) => ExConsole.toggle(m, 'healer', v),
 

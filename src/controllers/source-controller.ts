@@ -1,7 +1,7 @@
 import { injectable } from "tsyringe";
 
-import { HarvestTaskRepo } from "repos/source/harvest-task-repo";
-import { Task } from "repos/task";
+import { HarvestTaskRepo } from "repos/tasks/source/harvest-task-repo";
+import { Task } from "repos/tasks/task";
 import { Controller } from "./controller";
 import { Logger } from "logger";
 
@@ -20,7 +20,6 @@ export class SourceController implements Controller {
 
         // if (Game.time % 10 != 0) return;
 
-        // TODO rooms without sources ?
         if (!room.memory.objects?.source || room.memory.objects.source.length == 0) {
             this.initializeRoom(room);
         }

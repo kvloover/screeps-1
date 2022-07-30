@@ -5,14 +5,15 @@ import { Pathing } from "../../pathing";
 // import { RoleService } from "creeps/roles/role-service-registry";
 import { HarvesterRole } from "./harvester-role";
 
-import { SpawnDemandTaskRepo } from "repos/spawn/spawn-demand-task-repo";
-import { LinkDemandTaskRepo } from "repos/link/link-demand-task-repo";
+import { SpawnDemandTaskRepo } from "repos/tasks/spawn/spawn-demand-task-repo";
+import { LinkDemandTaskRepo } from "repos/tasks/link/link-demand-task-repo";
 import { HarvestAction } from "./harvest-action";
 
 import profiler from "screeps-profiler";
-import { ContainerDemandTaskRepo } from "repos/container/container-demand-task-repo";
-import { StorageDemandTaskRepo } from "repos/storage/storage-demand-task-repo";
-import { CombinedRepo } from "repos/_base/combined-repo";
+import { ContainerDemandTaskRepo } from "repos/tasks/container/container-demand-task-repo";
+import { StorageDemandTaskRepo } from "repos/tasks/storage/storage-demand-task-repo";
+import { CombinedRepo } from "repos/tasks/_base/combined-repo";
+import { ConstructionTaskRepo } from "repos/tasks/structures/construction-task-repo";
 
 
 @singleton()
@@ -24,8 +25,8 @@ export class HarvestSupplierRole extends HarvesterRole {
     };
 
     constructor(log: Logger, pathing: Pathing,
-        supply: SpawnDemandTaskRepo, action: HarvestAction) {
-        super(log, pathing, supply, action, undefined)
+        supply: SpawnDemandTaskRepo, build: ConstructionTaskRepo, action: HarvestAction) {
+        super(log, pathing, supply, build, action, undefined)
     }
 
     public run(creep: Creep): void {
@@ -48,6 +49,7 @@ export class HarvestMidstreamRole extends HarvesterRole {
         container: ContainerDemandTaskRepo,
         storage: StorageDemandTaskRepo,
         links: LinkDemandTaskRepo,
+        build: ConstructionTaskRepo,
         action: HarvestAction) {
         super(log, pathing,
             new CombinedRepo('combined-demand', log, [
@@ -55,6 +57,7 @@ export class HarvestMidstreamRole extends HarvesterRole {
                 { offset: 3, repo: storage },
                 { offset: 6, repo: container }
             ]),
+            build,
             action,
             5 // limit range
         );

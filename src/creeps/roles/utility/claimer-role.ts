@@ -7,8 +7,7 @@ import profiler from "screeps-profiler";
 import { isController, whoAmI } from "utils/utils";
 import { CreepState } from "utils/creep-state";
 
-@singleton()
-export class ClaimerRole implements Role {
+export abstract class ClaimerRole implements Role {
 
     name: string = 'claimer';
     prio = 9;
@@ -20,15 +19,6 @@ export class ClaimerRole implements Role {
     constructor(protected pathing: Pathing) { }
 
     public run(creep: Creep): void {
-        if (!creep.memory.targetRoom) {
-            // get setting on room:
-            const roomMem = Memory.rooms[creep.memory.room];
-            if (roomMem) {
-                creep.memory.targetRoom = roomMem.conquer ?? roomMem.remote;
-                creep.memory.state = roomMem.conquer ? CreepState.claim : CreepState.reserve;
-            }
-        }
-
         if (!creep.memory.targetId) {
             if (creep.memory.targetRoom) {
                 if (!Game.rooms.hasOwnProperty(creep.memory.targetRoom)) {
@@ -96,4 +86,3 @@ export class ClaimerRole implements Role {
 }
 
 profiler.registerClass(ClaimerRole, 'ClaimerRole');
-

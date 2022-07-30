@@ -12,6 +12,7 @@ import { StorageController } from "./storage-controller";
 import { StructuresController } from "./structure-controller";
 import { TerminalController } from "./terminal-controller";
 import { TowerController } from "./tower-controller";
+import { WorkController } from "./work-controller";
 
 export interface Controller {
     monitor(room: Room): void;
@@ -30,6 +31,7 @@ export interface Controller {
     { token: Controllers.token, useToken: StructuresController },
     { token: Controllers.token, useToken: TerminalController },
     { token: Controllers.token, useToken: EnergyController },
+    { token: Controllers.token, useToken: WorkController },
 ])
 export abstract class Controllers {
     static readonly token = Symbol('Controller');

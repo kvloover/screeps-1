@@ -5,8 +5,8 @@ import { Role } from "../role-registry";
 import { TransferRole } from "../_base/transfer-role";
 
 import { CreepUtils } from "creeps/creep-utils";
-import { Task } from "repos/task";
-import { TaskRepo } from "repos/_base/task-repo";
+import { Task } from "repos/tasks/task";
+import { TaskRepo } from "repos/tasks/_base/task-repo";
 
 // TODO rework for tasks for build/repair
 

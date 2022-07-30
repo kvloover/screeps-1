@@ -54,8 +54,12 @@ export class Pathing {
         return matrix;
     }
 
-    public scoutRoom(creep: Creep, room: string, allowHostile: boolean = false) {
-        creep.travelTo(new RoomPosition(25, 25, room), { range: 24, allowHostile: allowHostile });
+    public scoutRoom(creep: Creep, room: string, allowHostile: boolean = false): boolean {
+        const pos = new RoomPosition(25, 25, room);
+        const range = 23;
+        if (creep.room.name == room && pos.getRangeTo(creep.pos) <= range) return false;
+        creep.travelTo(pos, { range: range, allowHostile: allowHostile });
+        return true;
     }
 
 }

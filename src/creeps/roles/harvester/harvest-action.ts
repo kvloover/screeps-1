@@ -3,7 +3,7 @@ import { singleton } from "tsyringe";
 import { Logger } from "logger";
 import { Pathing } from "creeps/pathing";
 import { isDefined } from "utils/utils";
-import { HarvestTaskRepo } from "repos/source/harvest-task-repo";
+import { HarvestTaskRepo } from "repos/tasks/source/harvest-task-repo";
 
 @singleton()
 export class HarvestAction {
@@ -53,7 +53,7 @@ export class HarvestAction {
                     this.harvests.registerTask(creep, task, this.key);
                     creep.memory.targetId = task.requester;
                     // Mine 2 per tick per worker part
-                    if (this.harvests.trySplitTask(task, 2 * creep.getActiveBodyparts(WORK), true))
+                    if (this.harvests.trySplitTask(task, 2 * creep.getActiveBodyparts(WORK)))
                         this.log.debug(creep.room.name, `${creep.name}: task split to harvests for remaining work`);
                 }
             }

@@ -31,6 +31,12 @@ onRespawn(initializeOnRespawn)
 export const loop =
   ErrorMapper.wrapLoop(
     () => {
+
+      if (Game.cpu.bucket < 200) {
+        console.log(`Waiting for bucket to reach 200 (currently ${Game.cpu.bucket})`);
+        return;
+      }
+
       MemHack.pretick();
 
       Migrations.Migrate();

@@ -1,13 +1,13 @@
 import { injectable } from "tsyringe";
 
-import { Task } from "repos/task";
+import { Task } from "repos/tasks/task";
 import { Controller } from "./controller";
 import { Logger } from "logger";
 
-import { ExchangeTaskRepo } from "repos/terminal/exchange-task-repo";
-import { RequestTaskRepo } from "repos/terminal/request-task-repo";
-import { TerminalSupplyTaskRepo } from "repos/terminal/terminal-supply-task-repo";
-import { TerminalDemandTaskRepo } from "repos/terminal/terminal-demand-task-repo";
+import { ExchangeTaskRepo } from "repos/tasks/terminal/exchange-task-repo";
+import { RequestTaskRepo } from "repos/tasks/terminal/request-task-repo";
+import { TerminalSupplyTaskRepo } from "repos/tasks/terminal/terminal-supply-task-repo";
+import { TerminalDemandTaskRepo } from "repos/tasks/terminal/terminal-demand-task-repo";
 
 import { isMyRoom, isStoreStructure } from "utils/utils";
 

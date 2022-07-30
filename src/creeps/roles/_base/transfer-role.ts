@@ -2,8 +2,8 @@ import { Logger } from "logger";
 import { Pathing } from "creeps/pathing";
 import { CreepState } from 'utils/creep-state';
 
-import { TaskRepo } from "repos/_base/task-repo";
-import { Task } from "repos/task";
+import { TaskRepo } from "repos/tasks/_base/task-repo";
+import { Task } from "repos/tasks/task";
 import { isStoreStructure, isTombStone, isRuin, isResource, isDefined, isResourceConstant, isConstruction, isHasPos, isStructure } from "utils/utils";
 import { CREEP_AMOUNT_PER_ENERGY, CREEP_ENERGY_PER_PART, CREEP_RANGE } from "utils/constants";
 
@@ -143,7 +143,7 @@ export abstract class TransferRole {
         const stored = creep.memory.tasks[key];
         const memTask = stored?.task;
         if (memTask) {
-            this.log.debug(creep.room.name, `${creep.name}: consuming for ${key} task ${memTask.id}`);
+            this.log.debug(creep.room.name, `${creep.name}: consuming for ${key} task ${memTask.id} on ${repo.key}`);
             const dest = memTask.requester ? Game.getObjectById(memTask.requester) : null;
 
             const cont = this.beforeConsumeFrom(dest, creep);
@@ -171,7 +171,7 @@ export abstract class TransferRole {
         const stored = creep.memory.tasks[key];
         const memTask = stored?.task;
         if (memTask) {
-            this.log.debug(creep.room.name, `${creep.name}: supplying for ${key} task ${memTask.id}`);
+            this.log.debug(creep.room.name, `${creep.name}: supplying for ${key} task ${memTask.id} on ${repo.key}`);
             const dest = memTask.requester ? Game.getObjectById(memTask.requester) : null;
 
             const cont = this.beforeSupplyTo(dest, creep);

@@ -1,13 +1,13 @@
 import { singleton } from "tsyringe";
 import { Logger } from "logger";
 import { Pathing } from "../../pathing";
-import { ContainerDemandTaskRepo } from "repos/container/container-demand-task-repo";
 import { RemoteHarvesterRole } from "./remote-harvester-role";
 import { HarvestAction } from "./harvest-action";
-import { ConstructionTaskRepo } from "repos/structures/construction-task-repo";
-import { RepairTaskRepo } from "repos/structures/repair-task-repo";
-import { CombinedRepo } from "repos/_base/combined-repo";
-import { Task } from "repos/task";
+import { ContainerDemandTaskRepo } from "repos/tasks/container/container-demand-task-repo";
+import { ConstructionTaskRepo } from "repos/tasks/structures/construction-task-repo";
+import { RepairTaskRepo } from "repos/tasks/structures/repair-task-repo";
+import { CombinedRepo } from "repos/tasks/_base/combined-repo";
+import { Task } from "repos/tasks/task";
 
 import profiler from "screeps-profiler";
 
@@ -23,7 +23,7 @@ export class RemoteHarvestMidstreamRole extends RemoteHarvesterRole {
         supply: ContainerDemandTaskRepo, repairs: RepairTaskRepo, private builds: ConstructionTaskRepo, action: HarvestAction) {
         super(log, pathing,
             supply,
-            new CombinedRepo('combined', log, [{ offset: 0, repo: repairs }, { offset: 15, repo: builds }]),
+            new CombinedRepo('combined', log, [{ offset: 0, repo: repairs }, { offset: 50, repo: builds }]),
             action);
     }
 
