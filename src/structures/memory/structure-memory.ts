@@ -28,6 +28,12 @@ export const initHeapMemory = (roomName: string, key?: StructureConstant | Objec
     }
 }
 
+export const bodyFromMap =
+    (body: BodyMap): BodyPartConstant[] => {
+        return _.flatten(Object.entries(body)
+            .map(([key, value]) => _.times(value, _ => key as BodyPartConstant)));
+    }
+
 declare global {
 
     // Persistent
@@ -72,6 +78,7 @@ declare global {
     interface SpawnMemory extends RoomObjectMemory<STRUCTURE_SPAWN> { }
 
     interface SpawnQueue {
+        spawning: { [key: string]: SpawnInfo | undefined }; // spawn - spawning
         immediate: SpawnInfo[];
         urgent: SpawnInfo[];
         normal: SpawnInfo[];
@@ -79,6 +86,7 @@ declare global {
     }
 
     interface SpawnInfo {
+        objective?: string;
         role: string;
         body: BodyInfo;
         initial: Partial<CreepMemory>;

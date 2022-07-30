@@ -73,6 +73,7 @@ export class ScoutHandler implements Handler {
         if (!data) return true; // finished invalid objective
         const roomMem = Memory.rooms[obj.master];
         if (!roomMem) return true; // invalid master room
+        if (!Memory.creeps) return false; // still spawning
 
         if (Memory.avoid && Memory.avoid.some(i => i == data.room)) return true;
 

@@ -3,7 +3,7 @@ import { singleton } from "tsyringe";
 import { Manager } from "manager";
 import { Logger } from "logger";
 import { CreepState } from "utils/creep-state";
-import { isMyRoom } from "utils/utils";
+import { bodyCost, isMyRoom } from "utils/utils";
 
 import profiler from "screeps-profiler";
 import { initObjectMemory } from "structures/memory/structure-memory";
@@ -29,6 +29,10 @@ export class SpawnManager implements Manager {
                     if (spawn.spawning) {
                         this.reportSpawning(room, spawn);
                     } else {
+                        if (room.memory.spawn?.spawning.hasOwnProperty(spawn.name)) {
+                            // reset currently spawning
+                            room.memory.spawn.spawning[spawn.name] = undefined;
+                        }
                         energy -= this.spawnFromRoomQueue(room, spawn, energy);
                     }
                 }
@@ -40,11 +44,12 @@ export class SpawnManager implements Manager {
         const queueKeys: (keyof SpawnQueue)[] = ['immediate', 'urgent', 'normal', 'low'];
         for (let key of queueKeys) {
             if (!room.memory.spawn) return 0;
-            const queue = room.memory.spawn[key];
-            if (queue.length > 0) {
+            const queue = room.memory.spawn[key] as SpawnInfo[];
+            if (queue && queue.length > 0) {
                 const peek = queue[0];
+                this.log.debug(room.name, `to spawn ${key}: ${peek.role}`);
                 const body = this.bodyFromInfo(peek.body);
-                const cost = this.bodyCost(body);
+                const cost = bodyCost(body);
                 if (cost <= energy) {
                     const newName = this.generateName(room, peek.role)
                     const ret = spawn.spawnCreep(body,
@@ -52,10 +57,14 @@ export class SpawnManager implements Manager {
                         { memory: this.mergeMemory(room, peek.role, peek.initial) });
                     if (ret === OK) {
                         this.log.info(room.name, `spawning ${peek.role}:  ${newName}`);
-                        room.memory.spawn[key].shift();
+                        const removed = queue.shift();
+                        if (!room.memory.spawn.spawning) room.memory.spawn.spawning = {};
+                        if (removed) room.memory.spawn.spawning[spawn.name] = removed;
                         this.nameInUse(room, newName);
                         return cost;
                     }
+                } else {
+                    this.log.debug(room.name, `not enough energy for ${peek.role}`);
                 }
                 return 0;
             }
@@ -88,16 +97,12 @@ export class SpawnManager implements Manager {
         }
 
         if (info.trail) {
-            ret = ret.concat(_.flatten(Object.entries(info)
-                .map(([key, value]) => this.isBodyTemplate(key) ? _.times(value - (info.trail?.[key] || 0), _ => key) : []))
+            ret = ret.concat(_.flatten(Object.entries(info.trail)
+                .map(([key, value]) => this.isBodyTemplate(key) ? _.times(value, _ => key) : []))
             );
         }
 
         return ret;
-    }
-
-    private bodyCost(body: BodyPartConstant[]): number {
-        return _.sum(body.map(i => BODYPART_COST[i]));
     }
 
     private initialMemory(room: Room, role: string): CreepMemory {

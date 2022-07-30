@@ -4,16 +4,17 @@ import { Pathing } from "../../pathing";
 
 // import { RoleService } from "creeps/roles/role-service-registry";
 import { HarvesterRole } from "./harvester-role";
-
-import { SpawnDemandTaskRepo } from "repos/tasks/spawn/spawn-demand-task-repo";
-import { LinkDemandTaskRepo } from "repos/tasks/link/link-demand-task-repo";
 import { HarvestAction } from "./harvest-action";
 
-import profiler from "screeps-profiler";
+import { LinkDemandTaskRepo } from "repos/tasks/link/link-demand-task-repo";
 import { ContainerDemandTaskRepo } from "repos/tasks/container/container-demand-task-repo";
-import { StorageDemandTaskRepo } from "repos/tasks/storage/storage-demand-task-repo";
 import { CombinedRepo } from "repos/tasks/_base/combined-repo";
+import { SpawnDemandTaskRepo } from "repos/tasks/spawn/spawn-demand-task-repo";
+import { StorageDemandTaskRepo } from "repos/tasks/storage/storage-demand-task-repo";
 import { ConstructionTaskRepo } from "repos/tasks/structures/construction-task-repo";
+
+import profiler from "screeps-profiler";
+import { ObjectiveRepo } from "repos/objectives/objectives-repo";
 
 
 @singleton()
@@ -25,8 +26,8 @@ export class HarvestSupplierRole extends HarvesterRole {
     };
 
     constructor(log: Logger, pathing: Pathing,
-        supply: SpawnDemandTaskRepo, build: ConstructionTaskRepo, action: HarvestAction) {
-        super(log, pathing, supply, build, action, undefined)
+        supply: SpawnDemandTaskRepo, build: ConstructionTaskRepo, action: HarvestAction, objectives: ObjectiveRepo) {
+        super(log, pathing, supply, build, action, objectives, undefined)
     }
 
     public run(creep: Creep): void {
@@ -50,7 +51,8 @@ export class HarvestMidstreamRole extends HarvesterRole {
         storage: StorageDemandTaskRepo,
         links: LinkDemandTaskRepo,
         build: ConstructionTaskRepo,
-        action: HarvestAction) {
+        action: HarvestAction,
+        objectives: ObjectiveRepo) {
         super(log, pathing,
             new CombinedRepo('combined-demand', log, [
                 { offset: 0, repo: links },
@@ -59,6 +61,7 @@ export class HarvestMidstreamRole extends HarvesterRole {
             ]),
             build,
             action,
+            objectives,
             5 // limit range
         );
     }

@@ -81,3 +81,22 @@ export const relativeExitTo =
 
     return { xDir: x, yDir: y };
   }
+
+export const roomCreeps =
+  (room: string, role: string): Creep[] => {
+    //return room.find(FIND_MY_CREEPS);
+    const creeps =
+      _.filter(
+        _.mapValues(Memory.creeps, (v, k) => { return { ...v, name: k } }),
+        c => c.room === room && c.role === role
+      ).map(i => i.name !== undefined
+        && Game.creeps.hasOwnProperty(i.name)
+        ? Game.creeps[i.name] : undefined)
+        .filter(isDefined);
+    return creeps;
+  }
+
+export const bodyCost =
+  (body: BodyPartConstant[]): number => {
+    return _.sum(body.map(i => BODYPART_COST[i]));
+  }

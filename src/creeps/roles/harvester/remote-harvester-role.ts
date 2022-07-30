@@ -4,13 +4,14 @@ import { Pathing } from "creeps/pathing";
 
 import { Role } from "../role-registry";
 
-import { Task } from "repos/tasks/task";
+import { CreepState } from "utils/creep-state";
 import { TaskRepo } from "repos/tasks/_base/task-repo";
+import { Task } from "repos/tasks/task";
+
 import { TransferRole } from "../_base/transfer-role";
 import { HarvestAction } from "./harvest-action";
 
 import profiler from "screeps-profiler";
-import { CreepState } from "utils/creep-state";
 
 export class RemoteHarvesterRole extends TransferRole implements Role {
 

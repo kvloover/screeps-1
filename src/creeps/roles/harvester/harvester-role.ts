@@ -7,10 +7,12 @@ import { isContainer, isDefined } from "utils/utils";
 import { Role } from "../role-registry";
 import { TransferRole } from "../_base/transfer-role";
 
-import { TaskRepo } from "repos/tasks/_base/task-repo";
 import { Task } from "repos/tasks/task";
+import { TaskRepo } from "repos/tasks/_base/task-repo";
 import { HarvestAction } from "./harvest-action";
 import { CREEP_AMOUNT_PER_ENERGY, CREEP_ENERGY_PER_PART, CREEP_RANGE } from "utils/constants";
+import { ObjectiveRepo } from "repos/objectives/objectives-repo";
+import { ObjectiveHarvestData } from "objectives/handlers/harvest/harvest-handler";
 
 /**
  * Get Energy from Sources and store in containers
@@ -27,11 +29,21 @@ export abstract class HarvesterRole extends TransferRole implements Role {
         protected demands: TaskRepo<Task>,
         protected buildTasks: TaskRepo<Task>,
         protected harvesting: HarvestAction,
+        private objectives: ObjectiveRepo,
         private rangeLimit?: number
     ) { super(log, pathing) }
 
     protected consume(creep: Creep): void {
-        this.harvesting.Action(creep);
+        // try to lock on to objective target
+        if (!creep.memory.targetId && creep.memory.objective) {
+            const obj = this.objectives.getById(creep.memory.objective);
+            if (!obj) {
+                creep.memory.objective = undefined;
+            } else {
+                creep.memory.targetId = (obj.data as ObjectiveHarvestData).sourceId;
+            }
+        }
+        this.harvesting.Action(creep, undefined, creep.memory.targetId as Id<Source>);
     }
 
     protected supply(creep: Creep) {
