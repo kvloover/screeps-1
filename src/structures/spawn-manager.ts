@@ -3,14 +3,10 @@ import { singleton } from "tsyringe";
 import { Manager } from "manager";
 import { Logger } from "logger";
 import { CreepState } from "utils/creep-state";
-import { isDefined, isMyRoom } from "utils/utils";
-
-import setup from "../config/setup.json";
-import { config, roleConfig, stageConfig } from "../config/config";
+import { isMyRoom } from "utils/utils";
 
 import profiler from "screeps-profiler";
 import { initObjectMemory } from "structures/memory/structure-memory";
-import { forEach } from "lodash";
 
 @singleton()
 export class SpawnManager implements Manager {
@@ -21,37 +17,11 @@ export class SpawnManager implements Manager {
         return (str as BodyPartConstant) != null;
     }
 
-    private isStage(room: Room, roomCreeps: Creep[], cfg: stageConfig): boolean {
-        return (cfg.roles.length > 0)
-            && (cfg.controller < 0 || (room.controller != undefined && room.controller.level >= cfg.controller))
-            && (cfg.energy < 0 || (room.energyCapacityAvailable >= cfg.energy))
-            && (cfg.creeps <= 0 || roomCreeps.length >= cfg.creeps)
-    }
-
-    private isPrio(room: Room, roomCreeps: Creep[], cfg: roleConfig): boolean {
-        if (cfg.count <= 0) return false;
-
-        const current = roomCreeps?.filter(c => c.memory.role === cfg.role
-            && (!c.ticksToLive // spawning
-                || c.ticksToLive > c.body.length * 3
-            ))?.length;
-
-        return (cfg.count > 0)
-            && (!cfg.emergency || (room.memory.emergency?.active))
-            && (!cfg.condition
-                || (room.memory.hasOwnProperty(cfg.condition)
-                    && (
-                        (cfg.dynamic_condition && (room.memory as any)[cfg.condition] > current)
-                        || (!cfg.dynamic_condition && (room.memory as any)[cfg.condition])
-                    )
-                ))
-            && (cfg.dynamic_condition || current < cfg.count);
-    }
-
     protected manageSpawns(room: Room): void {
 
         const spawns = room.memory.objects?.spawn;
         if (spawns && spawns.length > 0) {
+            let energy = room.energyAvailable;
 
             for (let spawnMem of spawns) {
                 const spawn = Game.getObjectById(spawnMem.id) as StructureSpawn;
@@ -59,75 +29,83 @@ export class SpawnManager implements Manager {
                     if (spawn.spawning) {
                         this.reportSpawning(room, spawn);
                     } else {
-                        this.trySpawn(room, spawn);
+                        energy -= this.spawnFromRoomQueue(room, spawn, energy);
                     }
                 }
             }
         }
     }
 
-    protected trySpawn(room: Room, spawn: StructureSpawn): void {
-        const roomCreeps = this.getRoomCreeps(room);
-
-        const cfg = Object.assign(new config(), setup);
-
-        const stage = _.last(
-            _.sortBy(cfg, stage => stage.order)
-                .filter(stage => this.isStage(room, roomCreeps, stage))
-        )
-
-        if (stage != undefined) {
-            // this.log.info(`current stage: ${stage.order}`);
-            room.memory.stage = stage.order;
-
-            const prio = stage.roles
-                .sort((a, b) => a.priority - b.priority)
-                .filter(cfg => this.isPrio(room, roomCreeps, cfg))
-                .find(x => x !== undefined);
-
-            if (prio) {
-                this.log.debug(room.name, `Requesting new spawn for ${prio.role}`)
-                var template = prio.template ?? stage.template ?? { 'work': 1, 'move': 1, 'carry': 1 };
-                var bodyTemplate = _.flatten(Object.entries(template)
-                    .map(([key, value]) => this.isBodyTemplate(key) ? _.times(value, _ => key) : []));
-                // template.map(i => this.isBodyTemplate(i) ? i : TOUGH);
-
-                var newName = this.generateName(room, prio.role);
-                const ret = spawn.spawnCreep(bodyTemplate, newName,
-                    { memory: this.initialMemory(spawn, prio) });
-                if (ret === OK) {
-                    this.log.debug(room.name, `Spawning new ${prio.role}: ${newName}`);
-                    if (prio.condition && prio.reset_condition
-                        && room.memory.hasOwnProperty(prio.condition)) {
-                        (room.memory as any)[prio.condition] = undefined;
+    protected spawnFromRoomQueue(room: Room, spawn: StructureSpawn, energy: number): number {
+        const queueKeys: (keyof SpawnQueue)[] = ['immediate', 'urgent', 'normal', 'low'];
+        for (let key of queueKeys) {
+            if (!room.memory.spawn) return 0;
+            const queue = room.memory.spawn[key];
+            if (queue.length > 0) {
+                const peek = queue[0];
+                const body = this.bodyFromInfo(peek.body);
+                const cost = this.bodyCost(body);
+                if (cost <= energy) {
+                    const newName = this.generateName(room, peek.role)
+                    const ret = spawn.spawnCreep(body,
+                        newName,
+                        { memory: this.mergeMemory(room, peek.role, peek.initial) });
+                    if (ret === OK) {
+                        this.log.info(room.name, `spawning ${peek.role}:  ${newName}`);
+                        room.memory.spawn[key].shift();
+                        this.nameInUse(room, newName);
+                        return cost;
                     }
-                    this.nameInUse(room, prio.role, newName);
-                } else if (ret === ERR_NAME_EXISTS) {
-                    this.nameInUse(room, prio.role, newName);
                 }
+                return 0;
             }
         }
+        return 0;
     }
 
-    private getRoomCreeps(room: Room): Creep[] {
-        //return room.find(FIND_MY_CREEPS);
-        const creeps =
-            _.filter(
-                _.mapValues(Memory.creeps, (v, k) => { return { ...v, name: k } }),
-                c => c.room === room.name
-            ).map(i => i.name !== undefined
-                && Game.creeps.hasOwnProperty(i.name)
-                ? Game.creeps[i.name] : undefined)
-                .filter(isDefined);
-        return creeps;
+    private mergeMemory(room: Room, role: string, info: Partial<CreepMemory>): CreepMemory {
+        const base = this.initialMemory(room, role);
+        return Object.assign(base, info);
     }
 
-    private initialMemory(spawn: StructureSpawn, cfg: roleConfig): CreepMemory {
+    private bodyFromInfo(info: BodyInfo): BodyPartConstant[] {
+        let ret: BodyPartConstant[] = [];
+        let trail: BodyMap | undefined = info.trail ? { ...info.trail } : undefined;
+        if (info.fixed) {
+            for (let body of info.fixed) {
+                ret = ret.concat(_.flatten(Object.entries(body)
+                    .map(([key, value]) => this.isBodyTemplate(key) ? _.times(value - (trail?.[key] || 0), _ => key) : [])));
+                if (trail) {
+                    for (let key of Object.keys(trail)) {
+                        if (this.isBodyTemplate(key) && body.hasOwnProperty(key)) {
+                            trail[key] = Math.max((trail[key] || 0) - (body[key] || 0), 0);
+                        }
+                    }
+                }
+            }
+        } else if (info.dynamic) {
+
+        }
+
+        if (info.trail) {
+            ret = ret.concat(_.flatten(Object.entries(info)
+                .map(([key, value]) => this.isBodyTemplate(key) ? _.times(value - (info.trail?.[key] || 0), _ => key) : []))
+            );
+        }
+
+        return ret;
+    }
+
+    private bodyCost(body: BodyPartConstant[]): number {
+        return _.sum(body.map(i => BODYPART_COST[i]));
+    }
+
+    private initialMemory(room: Room, role: string): CreepMemory {
         return {
             id: undefined,
-            role: cfg.role,
+            role: role,
             state: CreepState.idle,
-            room: spawn.room.name,
+            room: room.name,
             targetRoom: undefined,
             staging: undefined,
             targetId: undefined,
@@ -149,7 +127,7 @@ export class SpawnManager implements Manager {
         return `${role.slice(0, 4)}_${Memory.spawnSequence.toString()}`
     }
 
-    private nameInUse(room: Room, role: string, name: string) {
+    private nameInUse(room: Room, name: string) {
         this.log.debug(room.name, `name in use: ${name}`);
         Memory.spawnSequence++;
     }

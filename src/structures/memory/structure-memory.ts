@@ -34,6 +34,7 @@ declare global {
     interface RoomMemory {
         objects?: RoomObjectMap;
         constructions?: RoomConstructionMap;
+        spawn?: SpawnQueue;
     }
 
     type RoomConstructionMap = RoomObjectMemoryMap<BuildableStructureConstant>;
@@ -67,8 +68,31 @@ declare global {
         perAction: number;
     }
 
-    interface SourceMemory extends RoomObjectMemory<SOURCE> { }
+    interface SourceMemory extends RoomObjectMemory<SOURCE> { positions: number }
     interface SpawnMemory extends RoomObjectMemory<STRUCTURE_SPAWN> { }
+
+    interface SpawnQueue {
+        immediate: SpawnInfo[];
+        urgent: SpawnInfo[];
+        normal: SpawnInfo[];
+        low: SpawnInfo[];
+    }
+
+    interface SpawnInfo {
+        role: string;
+        body: BodyInfo;
+        initial: Partial<CreepMemory>;
+    }
+
+    interface BodyInfo {
+        fixed?: BodyMap[];
+        dynamic?: BodyMap;
+        trail?: BodyMap;
+    }
+
+    type BodyMap = {
+        [T in BodyPartConstant]?: number
+    }
 
     // Heap
     namespace NodeJS {
