@@ -1,3 +1,4 @@
+import { Logger } from "logger";
 import { Objective } from "repos/objectives/objective";
 import { ObjectiveRepo } from "repos/objectives/objectives-repo";
 import { injectAll, singleton } from "tsyringe";
@@ -9,6 +10,7 @@ import { Handlers } from "./handler-service";
 export class Brain {
 
     constructor(
+        private log: Logger,
         @injectAll(Handlers.token) private handlers: Handler[],
         private repo: ObjectiveRepo
     ) { }
@@ -40,7 +42,7 @@ export class Brain {
                     }
                 }
             } catch (error) {
-                console.log(error);
+                this.log.error(error);
             }
         }
     }
