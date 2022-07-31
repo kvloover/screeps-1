@@ -7,13 +7,16 @@ import { Objective } from "repos/objectives/objective";
 import { CreepState } from "utils/creep-state";
 import { bodyCost, isDefined, isMyRoom, parseRoomName, roomCreeps } from "utils/utils";
 import { bodyFromMap } from "structures/memory/structure-memory";
+import { SpawnQueue } from "structures/util/spawn-queue";
 
 @singleton()
 export class HarvestHandler implements Handler {
 
     type = 'harvest';
+    urgency: QueueKey = 'urgent';
+    role = 'harvester';
 
-    constructor(private log: Logger) { }
+    constructor(private log: Logger, private queue: SpawnQueue) { }
 
     generateObjectives(existing: Objective[], other: Objective[]): Objective[] {
         const objectives: Objective[] = [];
@@ -53,8 +56,8 @@ export class HarvestHandler implements Handler {
         const room = Game.rooms[obj.master];
 
         // wait for current request to be spawned
-        if (room.memory.spawn?.urgent?.find(i => i.objective == obj.id)) return false;
-        if (room.memory.spawn?.spawning && Object.values(room.memory.spawn).find(i => i.objective == obj.id)) return false;
+        if (room.memory.spawn?.[this.urgency]?.find(i => i.objective == obj.id)) return false;
+        if (room.memory.spawn?.spawning && Object.values(room.memory.spawn.spawning).find(i => i && i.objective == obj.id)) return false;
 
         // get current desired body
         // get current harvesting power
@@ -78,25 +81,19 @@ export class HarvestHandler implements Handler {
             if (simpleBody.length > 0) {
                 this.log.debug(obj.master, `harvesting ${data.sourceId} with ${simpleBody.join(',')}`);
 
-                const curHarvesters = roomCreeps(obj.master, 'harvester');
+                const curHarvesters = roomCreeps(obj.master, this.role);
                 const assigned = curHarvesters.filter(c => c.memory.objective == obj.id && (!c.ticksToLive || c.ticksToLive > simpleBody.length * 3));
                 if (assigned.length >= data.positions) return false;
 
                 const harvestPower = assigned.map(c => c.getActiveBodyparts(WORK)).reduce((a, b) => a + b, 0);
                 if (harvestPower < 5) {
                     // add new harvester with the given body and assign to the objective
-
-                    // TODO move to class
-                    if (!room.memory.spawn) { room.memory.spawn = { spawning: {}, immediate: [], urgent: [], normal: [], low: [] }; }
-                    if (!room.memory.spawn.urgent) { room.memory.spawn.urgent = []; }
-                    room.memory.spawn.urgent.push({
+                    this.queue.push(obj.master, this.urgency, {
                         objective: obj.id,
                         body: { fixed: body, trail: { work: 1 } },
-                        initial: { objective: obj.id, role: 'harvester' },
-                        role: 'harvester',
+                        initial: { objective: obj.id, role: this.role },
+                        role: this.role,
                     });
-
-
                 }
             }
 

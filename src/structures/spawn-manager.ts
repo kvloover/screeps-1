@@ -2,16 +2,17 @@ import { singleton } from "tsyringe";
 
 import { Manager } from "manager";
 import { Logger } from "logger";
-import { CreepState } from "utils/creep-state";
 import { bodyCost, isMyRoom } from "utils/utils";
+import { SpawnQueue } from "./util/spawn-queue";
+import { CreepState } from "utils/creep-state";
+import { initObjectMemory } from "./memory/structure-memory";
 
 import profiler from "screeps-profiler";
-import { initObjectMemory } from "structures/memory/structure-memory";
 
 @singleton()
 export class SpawnManager implements Manager {
 
-    constructor(private log: Logger) { }
+    constructor(private log: Logger, private queue: SpawnQueue) { }
 
     private isBodyTemplate(str: string): str is BodyPartConstant {
         return (str as BodyPartConstant) != null;
@@ -29,10 +30,7 @@ export class SpawnManager implements Manager {
                     if (spawn.spawning) {
                         this.reportSpawning(room, spawn);
                     } else {
-                        if (room.memory.spawn?.spawning.hasOwnProperty(spawn.name)) {
-                            // reset currently spawning
-                            room.memory.spawn.spawning[spawn.name] = undefined;
-                        }
+                        this.queue.clearExecuting(room.name, spawn.name);
                         energy -= this.spawnFromRoomQueue(room, spawn, energy);
                     }
                 }
@@ -41,32 +39,27 @@ export class SpawnManager implements Manager {
     }
 
     protected spawnFromRoomQueue(room: Room, spawn: StructureSpawn, energy: number): number {
-        const queueKeys: (keyof SpawnQueue)[] = ['immediate', 'urgent', 'normal', 'low'];
-        for (let key of queueKeys) {
-            if (!room.memory.spawn) return 0;
-            const queue = room.memory.spawn[key] as SpawnInfo[];
-            if (queue && queue.length > 0) {
-                const peek = queue[0];
-                this.log.debug(room.name, `to spawn ${key}: ${peek.role}`);
-                const body = this.bodyFromInfo(peek.body);
-                const cost = bodyCost(body);
-                if (cost <= energy) {
-                    const newName = this.generateName(room, peek.role)
-                    const ret = spawn.spawnCreep(body,
-                        newName,
-                        { memory: this.mergeMemory(room, peek.role, peek.initial) });
-                    if (ret === OK) {
-                        this.log.info(room.name, `spawning ${peek.role}:  ${newName}`);
-                        const removed = queue.shift();
-                        if (!room.memory.spawn.spawning) room.memory.spawn.spawning = {};
-                        if (removed) room.memory.spawn.spawning[spawn.name] = removed;
-                        this.nameInUse(room, newName);
-                        return cost;
-                    }
-                } else {
-                    this.log.debug(room.name, `not enough energy for ${peek.role}`);
+        const peek = this.queue.peek(room.name);
+        if (peek) {
+            this.log.debug(room.name, `to spawn: ${peek.role}`);
+            const body = this.bodyFromInfo(peek.body);
+            const cost = bodyCost(body);
+            if (cost <= energy) {
+                const newName = this.generateName(room, peek.role)
+                const ret = spawn.spawnCreep(body,
+                    newName,
+                    { memory: this.mergeMemory(room, peek.role, peek.initial) });
+                if (ret === OK) {
+                    this.log.info(room.name, `spawning ${peek.role}:  ${newName}`);
+                    const removed = this.queue.pop(room.name);
+                    if (peek.role !== removed?.role) { this.log.warn(room.name, `spawning ${peek.role} different than popped ${removed?.role} `); }
+
+                    if (removed) this.queue.executing(room.name, spawn.name, removed);
+                    this.nameInUse(room, newName);
+                    return cost;
                 }
-                return 0;
+            } else {
+                this.log.debug(room.name, `not enough energy for ${peek.role}`);
             }
         }
         return 0;
