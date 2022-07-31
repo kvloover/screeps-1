@@ -2,20 +2,19 @@ import { singleton } from "tsyringe";
 import { Logger } from "logger";
 
 import { Handler } from "objectives/entities/handler";
-import { ObjectiveData, ObjectiveRoomData } from "objectives/entities/objective";
+import { ObjectiveData } from "objectives/entities/objective";
 import { Objective } from "repos/objectives/objective";
-import { CreepState } from "utils/creep-state";
-import { bodyCost, isDefined, isMyRoom, parseRoomName, roomCreeps } from "utils/utils";
+import { isMyRoom, roomCreeps } from "utils/utils";
 import { bodyFromMap } from "structures/memory/structure-memory";
-import { UPGRADER_BODY } from "./upgrader-constants";
 import { SpawnQueue } from "structures/util/spawn-queue";
+import { UPGRADER_BODY } from "objectives/body/upgrader";
 
 @singleton()
 export class Rcl2Handler implements Handler {
 
     type = 'rcl2';
     count = 2;
-    urgency: QueueKey = 'normal';
+    urgency: QueueKey = 'low';
     role = 'upgrader';
 
     constructor(private log: Logger, private queue: SpawnQueue) { }
@@ -61,7 +60,7 @@ export class Rcl2Handler implements Handler {
 
         // get current desired body
 
-        const body = UPGRADER_BODY[1]
+        const body = UPGRADER_BODY[room.controller?.level || 0]
         if (body) {
             const simpleBody = body.map(i => bodyFromMap(i)).reduce((a, c) => a.concat(c), []);
 
@@ -77,7 +76,6 @@ export class Rcl2Handler implements Handler {
                         initial: { objective: obj.id, role: this.role },
                         role: this.role,
                     });
-
             }
 
         }

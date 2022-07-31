@@ -42,7 +42,7 @@ export class SpawnManager implements Manager {
         const peek = this.queue.peek(room.name);
         if (peek) {
             this.log.debug(room.name, `to spawn: ${peek.role}`);
-            const body = this.bodyFromInfo(peek.body);
+            const body = this.bodyFromInfo(peek.body, energy, room.energyCapacityAvailable);
             const cost = bodyCost(body);
             if (cost <= energy) {
                 const newName = this.generateName(room, peek.role)
@@ -70,7 +70,7 @@ export class SpawnManager implements Manager {
         return Object.assign(base, info);
     }
 
-    private bodyFromInfo(info: BodyInfo): BodyPartConstant[] {
+    private bodyFromInfo(info: BodyInfo, energy: number, capacity: number): BodyPartConstant[] {
         let ret: BodyPartConstant[] = [];
         let trail: BodyMap | undefined = info.trail ? { ...info.trail } : undefined;
         if (info.fixed) {
@@ -85,14 +85,19 @@ export class SpawnManager implements Manager {
                     }
                 }
             }
+
+            if (info.trail) {
+                ret = ret.concat(_.flatten(Object.entries(info.trail)
+                    .map(([key, value]) => this.isBodyTemplate(key) ? _.times(value, _ => key) : []))
+                );
+            }
+
         } else if (info.dynamic) {
-
-        }
-
-        if (info.trail) {
-            ret = ret.concat(_.flatten(Object.entries(info.trail)
-                .map(([key, value]) => this.isBodyTemplate(key) ? _.times(value, _ => key) : []))
-            );
+            const template = _.flatten(Object.entries(info.dynamic)
+                .map(([key, value]) => this.isBodyTemplate(key) ? _.times(value, _ => key) : []));
+            const templCost = bodyCost(template);
+            const times = Math.floor((info.dynamicAvailableEnergy ? energy : capacity) / templCost);
+            ret = _.times(times, _ => template).reduce((a, b) => a.concat(b), []);
         }
 
         return ret;

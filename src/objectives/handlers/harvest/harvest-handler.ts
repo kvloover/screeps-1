@@ -2,18 +2,19 @@ import { singleton } from "tsyringe";
 import { Logger } from "logger";
 
 import { Handler } from "objectives/entities/handler";
-import { ObjectiveData, ObjectiveRoomData } from "objectives/entities/objective";
+import { ObjectiveData } from "objectives/entities/objective";
 import { Objective } from "repos/objectives/objective";
-import { CreepState } from "utils/creep-state";
-import { bodyCost, isDefined, isMyRoom, parseRoomName, roomCreeps } from "utils/utils";
+import { bodyCost, isMyRoom, roomCreeps } from "utils/utils";
 import { bodyFromMap } from "structures/memory/structure-memory";
 import { SpawnQueue } from "structures/util/spawn-queue";
+import { HARVEST_BODY } from "objectives/body/harvester";
+import { HAULER_BODY } from "objectives/body/hauler";
 
 @singleton()
 export class HarvestHandler implements Handler {
 
     type = 'harvest';
-    urgency: QueueKey = 'urgent';
+    urgency: QueueKey = 'normal';
     role = 'harvester';
 
     constructor(private log: Logger, private queue: SpawnQueue) { }
@@ -50,7 +51,7 @@ export class HarvestHandler implements Handler {
         // - stop harvesting for unprotected sources if can't defend them
         // - bootstrap room with no harvesters and haulers
 
-        const data = obj.data as ObjectiveHarvestData;
+
 
         if (!Game.rooms.hasOwnProperty(obj.master)) return true; // stop harvesting unowned rooms
         const room = Game.rooms[obj.master];
@@ -58,6 +59,21 @@ export class HarvestHandler implements Handler {
         // wait for current request to be spawned
         if (room.memory.spawn?.[this.urgency]?.find(i => i.objective == obj.id)) return false;
         if (room.memory.spawn?.spawning && Object.values(room.memory.spawn.spawning).find(i => i && i.objective == obj.id)) return false;
+
+        const currCreeps = roomCreeps(obj.master, this.role).filter(c => c.memory.objective == obj.id);
+        const haulers = roomCreeps(obj.master, 'hauler').filter(c => c.memory.objective == obj.id);
+
+        if (currCreeps.length > 1 && haulers.length == 0) {
+            this.spawnHauler(obj);
+        } else {
+            this.trySpawnHarvester(obj, room, currCreeps);
+        }
+
+        return false; // not finished
+    }
+
+    private trySpawnHarvester(obj: Objective, room: Room, creeps: Creep[]): void {
+        const data = obj.data as ObjectiveHarvestData;
 
         // get current desired body
         // get current harvesting power
@@ -81,9 +97,8 @@ export class HarvestHandler implements Handler {
             if (simpleBody.length > 0) {
                 this.log.debug(obj.master, `harvesting ${data.sourceId} with ${simpleBody.join(',')}`);
 
-                const curHarvesters = roomCreeps(obj.master, this.role);
-                const assigned = curHarvesters.filter(c => c.memory.objective == obj.id && (!c.ticksToLive || c.ticksToLive > simpleBody.length * 3));
-                if (assigned.length >= data.positions) return false;
+                const assigned = creeps.filter(c => c.memory.objective == obj.id && (!c.ticksToLive || c.ticksToLive > simpleBody.length * 3));
+                if (assigned.length >= data.positions) return;
 
                 const harvestPower = assigned.map(c => c.getActiveBodyparts(WORK)).reduce((a, b) => a + b, 0);
                 if (harvestPower < 5) {
@@ -98,8 +113,23 @@ export class HarvestHandler implements Handler {
             }
 
         }
+    }
 
-        return false; // not finished
+    private spawnHauler(obj: Objective): void {
+        const body = HAULER_BODY[0];// dynamic
+        if (body) {
+            const simpleBody = body.map(i => bodyFromMap(i)).reduce((a, c) => a.concat(c), []);
+            if (simpleBody.length > 0) {
+                // add new upgrader with the given body and assign to the objective
+                this.queue.push(obj.master, 'urgent',
+                    {
+                        objective: obj.id,
+                        body: { dynamic: body[0], dynamicAvailableEnergy: true },
+                        initial: { objective: obj.id, role: 'hauler' },
+                        role: 'hauler',
+                    });
+            }
+        }
     }
 }
 
@@ -108,15 +138,3 @@ export interface ObjectiveHarvestData extends ObjectiveData {
     source: RoomPosition;
     positions: number; // number of possible harvesting spots : upper limit harvesters
 }
-
-export const HARVEST_BODY: { [rcl: number]: BodyMap[]; } = {
-    0: [],
-    1: [{ work: 1, carry: 1, move: 1 }],
-    2: [{ work: 1, carry: 1, move: 1 }],
-    3: [{ work: 5, carry: 1, move: 3 }, { work: 1 }],
-    4: [{ work: 5, carry: 1, move: 3 }, { work: 1 }],
-    5: [{ work: 5, carry: 1, move: 3 }, { work: 1 }],
-    6: [{ work: 5, carry: 1, move: 3 }, { work: 1 }],
-    7: [{ work: 5, carry: 1, move: 3 }, { work: 1 }],
-    8: [{ work: 5, carry: 1, move: 3 }, { work: 1 }]
-};

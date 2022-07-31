@@ -98,6 +98,7 @@ declare global {
     interface BodyInfo {
         fixed?: BodyMap[];
         dynamic?: BodyMap;
+        dynamicAvailableEnergy?: boolean
         trail?: BodyMap;
     }
 
