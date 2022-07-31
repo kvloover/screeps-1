@@ -44,6 +44,8 @@ export class HaulerDropsRole extends HaulerRole {
 
 }
 
+profiler.registerClass(HaulerDropsRole, 'HaulerDropsRole');
+
 @singleton()
 export class HaulerMidstreamRole extends HaulerRole {
 

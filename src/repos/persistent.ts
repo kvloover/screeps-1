@@ -5,6 +5,7 @@ import { ObjectiveRepo } from "./objectives/objectives-repo";
 import { ContainerDemandTaskRepo } from "./tasks/container/container-demand-task-repo";
 import { ContainerDemandTempTaskRepo } from "./tasks/container/container-demand-temp-task-repo";
 import { ContainerSupplyTaskRepo } from "./tasks/container/container-supply-task-repo";
+import { CreepDemandTaskRepo } from "./tasks/creep/creep-demand-task-repo";
 import { LinkDemandTaskRepo } from "./tasks/link/link-demand-task-repo";
 import { LinkSupplyTaskRepo } from "./tasks/link/link-supply-task-repo";
 import { LinkSupplyUtilityTaskRepo } from "./tasks/link/link-supply-utility-task-repo";
@@ -31,6 +32,7 @@ export interface Persistent {
 
 @registry([
     { token: Persistency.token, useToken: HarvestTaskRepo },
+    { token: Persistency.token, useToken: CreepDemandTaskRepo },
     { token: Persistency.token, useToken: ConstructionTaskRepo },
     { token: Persistency.token, useToken: RepairTaskRepo },
     { token: Persistency.token, useToken: DropTaskRepo },
