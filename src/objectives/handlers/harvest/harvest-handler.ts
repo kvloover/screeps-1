@@ -58,6 +58,7 @@ export class HarvestHandler implements Handler {
 
         // wait for current request to be spawned
         if (room.memory.spawn?.[this.urgency]?.find(i => i.objective == obj.id)) return false;
+        if (room.memory.spawn?.['urgent']?.find(i => i.objective == obj.id)) return false; // hauler
         if (room.memory.spawn?.spawning && Object.values(room.memory.spawn.spawning).find(i => i && i.objective == obj.id)) return false;
 
         const currCreeps = roomCreeps(obj.master, this.role).filter(c => c.memory.objective == obj.id);
