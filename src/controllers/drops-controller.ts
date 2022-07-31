@@ -17,8 +17,6 @@ export class DropsController implements Controller {
     }
 
     public monitor(room: Room): void {
-        if (Game.time % 5 != 0) return; // not too important to immediately spot
-
         if (!isMyRoom(room) && !isRemote(room))
             return;
 

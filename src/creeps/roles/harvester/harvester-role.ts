@@ -56,6 +56,9 @@ export abstract class HarvesterRole extends TransferRole implements Role {
             const alternative = this.findTask(creep, this.altTasks, key, RESOURCE_ENERGY, undefined, 2);
             const repo = alternative ? this.altTasks : this.demands;
             this.supplyToRepo(creep, repo, key, RESOURCE_ENERGY, creep.room.name, this.rangeLimit);
+        } else {
+            // drop energy for other roles to pickup
+            creep.drop(RESOURCE_ENERGY);
         }
     }
 
