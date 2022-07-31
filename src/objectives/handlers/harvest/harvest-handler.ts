@@ -124,7 +124,7 @@ export class HarvestHandler implements Handler {
                 this.queue.push(obj.master, 'urgent',
                     {
                         objective: obj.id,
-                        body: { dynamic: body[0], dynamicAvailableEnergy: true },
+                        body: { dynamic: body[0] },
                         initial: { objective: obj.id, role: 'hauler' },
                         role: 'hauler',
                     });
