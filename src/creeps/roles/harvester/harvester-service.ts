@@ -15,6 +15,7 @@ import { ConstructionTaskRepo } from "repos/tasks/structures/construction-task-r
 
 import profiler from "screeps-profiler";
 import { ObjectiveRepo } from "repos/objectives/objectives-repo";
+import { RepairTaskRepo } from "repos/tasks/structures/repair-task-repo";
 
 
 @singleton()
@@ -26,8 +27,8 @@ export class HarvestSupplierRole extends HarvesterRole {
     };
 
     constructor(log: Logger, pathing: Pathing,
-        supply: SpawnDemandTaskRepo, build: ConstructionTaskRepo, action: HarvestAction, objectives: ObjectiveRepo) {
-        super(log, pathing, supply, build, action, objectives, undefined)
+        supply: SpawnDemandTaskRepo, action: HarvestAction, objectives: ObjectiveRepo) {
+        super(log, pathing, supply, undefined, action, objectives, undefined)
     }
 
     public run(creep: Creep): void {
@@ -50,7 +51,8 @@ export class HarvestMidstreamRole extends HarvesterRole {
         container: ContainerDemandTaskRepo,
         storage: StorageDemandTaskRepo,
         links: LinkDemandTaskRepo,
-        build: ConstructionTaskRepo,
+        builds: ConstructionTaskRepo,
+        repairs: RepairTaskRepo,
         action: HarvestAction,
         objectives: ObjectiveRepo) {
         super(log, pathing,
@@ -59,7 +61,10 @@ export class HarvestMidstreamRole extends HarvesterRole {
                 { offset: 3, repo: storage },
                 { offset: 6, repo: container }
             ]),
-            build,
+            new CombinedRepo('combined-construction', log, [
+                { offset: 0, repo: repairs },
+                { offset: 50, repo: builds }
+            ]),
             action,
             objectives,
             5 // limit range
